@@ -2,7 +2,7 @@
  * LireFichier                          27 avr. 2024
  * IUT de Rodez, Info1 2023-2024 TP4, pas de copyright
  */
-package iut.developpement.sae202;
+package iut.groupesae.compileurhuffman;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
