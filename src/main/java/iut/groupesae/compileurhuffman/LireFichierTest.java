@@ -1,6 +1,6 @@
-package iut.developpement.sae202;
+package iut.groupesae.compileurhuffman;
 
-import iut.developpement.sae202.LireFichier;
+import iut.groupesae.compileurhuffman.LireFichier;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
