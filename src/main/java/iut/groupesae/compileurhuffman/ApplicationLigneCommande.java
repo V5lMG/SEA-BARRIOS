@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 import static java.lang.System.out;
 
-public class UtiliserGestionFichier {
+public class ApplicationLigneCommande {
 
     public static void main(String[] args) {
         afficherSeparateur();
@@ -54,7 +54,7 @@ public class UtiliserGestionFichier {
         afficherSeparateur();
     }
 
-    public static boolean demanderReessayer() {
+    private static boolean demanderReessayer() {
         out.println("Voulez-vous réessayer ? (oui/non)");
         Scanner scanner = new Scanner(System.in);
         String choix = scanner.nextLine();
@@ -67,7 +67,7 @@ public class UtiliserGestionFichier {
 
     private static void afficherCaracteres(String contenu) {
         int[][] occurrences = GestionFichier.ordonnerOccurrences(contenu);
-        Map<Character, Double> frequenceMap = GestionFichier.getFrequence(contenu);
+        Map<Character, Double> frequenceMap = GestionFichier.getFrequences(contenu);
 
         for (int[] occurrence : occurrences) {
             char caractere = (char) occurrence[0];

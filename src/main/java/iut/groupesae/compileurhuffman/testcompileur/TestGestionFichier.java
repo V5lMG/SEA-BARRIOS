@@ -190,7 +190,7 @@ public class TestGestionFichier {
      */
     @Test
     void testGetFrequence() {
-        Map<Character, Double> frequenceMap = GestionFichier.getFrequence(CONTENU_TEST_CHAR_FREQUENCE);
+        Map<Character, Double> frequenceMap = GestionFichier.getFrequences(CONTENU_TEST_CHAR_FREQUENCE);
 
         assertEquals(3, frequenceMap.size(), "La taille du map de fréquences est incorrecte.");
 

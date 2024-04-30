@@ -52,7 +52,7 @@ public class GestionFichier {
         return occurrences;
     }
 
-    public static Map<Character, Double> getFrequence(String contenu) {
+    public static Map<Character, Double> getFrequences(String contenu) {
         Map<Character, Integer> occurrenceMap = getOccurrenceCaractere(contenu);
         int totalCaracteres = contenu.length();
         Map<Character, Double> frequenceMap = new HashMap<>();
