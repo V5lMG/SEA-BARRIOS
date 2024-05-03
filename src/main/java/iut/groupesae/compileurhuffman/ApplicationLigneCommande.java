@@ -38,6 +38,7 @@ public class ApplicationLigneCommande {
                 String choix = scanner.nextLine();
                 if (choix.equalsIgnoreCase("oui")) {
                     afficherCaracteres(contenu);
+                    afficherArbre(cheminFichier);
                     continuer = false;
                 } else {
                     continuer = demanderReessayer();
@@ -75,5 +76,20 @@ public class ApplicationLigneCommande {
             double frequence = frequenceMap.get(caractere);
             System.out.println("Caractère: " + caractere + ", Occurrences: " + nbOccurrences + ", Fréquence: " + (frequence * 100) + "%");
         }
+    }
+
+    private static void afficherArbre(String cheminFichier) {
+        // Construction de l'arbre de Huffman
+        ArbreHuffman arbre = null;
+        try {
+            arbre = new ArbreHuffman(cheminFichier);
+        } catch (IOException e) {
+            System.out.println("Erreur lors de la construction de l'arbre de Huffman !");
+            return;
+        }
+
+        // Affichage de l'arbre de Huffman
+        System.out.println("Affichage de l'arbre de Huffman :");
+        UtiliserArbreHuffman.afficherArbreHuffman(arbre.getRacine());
     }
 }
