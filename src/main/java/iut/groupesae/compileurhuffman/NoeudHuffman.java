@@ -1,17 +1,18 @@
 package iut.groupesae.compileurhuffman;
 
 /**
- * Représente un noeud dans l'arbre de Huffman.
+ * Représente un nœud dans l'arbre de Huffman.
  * Cette classe implémente l'interface Comparable pour permettre la comparaison
- * des noeud de Huffman en fonction de leur fréquence lors de la construction de l'arbre.
+ * des nœuds de Huffman en fonction de leur fréquence lors de la construction de l'arbre.
  */
 public class NoeudHuffman implements Comparable<NoeudHuffman> {
-    char caractere;
-    double frequence;
-    NoeudHuffman gauche, droite;
+    public char caractere;
+    public double frequence;
+    public NoeudHuffman gauche;
+    public NoeudHuffman droite;
 
     /**
-     * Constructeur pour créer un noeud Huffman avec un caractère et une fréquence donnés.
+     * Constructeur pour créer un nœud Huffman avec un caractère et une fréquence donnés.
      *
      * @param caractere  Le caractère associé au nœud.
      * @param frequence  La fréquence du caractère dans le texte.
@@ -23,12 +24,14 @@ public class NoeudHuffman implements Comparable<NoeudHuffman> {
     }
 
     /**
-     * Compare ce nœud à un autre noeud Huffman en fonction de leur fréquence.
+     * Compare ce nœud à un autre nœud Huffman en fonction de leur fréquence.
      *
      * @param noeud  Le nœud Huffman à comparer.
-     * @return       Une valeur négative, zéro ou une valeur positive si ce noeud a une fréquence inférieure, égale ou supérieure à celle de l'autre nœud.
+     * @return       Une valeur négative si ce nœud a une fréquence inférieure, zéro si elle est égale
+     *               ou une valeur positive si elle est supérieure à celle de l'autre nœud.
      */
     public int compareTo(NoeudHuffman noeud) {
-        return Double.compare(this.frequence, noeud.frequence); // Utiliser Double.compare pour comparer les doubles de manière sûre
+        // Utiliser Double.compare pour comparer les doubles de manière sûre
+        return Double.compare(this.frequence, noeud.frequence);
     }
 }
