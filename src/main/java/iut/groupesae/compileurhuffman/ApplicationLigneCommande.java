@@ -22,7 +22,7 @@ public class ApplicationLigneCommande {
 
         boolean continuer = true;
         while (continuer) {
-            String cheminFichier = null;
+            String cheminFichier;
             try {
                 out.print("""
                       Entrez le chemin de votre fichier (URL) :

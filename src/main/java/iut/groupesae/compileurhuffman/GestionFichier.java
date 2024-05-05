@@ -86,7 +86,7 @@ public class GestionFichier {
             // Compare les occurrences des caractères a et b.
             // On compare les occurrences en utilisant b[1] - a[1] pour obtenir un tri décroissant.
             // Si b[1] est plus grand que a[1], alors b est considéré comme "plus grand" que a,
-            // et donc b devrait être placé avant a dans le tableau trié.
+            // et donc "b" devrait être placé avant "a" dans le tableau trié.
             return Integer.compare(b[1], a[1]);
         });
 

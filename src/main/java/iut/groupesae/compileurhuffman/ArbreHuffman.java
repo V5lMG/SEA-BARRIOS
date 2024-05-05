@@ -66,8 +66,8 @@ public class ArbreHuffman {
 
             // Création d'un nouveau nœud avec la somme des fréquences des nœuds d'avant
             NoeudHuffman nouveauNoeud  = new NoeudHuffman('\0', feuilleMin1.frequence + feuilleMin2.frequence);
-            nouveauNoeud .gauche = feuilleMin1;
-            nouveauNoeud .droite = feuilleMin2;
+            nouveauNoeud.gauche = feuilleMin1;
+            nouveauNoeud.droite = feuilleMin2;
 
             feuilles.remove(feuilleMin1);
             feuilles.remove(feuilleMin2);
