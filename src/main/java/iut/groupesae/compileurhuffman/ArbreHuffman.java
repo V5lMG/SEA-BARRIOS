@@ -1,9 +1,13 @@
 package iut.groupesae.compileurhuffman;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.lang.System.out;
 
 /**
  * Cette classe représente un arbre de Huffman utilisé dans le processus de compression de données.
@@ -84,4 +88,80 @@ public class ArbreHuffman {
     public NoeudHuffman getRacine() {
         return this.racine;
     }
+
+    /**
+     * Enregistre l'arbre de Huffman dans un fichier spécifié.
+     * @param cheminFichier le chemin vers le fichier source
+     * @param nomFichierDestination le nom du fichier de destination
+     */
+    public static void saveArbreHuffman(String cheminFichier, String nomFichierDestination) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(nomFichierDestination))) {
+            // Appel récursif pour générer le contenu de l'arbre de Huffman et écrire dans le fichier
+            ArbreHuffman arbre = new ArbreHuffman(cheminFichier);
+            ArbreHuffman.arbreHuffmanRecursive(arbre.getRacine(), "", writer);
+        } catch (IOException e) {
+            out.println("Erreur lors de l'enregistrement de l'arbre de Huffman dans le fichier.");
+        }
+    }
+
+    public static void arbreHuffmanRecursive(NoeudHuffman racine, String code, BufferedWriter writer) throws IOException {
+        if (racine == null) {
+            return;
+        }
+
+        // Vérifie si le nœud courant est une feuille (pas de fils gauche et droit)
+        if (racine.gauche == null && racine.droite == null) {
+            // Écriture de la ligne dans le fichier
+            writer.write("codeHuffman = " + code + " ; encode = " + getUTF8Binary(racine.caractere) + " ; symbole = " + racine.caractere + "\n");
+            // Affichage dans la console
+            out.println("codeHuffman = " + code + " ; encode = " + getUTF8Binary(racine.caractere) + " ; symbole = " + racine.caractere);
+        }
+
+        // Parcourt récursivement les nœuds fils gauche et droit
+        arbreHuffmanRecursive(racine.gauche, code + "0", writer);
+        arbreHuffmanRecursive(racine.droite, code + "1", writer);
+    }
+
+    private static String getUTF8Binary(char c) {
+        // Il faut crée un tableau de bytes contenant l'encodage UTF-8 du caractère
+        byte[] utf8Bytes = String.valueOf(c).getBytes(java.nio.charset.StandardCharsets.UTF_8);
+
+        // Convertit chaque byte en représentation binaire et concatène
+        StringBuilder binaryRepresentation = new StringBuilder();
+        for (byte b : utf8Bytes) {
+            // Convertit le byte en représentation binaire avec padding à gauche de 0
+            String binary = String.format("%8s", Integer.toBinaryString(b & 0xFF)).replace(' ', '0');
+            binaryRepresentation.append(binary);
+        }
+
+        return binaryRepresentation.toString();
+    }
+
+
+
+
+
+
+
+    /**
+     * Affiche récursivement l'arbre de Huffman.
+     * <p>
+     * La récursivité est utilisée ici pour parcourir et afficher l'arbre de Huffman de manière efficace
+     * et clean. Un arbre de Huffman est une structure de données récursive où chaque nœud peut avoir
+     * deux enfants (gauche et droit), qui sont eux-mêmes des arbres de Huffman. En utilisant la récursivité,
+     * nous pouvons parcourir chaque nœud de l'arbre de manière récursive, en commençant par la racine, puis
+     * en explorant récursivement chaque sous-arbre gauche et droit. Cela nous permet de visiter chaque nœud
+     * de l'arbre une fois et d'afficher son contenu.
+     * </p>
+     * <p>
+     * Le paramètre "code" permet de stocker le code binaire associé au chemin parcouru depuis la racine
+     * de l'arbre jusqu'au nœud courant. Pendant le parcours récursif de l'arbre de Huffman, chaque fois que nous
+     * descendons à un nœud fils gauche, nous ajoutons un "0" au code, et chaque fois que nous descendons à un nœud
+     * fils droit, nous ajoutons un "1" au code. Ainsi, le code est mis à jour à chaque étape de la
+     * récursion pour refléter le chemin parcouru jusqu'au nœud actuel, permettant ainsi d'associer un code binaire
+     * unique à chaque caractère représenté par les feuilles de l'arbre de Huffman.
+     * </p>
+     * @param racine la racine de l'arbre à parcourir
+     * @param code le code binaire associé au nœud courant
+     */
 }

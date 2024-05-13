@@ -45,7 +45,17 @@ public class ApplicationLigneCommande {
                 String choix = scanner.nextLine();
                 if (choix.equalsIgnoreCase("oui")) {
                     afficherCaracteres(contenu);
+                    afficherSeparateur();
                     afficherArbreHuffman(cheminFichier);
+
+                    afficherSeparateur();
+                    out.println("Où voulez-vous enregistrer le fichier ?");
+                    String repertoire = scanner.nextLine();
+                    out.println("Sous quel nom voulez-vous enregistrer le fichier ?");
+                    String nomFichier = scanner.nextLine();
+                    afficherSeparateur();
+
+                    ArbreHuffman.saveArbreHuffman(cheminFichier, repertoire + "\\" + nomFichier);
                     continuer = false;
                 } else {
                     continuer = demanderReessayer();
@@ -104,42 +114,6 @@ public class ApplicationLigneCommande {
     private static void afficherArbreHuffman(String cheminFichier) throws IOException {
         ArbreHuffman arbre = new ArbreHuffman(cheminFichier);
         System.out.println("Affichage de l'arbre de Huffman :");
-        arbreHuffmanRecursive(arbre.getRacine(), "");
-    }
-
-    /**
-     * Affiche récursivement l'arbre de Huffman.
-     * <p>
-     * La récursivité est utilisée ici pour parcourir et afficher l'arbre de Huffman de manière efficace
-     * et clean. Un arbre de Huffman est une structure de données récursive où chaque nœud peut avoir
-     * deux enfants (gauche et droit), qui sont eux-mêmes des arbres de Huffman. En utilisant la récursivité,
-     * nous pouvons parcourir chaque nœud de l'arbre de manière récursive, en commençant par la racine, puis
-     * en explorant récursivement chaque sous-arbre gauche et droit. Cela nous permet de visiter chaque nœud
-     * de l'arbre une fois et d'afficher son contenu.
-     * </p>
-     * <p>
-     * Le paramètre "code" permet de stocker le code binaire associé au chemin parcouru depuis la racine
-     * de l'arbre jusqu'au nœud courant. Pendant le parcours récursif de l'arbre de Huffman, chaque fois que nous
-     * descendons à un nœud fils gauche, nous ajoutons un "0" au code, et chaque fois que nous descendons à un nœud
-     * fils droit, nous ajoutons un "1" au code. Ainsi, le code est mis à jour à chaque étape de la
-     * récursion pour refléter le chemin parcouru jusqu'au nœud actuel, permettant ainsi d'associer un code binaire
-     * unique à chaque caractère représenté par les feuilles de l'arbre de Huffman.
-     * </p>
-     * @param racine la racine de l'arbre à parcourir
-     * @param code le code binaire associé au nœud courant
-     */
-    private static void arbreHuffmanRecursive(NoeudHuffman racine, String code) {
-        if (racine == null) {
-            return;
-        }
-
-        // Vérifie si le nœud courant est une feuille (pas de fils gauche et droit)
-        if (racine.gauche == null && racine.droite == null) {
-            System.out.println(racine.caractere + " : " + code);
-        }
-
-        // Parcourt récursivement les nœuds fils gauche et droit
-        arbreHuffmanRecursive(racine.gauche, code + "0");
-        arbreHuffmanRecursive(racine.droite, code + "1");
+        ArbreHuffman.arbreHuffmanRecursive(arbre.getRacine(), "", null);
     }
 }
