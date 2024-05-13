@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -33,8 +34,7 @@ public class GestionFichier {
      * @throws IOException en cas d'erreur d'entrée/sortie lors de la lecture du fichier
      */
     public static String getContenuFichier(String cheminFichier) throws IOException {
-        // try (BufferedReader lecteur = new BufferedReader(new FileReader(cheminFichier, StandardCharsets.UTF_8))) { FIXME : exclure les utf non 8
-        try (BufferedReader lecteur = new BufferedReader(new FileReader(cheminFichier))) {
+        try (BufferedReader lecteur = new BufferedReader(new FileReader(cheminFichier, StandardCharsets.UTF_8))) {
             StringBuilder contenu = new StringBuilder();
             String ligne;
             while ((ligne = lecteur.readLine()) != null) {
@@ -119,10 +119,18 @@ public class GestionFichier {
      * @param chemin le chemin du fichier
      * @return le chemin du fichier nettoyé
      */
-    private static String nettoyerChemin(String chemin) {
+    public static String nettoyerChemin(String chemin) {
         if (chemin.startsWith("\"") && chemin.endsWith("\"")) {
             return chemin.substring(1, chemin.length() - 1);
         }
         return chemin;
+    }
+
+    public static String nettoyerExtension(String nomFichier) {
+        int indexDernierPoint = nomFichier.lastIndexOf('.');
+        if (indexDernierPoint != -1) {
+            nomFichier = nomFichier.substring(0, indexDernierPoint);
+        }
+        return nomFichier + ".txt";
     }
 }

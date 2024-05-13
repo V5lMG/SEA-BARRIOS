@@ -1,4 +1,2 @@
-Bonjour, ceci est un fichier txt de test pour l'algorythme de Huffman.
-Ligne 2.
-Ligne 3 !
-Ca en fait des caractères...
+azertyuiop : c'est la première ligne du clavier
+Francais ! 

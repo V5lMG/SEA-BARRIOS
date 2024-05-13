@@ -1,5 +1,10 @@
 package iut.groupesae.compileurhuffman;
 
+import iut.groupesae.compileurhuffman.objetcs.ArbreHuffman;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Scanner;
@@ -46,21 +51,19 @@ public class ApplicationLigneCommande {
                 if (choix.equalsIgnoreCase("oui")) {
                     afficherCaracteres(contenu);
                     afficherSeparateur();
-                    afficherArbreHuffman(cheminFichier);
 
-                    afficherSeparateur();
-                    out.println("Où voulez-vous enregistrer le fichier ?");
-                    String repertoire = scanner.nextLine();
-                    out.println("Sous quel nom voulez-vous enregistrer le fichier ?");
-                    String nomFichier = scanner.nextLine();
-                    afficherSeparateur();
+                    String cheminFichierDestination = getCheminFichierDestination(scanner);
+                    BufferedWriter writer = new BufferedWriter(new FileWriter(cheminFichierDestination));
 
-                    ArbreHuffman.saveArbreHuffman(cheminFichier, repertoire + "\\" + nomFichier);
+                    ArbreHuffman arbre = new ArbreHuffman(cheminFichier);
+                    arbre.trierArbre(writer);
+
+                    writer.close();
                     continuer = false;
                 } else {
+                    // Demander à l'utilisateur s'il souhaite réessayer
                     continuer = demanderReessayer();
                 }
-
             } catch (IOException e) {
                 out.println("Erreur lors de la lecture du fichier !");
                 continuer = demanderReessayer();
@@ -106,14 +109,38 @@ public class ApplicationLigneCommande {
         }
     }
 
-    /**
-     * Affiche l'arbre de Huffman pour le fichier spécifié.
-     * @param cheminFichier le chemin vers le fichier
-     * @throws IOException en cas d'erreur de lecture du fichier
-     */
-    private static void afficherArbreHuffman(String cheminFichier) throws IOException {
-        ArbreHuffman arbre = new ArbreHuffman(cheminFichier);
-        System.out.println("Affichage de l'arbre de Huffman :");
-        ArbreHuffman.arbreHuffmanRecursive(arbre.getRacine(), "", null);
+    private static String getCheminFichierDestination(Scanner scanner) {
+        return GestionFichier.nettoyerChemin(obtenirChemain(scanner)) + "\\" + GestionFichier.nettoyerExtension(obtenirNom(scanner));
+    }
+
+    private static String obtenirChemain(Scanner scanner) {
+        out.println("Où voulez-vous enregistrer le fichier ? (Entrez le chemin complet du répertoire)");
+        String repertoire = "";
+        boolean isRepertoireValide = false;
+        while (!isRepertoireValide) {
+            repertoire = scanner.nextLine();
+            File repertoireFile = new File(repertoire);
+            if (repertoireFile.exists() && repertoireFile.isDirectory()) {
+                isRepertoireValide = true;
+            } else {
+                out.println("Répertoire invalide. Assurez-vous d'entrer un chemin de répertoire valide.");
+            }
+        }
+        return repertoire;
+    }
+
+    private static String obtenirNom(Scanner scanner) {
+        out.println("Sous quel nom voulez-vous enregistrer le fichier ? (Entrez le nom du fichier)");
+        String nomFichier = "";
+        boolean isNomFichierValide = false;
+        while (!isNomFichierValide) {
+            nomFichier = scanner.nextLine();
+            if (!nomFichier.isEmpty() && nomFichier.matches("[a-zA-Z0-9._-]+")) { // regex pour les caracteres invalides
+                isNomFichierValide = true;
+            } else {
+                out.println("Nom de fichier invalide. Assurez-vous d'entrer un nom de fichier valide sans caractères spéciaux autres que '.', '_', ' ', ou '-'.");
+            }
+        }
+        return nomFichier;
     }
 }
