@@ -27,6 +27,17 @@ public class ArbreHuffman {
         }
     }
 
+    public String encoderContenu(String contenu) {
+        Map<Character, String> codesHuffman = getCodesHuffman();
+        StringBuilder contenuEncode = new StringBuilder();
+
+        for (char caractere : contenu.toCharArray()) {
+            contenuEncode.append(codesHuffman.get(caractere));
+        }
+
+        return contenuEncode.toString();
+    }
+
     private void collecterFeuilles(NoeudHuffman racine, List<NoeudHuffman> feuilles) {
         if (racine == null) {
             return;
@@ -72,5 +83,24 @@ public class ArbreHuffman {
 
         assignerCodesHuffman(noeud.getGauche(), code + "0");
         assignerCodesHuffman(noeud.getDroite(), code + "1");
+    }
+
+    private Map<Character, String> getCodesHuffman() {
+        Map<Character, String> codesHuffman = new HashMap<>();
+        collecterCodesHuffman(racine, codesHuffman);
+        return codesHuffman;
+    }
+
+    private void collecterCodesHuffman(NoeudHuffman noeud, Map<Character, String> codesHuffman) {
+        if (noeud == null) {
+            return;
+        }
+
+        if (noeud.getGauche() == null && noeud.getDroite() == null) {
+            codesHuffman.put(noeud.getCaractere(), noeud.getCodeHuffman());
+        }
+
+        collecterCodesHuffman(noeud.getGauche(), codesHuffman);
+        collecterCodesHuffman(noeud.getDroite(), codesHuffman);
     }
 }

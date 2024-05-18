@@ -58,6 +58,10 @@ public class ApplicationLigneCommande {
                     ArbreHuffman arbre = new ArbreHuffman(cheminFichier);
                     arbre.trierArbre(writer);
 
+                    String contenuEncode = arbre.encoderContenu(contenu);
+                    out.println("Contenu encodé :\n" + contenuEncode);
+                    writer.write("\nContenu encodé :\n" + contenuEncode);
+
                     writer.close();
                     continuer = false;
                 } else {
@@ -75,7 +79,8 @@ public class ApplicationLigneCommande {
         afficherSeparateur();
     }
 
-    /**
+
+/**
      * Demande à l'utilisateur s'il veut réessayer.
      * @return true si l'utilisateur veut réessayer, sinon false
      */
