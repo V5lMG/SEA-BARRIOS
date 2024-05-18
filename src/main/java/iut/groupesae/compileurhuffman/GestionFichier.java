@@ -133,4 +133,12 @@ public class GestionFichier {
         }
         return nomFichier + ".txt";
     }
+
+    public static String nettoyerExtensionBin(String nomFichier) {
+        int indexDernierPoint = nomFichier.lastIndexOf('.');
+        if (indexDernierPoint != -1) {
+            nomFichier = nomFichier.substring(0, indexDernierPoint);
+        }
+        return nomFichier + ".bin";
+    }
 }

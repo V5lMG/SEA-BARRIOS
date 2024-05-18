@@ -140,7 +140,7 @@ public class ApplicationLigneCommande {
     }
 
     private static String getCheminFichierEncodage(Scanner scanner) {
-        return GestionFichier.nettoyerChemin(obtenirChemainEncodage(scanner)) + "\\" + GestionFichier.nettoyerExtension(obtenirNom(scanner));
+        return GestionFichier.nettoyerChemin(obtenirChemainEncodage(scanner)) + "\\" + GestionFichier.nettoyerExtensionBin(obtenirNom(scanner));
     }
 
     private static String obtenirChemainEncodage(Scanner scanner) {
