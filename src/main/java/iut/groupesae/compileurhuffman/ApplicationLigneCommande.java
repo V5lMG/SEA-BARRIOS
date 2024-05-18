@@ -57,12 +57,16 @@ public class ApplicationLigneCommande {
 
                     ArbreHuffman arbre = new ArbreHuffman(cheminFichier);
                     arbre.trierArbre(writer);
+                    writer.close();
+
+                    String cheminFichierDestinationEncode = getCheminFichierEncodage(scanner);
+                    BufferedWriter writerEncode = new BufferedWriter(new FileWriter(cheminFichierDestinationEncode));
 
                     String contenuEncode = arbre.encoderContenu(contenu);
                     out.println("Contenu encodé :\n" + contenuEncode);
-                    writer.write("\nContenu encodé :\n" + contenuEncode);
+                    writerEncode.write(contenuEncode);
+                    writerEncode.close();
 
-                    writer.close();
                     continuer = false;
                 } else {
                     // Demander à l'utilisateur s'il souhaite réessayer
@@ -128,6 +132,28 @@ public class ApplicationLigneCommande {
             if (repertoireFile.exists() && repertoireFile.isDirectory()) {
                 isRepertoireValide = true;
             } else {
+
+                out.println("Répertoire invalide. Assurez-vous d'entrer un chemin de répertoire valide.");
+            }
+        }
+        return repertoire;
+    }
+
+    private static String getCheminFichierEncodage(Scanner scanner) {
+        return GestionFichier.nettoyerChemin(obtenirChemainEncodage(scanner)) + "\\" + GestionFichier.nettoyerExtension(obtenirNom(scanner));
+    }
+
+    private static String obtenirChemainEncodage(Scanner scanner) {
+        out.println("Où voulez-vous enregistrer le fichier encodé ? (Entrez le chemin complet du répertoire)");
+        String repertoire = "";
+        boolean isRepertoireValide = false;
+        while (!isRepertoireValide) {
+            repertoire = scanner.nextLine();
+            File repertoireFile = new File(repertoire);
+            if (repertoireFile.exists() && repertoireFile.isDirectory()) {
+                isRepertoireValide = true;
+            } else {
+
                 out.println("Répertoire invalide. Assurez-vous d'entrer un chemin de répertoire valide.");
             }
         }
