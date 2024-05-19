@@ -1,4 +1,4 @@
-package iut.groupesae.compileurhuffman.objetcs;
+package iut.groupesae.compileurhuffman.objets;
 
 import iut.groupesae.compileurhuffman.GestionFichier;
 
@@ -27,6 +27,11 @@ public class ArbreHuffman {
         }
     }
 
+    public byte[] encoderFichier(String contenu) {
+        String contenuEncode = encoderContenu(contenu);
+        return convertirBinaireEnBytes(contenuEncode);
+    }
+
     public String encoderContenu(String contenu) {
         Map<Character, String> codesHuffman = getCodesHuffman();
         StringBuilder contenuEncode = new StringBuilder();
@@ -36,6 +41,16 @@ public class ArbreHuffman {
         }
 
         return contenuEncode.toString();
+    }
+
+    private static byte[] convertirBinaireEnBytes(String binaire) {
+        int longueur = binaire.length();
+        byte[] bytes = new byte[longueur / 8];
+        for (int i = 0; i < longueur; i += 8) {
+            String octet = binaire.substring(i, i + 8);
+            bytes[i / 8] = (byte) Integer.parseInt(octet, 2);
+        }
+        return bytes;
     }
 
     private void collecterFeuilles(NoeudHuffman racine, List<NoeudHuffman> feuilles) {

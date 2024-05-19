@@ -4,9 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-import iut.groupesae.compileurhuffman.GestionFichier;
-import iut.groupesae.compileurhuffman.objetcs.ArbreHuffman;
-import iut.groupesae.compileurhuffman.objetcs.NoeudHuffman;
+import iut.groupesae.compileurhuffman.objets.ArbreHuffman;
 
 import java.io.BufferedWriter;
 import java.io.IOException;

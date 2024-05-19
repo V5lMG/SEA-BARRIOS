@@ -1,4 +1,4 @@
-package iut.groupesae.compileurhuffman.objetcs;
+package iut.groupesae.compileurhuffman.objets;
 
 public class NoeudHuffman implements Comparable<NoeudHuffman> {
     private final char caractere;

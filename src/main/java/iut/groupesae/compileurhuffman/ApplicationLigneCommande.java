@@ -1,11 +1,8 @@
 package iut.groupesae.compileurhuffman;
 
-import iut.groupesae.compileurhuffman.objetcs.ArbreHuffman;
+import iut.groupesae.compileurhuffman.objets.ArbreHuffman;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -15,33 +12,41 @@ import static java.lang.System.out;
  * Cette classe représente l'application en ligne de commande pour utiliser le compilateur Huffman.
  */
 public class ApplicationLigneCommande {
+    private static String cheminFichierACompiler;
+    private static String contenu;
+    private static String cheminFichierDestination;
+    private static String dossierDestination;
+    private static String nomFichierCompile;
+    private static ArbreHuffman arbre;
 
-    /**
-     * Méthode principale de l'application. Permet de lancer toutes les méthodes pour le fonctionnement en ligne de cmd.
-     * @param args les arguments de la ligne de commande
-     */
     public static void main(String[] args) {
         afficherSeparateur();
         out.println("L'application est lancée.");
         afficherSeparateur();
 
+        demanderFichierACompiler(args);
+
+        afficherSeparateur();
+        out.println("Fin de l'application.");
+        afficherSeparateur();
+    }
+
+    private static void demanderFichierACompiler(String[] args) {
         boolean continuer = true;
         while (continuer) {
-            String cheminFichier;
             try {
                 out.print("""
                       Entrez le chemin de votre fichier (URL) :
                       Exemple de chemin valide : "dossier1\\dossier2\\monFichier.txt"
                                                   dossier1/dossier2/monFichier.txt
                       ==>\s""");
-
-                cheminFichier = GestionFichier.getCheminFichier(args);
+                cheminFichierACompiler = GestionFichier.getCheminFichierACompiler(args);
 
                 afficherSeparateur();
-                out.println("Chemin du fichier spécifié : " + cheminFichier);
+                out.println("Chemin du fichier spécifié : " + cheminFichierACompiler);
                 afficherSeparateur();
 
-                String contenu = GestionFichier.getContenuFichier(cheminFichier);
+                contenu = GestionFichier.getContenuFichier(cheminFichierACompiler);
                 out.println("Contenu du fichier :\n" + contenu);
 
                 afficherSeparateur();
@@ -49,47 +54,87 @@ public class ApplicationLigneCommande {
                 Scanner scanner = new Scanner(System.in);
                 String choix = scanner.nextLine();
                 if (choix.equalsIgnoreCase("oui")) {
-                    afficherCaracteres(contenu);
-                    afficherSeparateur();
-
-                    String cheminFichierDestination = getCheminFichierDestination(scanner);
-                    BufferedWriter writer = new BufferedWriter(new FileWriter(cheminFichierDestination));
-
-                    ArbreHuffman arbre = new ArbreHuffman(cheminFichier);
-                    arbre.trierArbre(writer);
-                    writer.close();
-
-                    String cheminFichierDestinationEncode = getCheminFichierEncodage(scanner);
-                    BufferedWriter writerEncode = new BufferedWriter(new FileWriter(cheminFichierDestinationEncode));
-
-                    String contenuEncode = arbre.encoderContenu(contenu);
-                    out.println("Contenu encodé :\n" + contenuEncode);
-                    writerEncode.write(contenuEncode);
-                    writerEncode.close();
-
-                    continuer = false;
+                    traiterFichierACompiler(scanner);
+                    continuer = demanderRecommencer();
                 } else {
-                    // Demander à l'utilisateur s'il souhaite réessayer
-                    continuer = demanderReessayer();
+                    continuer = demanderRecommencer();
                 }
             } catch (IOException e) {
-                out.println("Erreur lors de la lecture du fichier !");
-                continuer = demanderReessayer();
+                out.println("Erreur lors de la lecture du fichier à compiler !\nErreur :" + e);
+                continuer = demanderRecommencer();
             }
         }
-
-        afficherSeparateur();
-        out.println("Fin de l'application.");
-        afficherSeparateur();
     }
 
+    private static void traiterFichierACompiler(Scanner scanner) throws IOException {
+        afficherCaracteres(contenu);
+        afficherSeparateur();
 
-/**
+        out.println("Où voulez-vous enregistrer le fichier une fois compilé ? (Entrez le chemin complet du répertoire)");
+        cheminFichierDestination = GestionFichier.nettoyerChemin(GestionFichier.getCheminDestination(scanner));
+        verifierRepertoireValide(scanner);
+
+        out.println("Sous quel nom voulez-vous enregistrer le fichier une fois compilé ? (Entrez le nom du fichier)");
+        nomFichierCompile = obtenirNomFichierUnique(scanner, cheminFichierDestination);
+
+        dossierDestination = cheminFichierDestination + "\\" + nomFichierCompile;
+        creerDossierCompilation();
+        creerArbreHuffman();
+        creerFichierCompile();
+    }
+
+    private static void verifierRepertoireValide(Scanner scanner) {
+        File repertoireFile = new File(cheminFichierDestination);
+        while (!repertoireFile.exists() || !repertoireFile.isDirectory() || !repertoireFile.canWrite()) {
+            out.println("Répertoire invalide ou vous n'avez pas les droits d'écriture. Assurez-vous d'entrer un chemin de répertoire valide et accessible en écriture.");
+            cheminFichierDestination = GestionFichier.nettoyerChemin(GestionFichier.getCheminDestination(scanner));
+            repertoireFile = new File(cheminFichierDestination);
+        }
+    }
+
+    private static String obtenirNomFichierUnique(Scanner scanner, String cheminFichierDestination) {
+        String nomFichier = GestionFichier.getNomFichierCompile(scanner);
+        File fichier = new File(cheminFichierDestination, nomFichier);
+        while (fichier.exists()) {
+            out.println("Un fichier ou dossier avec ce nom existe déjà. Veuillez entrer un nom différent.");
+            nomFichier = GestionFichier.getNomFichierCompile(scanner);
+            fichier = new File(cheminFichierDestination, nomFichier);
+        }
+        return nomFichier;
+    }
+
+    private static void creerDossierCompilation() {
+        File dossier = new File(dossierDestination);
+        if (!dossier.exists()) {
+            boolean result = dossier.mkdirs();
+            if (!result) {
+                throw new RuntimeException("Erreur : Impossible de créer le répertoire " + dossierDestination);
+            }
+        }
+    }
+
+    private static void creerArbreHuffman() throws IOException {
+        try (BufferedWriter writerArbre = new BufferedWriter(new FileWriter(dossierDestination + "\\arbreHuffman.txt"))) {
+            arbre = new ArbreHuffman(cheminFichierACompiler);
+            arbre.trierArbre(writerArbre);
+        }
+        out.println("L'arbre d'Huffman a bien été créé.");
+    }
+
+    private static void creerFichierCompile() throws IOException {
+        byte[] bytes = arbre.encoderFichier(contenu);
+        try (FileOutputStream fos = new FileOutputStream(dossierDestination + "\\" + nomFichierCompile + ".bin")) {
+            fos.write(bytes);
+        }
+        out.println("Le fichier fourni a bien été compilé.");
+    }
+
+    /**
      * Demande à l'utilisateur s'il veut réessayer.
      * @return true si l'utilisateur veut réessayer, sinon false
      */
-    private static boolean demanderReessayer() {
-        out.println("Voulez-vous réessayer ? (oui/non)");
+    private static boolean demanderRecommencer() {
+        out.println("Voulez-vous recommencer ? (oui/non)");
         Scanner scanner = new Scanner(System.in);
         String choix = scanner.nextLine();
         return choix.equalsIgnoreCase("oui");
@@ -112,66 +157,9 @@ public class ApplicationLigneCommande {
 
         for (int[] occurrence : occurrences) {
             char caractere = (char) occurrence[0];
-            int nbOccurrences = occurrence[1];
+            int nombreOccurrences = occurrence[1];
             double frequence = frequenceMap.get(caractere);
-            System.out.println("Caractère: " + caractere + ", Occurrences: " + nbOccurrences + ", Fréquence: " + (frequence * 100) + "%");
+            out.println("Caractère: " + caractere + "; Occurrences: " + nombreOccurrences + "; Fréquence: " + (frequence * 100) + "%");
         }
-    }
-
-    private static String getCheminFichierDestination(Scanner scanner) {
-        return GestionFichier.nettoyerChemin(obtenirChemain(scanner)) + "\\" + GestionFichier.nettoyerExtension(obtenirNom(scanner));
-    }
-
-    private static String obtenirChemain(Scanner scanner) {
-        out.println("Où voulez-vous enregistrer le fichier ? (Entrez le chemin complet du répertoire)");
-        String repertoire = "";
-        boolean isRepertoireValide = false;
-        while (!isRepertoireValide) {
-            repertoire = scanner.nextLine();
-            File repertoireFile = new File(repertoire);
-            if (repertoireFile.exists() && repertoireFile.isDirectory()) {
-                isRepertoireValide = true;
-            } else {
-
-                out.println("Répertoire invalide. Assurez-vous d'entrer un chemin de répertoire valide.");
-            }
-        }
-        return repertoire;
-    }
-
-    private static String getCheminFichierEncodage(Scanner scanner) {
-        return GestionFichier.nettoyerChemin(obtenirChemainEncodage(scanner)) + "\\" + GestionFichier.nettoyerExtensionBin(obtenirNom(scanner));
-    }
-
-    private static String obtenirChemainEncodage(Scanner scanner) {
-        out.println("Où voulez-vous enregistrer le fichier encodé ? (Entrez le chemin complet du répertoire)");
-        String repertoire = "";
-        boolean isRepertoireValide = false;
-        while (!isRepertoireValide) {
-            repertoire = scanner.nextLine();
-            File repertoireFile = new File(repertoire);
-            if (repertoireFile.exists() && repertoireFile.isDirectory()) {
-                isRepertoireValide = true;
-            } else {
-
-                out.println("Répertoire invalide. Assurez-vous d'entrer un chemin de répertoire valide.");
-            }
-        }
-        return repertoire;
-    }
-
-    private static String obtenirNom(Scanner scanner) {
-        out.println("Sous quel nom voulez-vous enregistrer le fichier ? (Entrez le nom du fichier)");
-        String nomFichier = "";
-        boolean isNomFichierValide = false;
-        while (!isNomFichierValide) {
-            nomFichier = scanner.nextLine();
-            if (!nomFichier.isEmpty() && nomFichier.matches("[a-zA-Z0-9._-]+")) { // regex pour les caracteres invalides
-                isNomFichierValide = true;
-            } else {
-                out.println("Nom de fichier invalide. Assurez-vous d'entrer un nom de fichier valide sans caractères spéciaux autres que '.', '_', ' ', ou '-'.");
-            }
-        }
-        return nomFichier;
     }
 }

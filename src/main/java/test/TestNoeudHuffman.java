@@ -3,7 +3,7 @@ package test;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import iut.groupesae.compileurhuffman.objetcs.NoeudHuffman;
+import iut.groupesae.compileurhuffman.objets.NoeudHuffman;
 
 /**
  * Classe de test pour la classe NoeudHuffman.

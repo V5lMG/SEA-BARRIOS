@@ -66,7 +66,7 @@ public class TestGestionFichier {
     @Test
     void testObtenirCheminFichierAvecArgsAvecGuillemets() throws IOException {
         String[] args = {CHEMIN_VALIDE_AVEC_GUILLEMETS};
-        String cheminFichier = GestionFichier.getCheminFichier(args);
+        String cheminFichier = GestionFichier.getCheminFichierACompiler(args);
         assertEquals(CHEMIN_VALIDE, cheminFichier, "Le chemin du fichier récupéré ne correspond pas.");
     }
 
@@ -79,7 +79,7 @@ public class TestGestionFichier {
         // Simule une saisie utilisateur depuis la console
         System.setIn(new java.io.ByteArrayInputStream(CHEMIN_VALIDE_AVEC_GUILLEMETS.getBytes()));
 
-        String cheminFichier = GestionFichier.getCheminFichier(new String[]{});
+        String cheminFichier = GestionFichier.getCheminFichierACompiler(new String[]{});
         assertEquals(CHEMIN_VALIDE, cheminFichier, "Le chemin du fichier récupéré ne correspond pas.");
     }
 
@@ -90,7 +90,7 @@ public class TestGestionFichier {
     @Test
     void testObtenirCheminFichierAvecArgs() throws IOException {
         String[] args = {CHEMIN_VALIDE};
-        String cheminFichier = GestionFichier.getCheminFichier(args);
+        String cheminFichier = GestionFichier.getCheminFichierACompiler(args);
         assertEquals(CHEMIN_VALIDE, cheminFichier, "Le chemin du fichier récupéré ne correspond pas.");
     }
 
@@ -104,7 +104,7 @@ public class TestGestionFichier {
         // Simule une saisie utilisateur depuis la console
         System.setIn(new java.io.ByteArrayInputStream(CHEMIN_VALIDE.getBytes()));
 
-        String cheminFichier = GestionFichier.getCheminFichier(args);
+        String cheminFichier = GestionFichier.getCheminFichierACompiler(args);
         assertEquals(CHEMIN_VALIDE, cheminFichier, "Le chemin du fichier récupéré ne correspond pas.");
     }
 
