@@ -12,6 +12,9 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Classe de test pour la classe ArbreHuffman.
+ */
 public class TestArbreHuffman {
 
     @Test

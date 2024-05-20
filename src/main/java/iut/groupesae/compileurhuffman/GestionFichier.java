@@ -25,6 +25,13 @@ public class GestionFichier {
         }
     }
 
+    /**
+     * Cette méthode permet à l'utilisateur de saisir un chemin de répertoire
+     * dans lequel le fichier compressé sera créé.
+     * Elle vérifie la validité du chemin saisi en s'assurant qu'il existe et qu'il s'agit bien d'un répertoire.
+     * @param scanner utilisé pour lire l'entrée de l'utilisateur.
+     * @return le chemin du répertoire de destination validé.
+     */
     public static String getCheminDestination(Scanner scanner) {
         String repertoire = "";
         boolean isRepertoireValide = false;
@@ -40,6 +47,12 @@ public class GestionFichier {
         return repertoire;
     }
 
+    /**
+     * Cette méthode permet à l'utilisateur de saisir un nom de fichier pour le fichier compressé qui sera créé.
+     * Elle vérifie la validité du nom de fichier saisi en s'assurant qu'il ne contient pas de caractères spéciaux.
+     * @param scanner utilisé pour lire l'entrée de l'utilisateur.
+     * @return le nom du fichier validé.
+     */
     public static String getNomFichierCompile(Scanner scanner) {
         String nomFichier = "";
         boolean isNomFichierValide = false;

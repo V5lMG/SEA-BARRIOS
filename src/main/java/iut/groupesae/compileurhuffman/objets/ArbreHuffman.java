@@ -6,15 +6,34 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * ArbreHuffman représente un arbre de Huffman utilisé pour la compression et la décompression des données.
+ * Un arbre de Huffman est un arbre binaire utilisé pour construire un code de Huffman.
+ * Ce code est couramment utilisé pour compresser des données.
+ */
 public class ArbreHuffman {
+
+    /**
+     * Noeud racine de l'arbre de Huffman.
+     */
     private final NoeudHuffman racine;
 
+    /**
+     * Crée un arbre de Huffman à partir des fréquences des caractères.
+     * @param cheminFichier le chemin d'accès au fichier texte.
+     * @throws IOException si une erreur d'entrée/sortie se produit.
+     */
     public ArbreHuffman(String cheminFichier) throws IOException {
         String contenu = GestionFichier.getContenuFichier(cheminFichier);
         Map<Character, Double> frequences = GestionFichier.getFrequences(contenu);
         this.racine = construireArbreHuffman(frequences);
     }
 
+    /**
+     * Trie l'arbre de Huffman dans l'ordre décroissant des fréquences des caractères.
+     * @param writer le flux d'écriture vers lequel écrire le résultat.
+     * @throws IOException si une erreur d'entrée/sortie se produit.
+     */
     public void trierArbre(BufferedWriter writer) throws IOException {
         List<NoeudHuffman> feuilles = new ArrayList<>();
         collecterFeuilles(racine, feuilles);
@@ -27,11 +46,21 @@ public class ArbreHuffman {
         }
     }
 
+    /**
+     * Encode une chaîne de caractères en binaire en utilisant les codes de l'arbre Huffman.
+     * @param contenu la chaîne de cractères à encoder.
+     * @return un tableau d'octets représentant la chaîne de caractères encodée.
+     */
     public byte[] encoderFichier(String contenu) {
         String contenuEncode = encoderContenu(contenu);
         return convertirBinaireEnBytes(contenuEncode);
     }
 
+    /**
+     * Encode une chaîne de caractères en utilisant les codes de l'arbre Huffman.
+     * @param contenu la chaîne de caractères à encoder.
+     * @return une chaîne de caractères représentant la chaîne de caractères encodée en binaire.
+     */
     public String encoderContenu(String contenu) {
         Map<Character, String> codesHuffman = getCodesHuffman();
         StringBuilder contenuEncode = new StringBuilder();
@@ -43,6 +72,11 @@ public class ArbreHuffman {
         return contenuEncode.toString();
     }
 
+    /**
+     * Convertit une chaîne de caractères binaires en un tableau d'octets.
+     * @param binaire la chaîne de caractères binaires à convertir.
+     * @return un tableau d'octets représentant la chaîne de caractères binaires convertie.
+     */
     private static byte[] convertirBinaireEnBytes(String binaire) {
         int longueur = binaire.length();
         byte[] bytes = new byte[longueur / 8];
@@ -53,6 +87,11 @@ public class ArbreHuffman {
         return bytes;
     }
 
+    /**
+     * Parcourt l'arbre de Huffman et collecte les feuilles dans une liste.
+     * @param racine le noeud racine de l'arbre de Huffman.
+     * @param feuilles la liste dans laquelle les feuilles collectées sont stockées.
+     */
     private void collecterFeuilles(NoeudHuffman racine, List<NoeudHuffman> feuilles) {
         if (racine == null) {
             return;
@@ -66,6 +105,11 @@ public class ArbreHuffman {
         collecterFeuilles(racine.getDroite(), feuilles);
     }
 
+    /**
+     * Crée un arbre de Huffman à partir d'une mappe des fréquences des caractères.
+     * @param frequences une mappe associant chaque caractère à sa fréquence d'apparition.
+     * @return le noeud racine de l'arbre de Huffman construit.
+     */
     private NoeudHuffman construireArbreHuffman(Map<Character, Double> frequences) {
         List<NoeudHuffman> feuilles = new ArrayList<>();
 
@@ -89,6 +133,11 @@ public class ArbreHuffman {
         return feuilles.getFirst();
     }
 
+    /**
+     * Attribue un code Huffman à chaque noeud de l'arbre.
+     * @param noeud le noeud courant à auquel attribuer un code.
+     * @param code le code Huffman préfixe du noeud.
+     */
     private void assignerCodesHuffman(NoeudHuffman noeud, String code) {
         if (noeud == null) {
             return;
@@ -100,12 +149,21 @@ public class ArbreHuffman {
         assignerCodesHuffman(noeud.getDroite(), code + "1");
     }
 
+    /**
+     * Renvoie une mappe associant chaque caractère à son code Huffman
+     * @return une mappe des codes Huffman.
+     */
     private Map<Character, String> getCodesHuffman() {
         Map<Character, String> codesHuffman = new HashMap<>();
         collecterCodesHuffman(racine, codesHuffman);
         return codesHuffman;
     }
 
+    /**
+     * Parcourt l'arbre de Huffman et collecte les codes Huffman de chaque noeud dans une mappe.
+     * @param noeud le noeud courant à partir duquel collecter le code Huffman
+     * @param codesHuffman la mappe dans laquelle stocker les codes Huffman collectés
+     */
     private void collecterCodesHuffman(NoeudHuffman noeud, Map<Character, String> codesHuffman) {
         if (noeud == null) {
             return;
