@@ -10,6 +10,9 @@ import static java.lang.System.out;
 
 /**
  * Cette classe représente l'application en ligne de commande pour utiliser le compilateur Huffman.
+ * Elle permet de sélectionner un fichier à compiler, de spécifier un emplacement de destination
+ * et de générer le fichier compilé et l'arbre de Huffman correspondant.
+ * TODO : gérer les arguments en lignes de commandes
  */
 public class ApplicationLigneCommande {
     private static String cheminFichierACompiler;
@@ -19,18 +22,27 @@ public class ApplicationLigneCommande {
     private static String nomFichierCompile;
     private static ArbreHuffman arbre;
 
+    /**
+     * Point d'entrée principal de l'application en ligne de commande.
+     * @param args les arguments de la ligne de commande (optionnelle)
+     */
     public static void main(String[] args) {
         afficherSeparateur();
         out.println("L'application est lancée.");
         afficherSeparateur();
 
         demanderFichierACompiler(args);
+        //demanderFichierADecompiler(args); FIXME
 
         afficherSeparateur();
         out.println("Fin de l'application.");
         afficherSeparateur();
     }
 
+    /**
+     * Demande à l'utilisateur de spécifier le fichier à compiler.
+     * @param args les arguments de la ligne de commande (optionnelle)
+     */
     private static void demanderFichierACompiler(String[] args) {
         boolean continuer = true;
         while (continuer) {
@@ -66,6 +78,11 @@ public class ApplicationLigneCommande {
         }
     }
 
+    /**
+     * Traite le fichier à compiler en demandant l'emplacement de destination et en générant le fichier compilé.
+     * @param scanner le scanner utilisé pour lire les entrées de l'utilisateur
+     * @throws IOException si une erreur survient lors de la manipulation des fichiers
+     */
     private static void traiterFichierACompiler(Scanner scanner) throws IOException {
         afficherCaracteres(contenu);
         afficherSeparateur();
@@ -78,11 +95,17 @@ public class ApplicationLigneCommande {
         nomFichierCompile = obtenirNomFichierUnique(scanner, cheminFichierDestination);
 
         dossierDestination = cheminFichierDestination + "\\" + nomFichierCompile;
+        afficherSeparateur();
         creerDossierCompilation();
         creerArbreHuffman();
         creerFichierCompile();
+        afficherSeparateur();
     }
 
+    /**
+     * Vérifie que le répertoire de destination spécifié par l'utilisateur est valide et accessible en écriture.
+     * @param scanner le scanner utilisé pour lire les entrées de l'utilisateur
+     */
     private static void verifierRepertoireValide(Scanner scanner) {
         File repertoireFile = new File(cheminFichierDestination);
         while (!repertoireFile.exists() || !repertoireFile.isDirectory() || !repertoireFile.canWrite()) {
@@ -92,6 +115,12 @@ public class ApplicationLigneCommande {
         }
     }
 
+    /**
+     * Obtient un nom de fichier unique dans le répertoire de destination pour éviter les conflits.
+     * @param scanner le scanner utilisé pour lire les entrées de l'utilisateur
+     * @param cheminFichierDestination le chemin du répertoire de destination
+     * @return un nom de fichier unique
+     */
     private static String obtenirNomFichierUnique(Scanner scanner, String cheminFichierDestination) {
         String nomFichier = GestionFichier.getNomFichierCompile(scanner);
         File fichier = new File(cheminFichierDestination, nomFichier);
@@ -103,6 +132,9 @@ public class ApplicationLigneCommande {
         return nomFichier;
     }
 
+    /**
+     * Crée le répertoire de compilation si celui-ci n'existe pas.
+     */
     private static void creerDossierCompilation() {
         File dossier = new File(dossierDestination);
         if (!dossier.exists()) {
@@ -113,6 +145,10 @@ public class ApplicationLigneCommande {
         }
     }
 
+    /**
+     * Crée l'arbre de Huffman à partir du fichier spécifié et écrit sa représentation dans un fichier.
+     * @throws IOException si une erreur survient lors de l'écriture du fichier
+     */
     private static void creerArbreHuffman() throws IOException {
         try (BufferedWriter writerArbre = new BufferedWriter(new FileWriter(dossierDestination + "\\arbreHuffman.txt"))) {
             arbre = new ArbreHuffman(cheminFichierACompiler);
@@ -121,6 +157,10 @@ public class ApplicationLigneCommande {
         out.println("L'arbre d'Huffman a bien été créé.");
     }
 
+    /**
+     * Encode le contenu du fichier à compiler en utilisant l'arbre de Huffman et écrit le résultat dans un fichier binaire.
+     * @throws IOException si une erreur survient lors de l'écriture du fichier
+     */
     private static void creerFichierCompile() throws IOException {
         byte[] bytes = arbre.encoderFichier(contenu);
         try (FileOutputStream fos = new FileOutputStream(dossierDestination + "\\" + nomFichierCompile + ".bin")) {
