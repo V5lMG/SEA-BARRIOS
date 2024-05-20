@@ -9,14 +9,40 @@ import static java.lang.System.out;
  * Cette classe fournit des méthodes pour la gestion des fichiers.
  */
 public class GestionFichier {
+    /* *============================================================*
+     *
+     *                          FICHIER
+     *
+     * *============================================================*
+     */
 
+    /* *============================================================*
+     *
+     *                          CHEMIN
+     *
+     * *============================================================*
+     */
+
+    /* *============================================================*
+     *
+     *                          ENCODAGE
+     *
+     * *============================================================*
+     */
+
+    /* *============================================================*
+     *
+     *                          DÉCODAGE
+     *
+     * *============================================================*
+     */
     /**
      * Obtient le chemin du fichier à partir des arguments de la ligne de commande ou de l'entrée utilisateur.
      * @param args les arguments de la ligne de commande
      * @return le chemin du fichier nettoyé
      * @throws IOException en cas d'erreur d'entrée/sortie lors de la lecture de la ligne de commande
      */
-    public static String getCheminFichierACompiler(String[] args) throws IOException {
+    public static String getCheminFichierSource(String[] args) throws IOException {
         if (args.length > 0) {
             return nettoyerChemin(args[0]);
         } else {
@@ -48,12 +74,29 @@ public class GestionFichier {
     }
 
     /**
+     * Obtient un nom de fichier unique dans le répertoire de destination pour éviter les conflits.
+     * @param scanner le scanner utilisé pour lire les entrées de l'utilisateur
+     * @param cheminFichierDestination le chemin du répertoire de destination
+     * @return un nom de fichier unique
+     */
+    public static String getNomFichierDestinationUnique(Scanner scanner, String cheminFichierDestination) {
+        String nomFichier = GestionFichier.getNomFichierDestination(scanner);
+        File fichier = new File(cheminFichierDestination, nomFichier);
+        while (fichier.exists()) {
+            out.println("Un fichier ou dossier avec ce nom existe déjà. Veuillez entrer un nom différent.");
+            nomFichier = GestionFichier.getNomFichierDestination(scanner);
+            fichier = new File(cheminFichierDestination, nomFichier);
+        }
+        return nomFichier;
+    }
+
+    /**
      * Cette méthode permet à l'utilisateur de saisir un nom de fichier pour le fichier compressé qui sera créé.
      * Elle vérifie la validité du nom de fichier saisi en s'assurant qu'il ne contient pas de caractères spéciaux.
      * @param scanner utilisé pour lire l'entrée de l'utilisateur.
      * @return le nom du fichier validé.
      */
-    public static String getNomFichierCompile(Scanner scanner) {
+    public static String getNomFichierDestination(Scanner scanner) {
         String nomFichier = "";
         boolean isNomFichierValide = false;
         while (!isNomFichierValide) {
@@ -85,24 +128,11 @@ public class GestionFichier {
     }
 
     /**
-     * Obtient les occurrences de chaque caractère dans le contenu du fichier.
-     * @param contenu le contenu du fichier
-     * @return une map des occurrences de caractères
-     */
-    public static Map<Character, Integer> getOccurrenceCaractere(String contenu) {
-        Map<Character, Integer> occurrences = new HashMap<>();
-        for (char caractere : contenu.toCharArray()) {
-            occurrences.put(caractere, occurrences.getOrDefault(caractere, 0) + 1);
-        }
-        return occurrences;
-    }
-
-    /**
      * Trie les occurrences des caractères dans le contenu du fichier.
      * @param contenu le contenu du fichier
      * @return un tableau à deux dimensions des occurrences triées par ordre décroissant
      */
-    public static int[][] ordonnerOccurrences(String contenu) {
+    public static int[][] getOccurrencesOrdonnee(String contenu) {
         Map<Character, Integer> occurrenceMap = getOccurrenceCaractere(contenu);
 
         int[][] occurrences = new int[occurrenceMap.size()][2];
@@ -131,6 +161,19 @@ public class GestionFichier {
         });
 
 
+        return occurrences;
+    }
+
+    /**
+     * Obtient les occurrences de chaque caractère dans le contenu du fichier.
+     * @param contenu le contenu du fichier
+     * @return une map des occurrences de caractères
+     */
+    private static Map<Character, Integer> getOccurrenceCaractere(String contenu) {
+        Map<Character, Integer> occurrences = new HashMap<>();
+        for (char caractere : contenu.toCharArray()) {
+            occurrences.put(caractere, occurrences.getOrDefault(caractere, 0) + 1);
+        }
         return occurrences;
     }
 
@@ -164,5 +207,18 @@ public class GestionFichier {
             return chemin.substring(1, chemin.length() - 1);
         }
         return chemin;
+    }
+
+    /**
+     * Vérifie que le répertoire de destination spécifié par l'utilisateur est valide et accessible en écriture.
+     * @param scanner le scanner utilisé pour lire les entrées de l'utilisateur
+     */
+    public static void verifierRepertoireValide(Scanner scanner, String cheminFichierDestination) {
+        File repertoireFile = new File(cheminFichierDestination);
+        while (!repertoireFile.exists() || !repertoireFile.isDirectory() || !repertoireFile.canWrite()) {
+            out.println("Répertoire invalide ou vous n'avez pas les droits d'écriture. Assurez-vous d'entrer un chemin de répertoire valide et accessible en écriture.");
+            cheminFichierDestination = GestionFichier.nettoyerChemin(GestionFichier.getCheminDestination(scanner));
+            repertoireFile = new File(cheminFichierDestination);
+        }
     }
 }
