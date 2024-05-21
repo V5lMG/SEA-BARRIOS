@@ -3,9 +3,6 @@ package iut.groupesae.compileurhuffman;
 import iut.groupesae.compileurhuffman.objets.ArbreHuffman;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Scanner;
 
 import static java.lang.System.out;
@@ -40,10 +37,8 @@ public class DecompressionHuffman {
                 String choix = scanner.nextLine();
                 if (choix.equalsIgnoreCase("oui")) {
                     traiterFichierADecompresser(scanner);
-                    continuer = demanderRecommencer();
-                } else {
-                    continuer = demanderRecommencer();
                 }
+                continuer = demanderRecommencer();
             } catch (IOException e) {
                 out.println("Erreur lors de la lecture du fichier à décompresser !\nErreur :" + e);
                 continuer = demanderRecommencer();
@@ -79,22 +74,35 @@ public class DecompressionHuffman {
      */
     private static void creerFichierDecomprime(long tempsDeCompression) throws IOException {
         cheminFichierDecompile = dossierDestination + "\\" + nomFichierDecompile + ".txt";
-        String arbreHuffman = cheminFichierADecompiler.substring(0, cheminFichierADecompiler.lastIndexOf("\\")) + "\\arbreHuffman.txt";
+        String cheminArbreHuffman = cheminFichierADecompiler.substring(0, cheminFichierADecompiler.lastIndexOf("\\")) + "\\arbreHuffman.txt";
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(cheminFichierDecompile))) {
-            writer.write(decoderFichier(arbreHuffman));
+
+        ArbreHuffman arbre;
+        try (BufferedWriter writerArbre = new BufferedWriter(new FileWriter(dossierDestination + "\\arbreHuffman2.txt"))) {
+            arbre = new ArbreHuffman(cheminArbreHuffman);
+            arbre.trierArbre(writerArbre);
         }
+        out.println("L'arbre d'Huffman a bien été créé.");
+        
+        // TODO decompression
+
         out.println("Le fichier a bien été décompressé et enregistré à l'emplacement suivant : " + cheminFichierDecompile);
         resumeDecompression(tempsDeCompression);
     }
 
-    private static String decoderFichier(String arbreHuffman) throws IOException {
-        ArbreHuffman arbre = new ArbreHuffman(arbreHuffman);
-        /*
-         * Expliquer readAllBytes et Path.of
-         */
-        byte[] bytes = Files.readAllBytes(Path.of(cheminFichierADecompiler));
-        return arbre.decoderFichier(bytes);
+    private static byte[] getBytesADecompiler(String cheminFichierDecompile) throws IOException {
+        try (FileInputStream fis = new FileInputStream(cheminFichierDecompile)) {
+            // Créer un tampon pour stocker les octets lus
+            ByteArrayOutputStream tempon = new ByteArrayOutputStream();
+
+            // Lire les octets du fichier et les écrire dans le tampon
+            byte[] buffer = new byte[1024]; // Taille du tampon
+            int bytesRead;
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                tempon.write(buffer, 0, bytesRead);
+            }
+            return tempon.toByteArray();
+        }
     }
 
     /**

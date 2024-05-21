@@ -16,10 +16,10 @@ public class ApplicationLigneCommande {
     public static void main(String[] args) {
         afficherSeparateur();
         out.println("L'application est lancée.");
-        afficherSeparateur();
 
         boolean continuer = true;
         while (continuer) {
+            afficherSeparateur();
             out.println("Choisissez une action :");
             out.println("1. Compression de fichier");
             out.println("2. Décompression de fichier");
