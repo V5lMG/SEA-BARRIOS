@@ -7,6 +7,8 @@ import static java.lang.System.out;
  * Elle permet de sélectionner un fichier à compiler, de spécifier un emplacement de destination
  * et de générer le fichier compilé et l'arbre de Huffman correspondant.
  * TODO : gérer les arguments en lignes de commandes
+ * TODO : empecher les fichiers vide
+ * TODO : empecher les fichiers texte
  */
 public class ApplicationLigneCommande {
     /**

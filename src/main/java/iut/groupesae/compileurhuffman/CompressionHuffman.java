@@ -71,7 +71,7 @@ public class CompressionHuffman {
         dossierDestination = cheminFichierDestination + "\\" + nomFichierCompile;
         ApplicationLigneCommande.afficherSeparateur();
         creerDossierCompilation();
-        ApplicationLigneCommande.afficherSeparateur();
+        //ApplicationLigneCommande.afficherSeparateur(); TODO : tester si il est a ça place
         creerArbreHuffman();
         creerFichierCompile();
         ApplicationLigneCommande.afficherSeparateur();

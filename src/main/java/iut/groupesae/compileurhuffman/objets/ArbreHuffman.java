@@ -89,8 +89,8 @@ public class ArbreHuffman {
         }
 
         while (feuilles.size() > 1) {
-            NoeudHuffman noeudMin1 = feuilles.removeFirst();
-            NoeudHuffman noeudMin2 = feuilles.removeFirst();
+            NoeudHuffman noeudMin1 = feuilles.remove(0);
+            NoeudHuffman noeudMin2 = feuilles.remove(0);
 
             NoeudHuffman nouveauNoeud = new NoeudHuffman('\0', noeudMin1.getFrequence() + noeudMin2.getFrequence());
             nouveauNoeud.setGauche(noeudMin1);
@@ -100,8 +100,8 @@ public class ArbreHuffman {
             feuilles.sort(Comparator.comparingDouble(NoeudHuffman::getFrequence));
         }
 
-        setCodesHuffman(feuilles.getFirst(), ""); // Appel de la méthode pour attribuer les codes Huffman
-        return feuilles.getFirst();
+        setCodesHuffman(feuilles.get(0), ""); // Appel de la méthode pour attribuer les codes Huffman
+        return feuilles.get(0);
     }
 
     /**
@@ -223,8 +223,30 @@ public class ArbreHuffman {
      * @param bytesADecompiler le tableau d'octets à décoder.
      * @return la chaîne de caractères décodée.
      */
-    public String decoderFichier(ArbreHuffman arbreHuffman, byte[] bytesADecompiler) {
-        // TODO decoder le fichier en remplacant les binaires récolté par l'encode en utf8 fornit dans l'arbre, ensuite retourner une string a l'aide de ce code utf8
-        return null;
+    public static String decoderFichier(List<String> arbreHuffman, String bytesADecompiler) {
+        // Créer une map pour les codes Huffman et leurs symboles
+        Map<String, Character> huffmanMap = new HashMap<>();
+        for (String entry : arbreHuffman) {
+            String[] parts = entry.split(" ; ");
+            if (parts.length == 3) {
+                String codeHuffman = parts[0].split(" = ")[1];
+                char symbole = parts[2].split(" = ")[1].charAt(0);
+                huffmanMap.put(codeHuffman, symbole);
+            }
+        }
+
+        // Lire bytesADecompiler caractère par caractère et décoder
+        StringBuilder decodedString = new StringBuilder();
+        StringBuilder currentBits = new StringBuilder();
+
+        for (char bit : bytesADecompiler.toCharArray()) {
+            currentBits.append(bit);
+            if (huffmanMap.containsKey(currentBits.toString())) {
+                decodedString.append(huffmanMap.get(currentBits.toString()));
+                currentBits.setLength(0); // Réinitialiser les bits actuels
+            }
+        }
+
+        return decodedString.toString();
     }
 }
