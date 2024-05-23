@@ -117,8 +117,8 @@ public class ArbreHuffman {
 
         noeud.setCodeHuffman(code);
 
-        setCodesHuffman(noeud.getGauche(), code + "0");
-        setCodesHuffman(noeud.getDroite(), code + "1");
+        setCodesHuffman(noeud.getGauche(), code + "1");
+        setCodesHuffman(noeud.getDroite(), code + "0");
     }
 
     /**
