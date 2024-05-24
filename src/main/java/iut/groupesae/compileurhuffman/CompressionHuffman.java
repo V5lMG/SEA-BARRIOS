@@ -43,10 +43,8 @@ public class CompressionHuffman {
                 String choix = scanner.nextLine();
                 if (choix.equalsIgnoreCase("oui")) {
                     traiterFichierACompiler(scanner);
-                    continuer = demanderRecommencer();
-                } else {
-                    continuer = demanderRecommencer();
                 }
+                continuer = demanderRecommencer();
             } catch (IOException e) {
                 out.println("Erreur lors de la lecture du fichier à compiler !\nErreur :" + e);
                 continuer = demanderRecommencer();
@@ -73,6 +71,7 @@ public class CompressionHuffman {
         dossierDestination = cheminFichierDestination + "\\" + nomFichierCompile;
         ApplicationLigneCommande.afficherSeparateur();
         creerDossierCompilation();
+        //ApplicationLigneCommande.afficherSeparateur(); TODO : tester si il est a ça place
         creerArbreHuffman();
         creerFichierCompile();
         ApplicationLigneCommande.afficherSeparateur();

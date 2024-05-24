@@ -1,18 +1,19 @@
 package iut.groupesae.compileurhuffman.objets;
 
 /**
- * Cette classe représente un noeud dans un arbre de Huffman utilisé pour
+ * Cette classe représente un nœud dans un arbre de Huffman utilisé pour
  * la compression et la décompression de données.
  */
 public class NoeudHuffman implements Comparable<NoeudHuffman> {
-    private final char caractere;
     private final double frequence;
     private NoeudHuffman gauche;
     private NoeudHuffman droite;
+    private NoeudHuffman parent;
     private String codeHuffman;
+    private final char caractere;
 
     /**
-     * Constructeur qui crée un noeud de Huffman avec un caractère et sa fréquence d'apparition.
+     * Constructeur qui crée un nœud de Huffman avec un caractère et sa fréquence d'apparition.
      * @param caractere le caractère.
      * @param frequence la fréquence d'apparition du caractère.
      */
@@ -43,22 +44,36 @@ public class NoeudHuffman implements Comparable<NoeudHuffman> {
 
     public void setGauche(NoeudHuffman gauche) {
         this.gauche = gauche;
+        if (gauche != null) {
+            gauche.setParent(this);
+        }
     }
 
     public void setDroite(NoeudHuffman droite) {
         this.droite = droite;
+        if (droite != null) {
+            droite.setParent(this);
+        }
     }
 
     public void setCodeHuffman(String codeHuffman) {
         this.codeHuffman = codeHuffman;
     }
 
+    public NoeudHuffman getParent() {
+        return parent;
+    }
+
+    public void setParent(NoeudHuffman parent) {
+        this.parent = parent;
+    }
+
     /**
-     * Renvoie une représentation textuelle du noeud, incluant
+     * Renvoie une représentation textuelle du nœud, incluant
      * son code Huffman,
      * son encodage binaire UTF-8,
      * et son caractère.
-     * @return La représentation du noeud.
+     * @return La représentation du nœud.
      */
     @Override
     public String toString() {
@@ -81,9 +96,9 @@ public class NoeudHuffman implements Comparable<NoeudHuffman> {
     }
 
     /**
-     * Cette méthode compare deux noeuds de Huffman en fonction de leur fréquence d'apparition.
-     * @param autre le noeud Huffman à comparer avec le noeud actuel.
-     * @return un entier qui caractérise la différence entre les deux noeuds.
+     * Cette méthode compare deux nœuds de Huffman en fonction de leur fréquence d'apparition.
+     * @param autre le nœud Huffman à comparer avec le nœud actuel.
+     * @return un entier qui caractérise la différence entre les deux nœuds.
      */
     @Override
     public int compareTo(NoeudHuffman autre) {
