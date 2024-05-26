@@ -29,7 +29,10 @@ public class CompressionHuffman {
                                                   dossier1/dossier2/monFichier.txt
                       ==>\s""");
                 cheminFichierACompiler = GestionFichier.getCheminFichierSource(args);
-
+                // Vérification du chemin de fichier
+                if ( cheminFichierACompiler.isEmpty()) {
+                    throw new IOException("\nUn chemin de fichier doit être spécifié");
+                }
                 ApplicationLigneCommande.afficherSeparateur();
                 out.println("Chemin du fichier spécifié : " + cheminFichierACompiler);
                 ApplicationLigneCommande.afficherSeparateur();
@@ -46,7 +49,9 @@ public class CompressionHuffman {
                 }
                 continuer = demanderRecommencer();
             } catch (IOException e) {
-                out.println("Erreur lors de la lecture du fichier à compiler !\nErreur :" + e);
+                out.println("Erreur lors de la lecture du fichier à compiler !\n" +
+                             "Erreur : " + e);
+
                 continuer = demanderRecommencer();
             }
         }

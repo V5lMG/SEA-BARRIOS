@@ -30,7 +30,10 @@ public class DecompressionHuffman {
                                                   dossier1/dossier2/monFichier.bin
                       ==>\s""");
                 cheminFichierADecompiler = GestionFichier.getCheminFichierSource(args);
-
+                // Vérification du chemin de fichier
+                if ( cheminFichierADecompiler.isEmpty()) {
+                    throw new IOException("\nUn chemin de fichier doit être spécifié");
+                }
                 ApplicationLigneCommande.afficherSeparateur();
                 out.println("Chemin du fichier spécifié : " + cheminFichierADecompiler);
                 ApplicationLigneCommande.afficherSeparateur();

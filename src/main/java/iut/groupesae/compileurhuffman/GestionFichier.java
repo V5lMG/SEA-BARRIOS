@@ -94,7 +94,7 @@ public class GestionFichier {
      * Cette méthode permet à l'utilisateur de saisir un nom de fichier pour le fichier compressé qui sera créé.
      * Elle vérifie la validité du nom de fichier saisi en s'assurant qu'il ne contient pas de caractères spéciaux.
      * @param scanner utilisé pour lire l'entrée de l'utilisateur.
-     * @return le nom du fichier validé.
+     * @return
      */
     public static String getNomFichierDestination(Scanner scanner) {
         String nomFichier = "";
