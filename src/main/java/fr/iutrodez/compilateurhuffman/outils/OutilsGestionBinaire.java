@@ -60,6 +60,12 @@ public class OutilsGestionBinaire {
         return bytes;
     }
 
+    /* *============================================================*
+     *
+     *                          DÉCODAGE
+     *
+     * *============================================================*
+     */
     public static List<String> recupererBytesDansArbreHuffman(String cheminArbreHuffman) throws IOException {
         List<String> huffmanCodes = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(cheminArbreHuffman))) {
@@ -82,7 +88,7 @@ public class OutilsGestionBinaire {
         return huffmanCodes;
     }
 
-    public static String getBytesADecompiler(String cheminFichierADecompiler) throws IOException {
+    public static String getBytesADecompresser(String cheminFichierADecompiler) throws IOException {
         byte[] fileBytes = Files.readAllBytes(Paths.get(cheminFichierADecompiler));
         StringBuilder binaryStringBuilder = new StringBuilder();
         for (byte b : fileBytes) {

@@ -1,5 +1,6 @@
 package fr.iutrodez.compilateurhuffman.objets;
 
+import fr.iutrodez.compilateurhuffman.outils.OutilsAnalyseFichier;
 import fr.iutrodez.compilateurhuffman.outils.OutilsGestionBinaire;
 import fr.iutrodez.compilateurhuffman.outils.OutilsGestionFichier;
 
@@ -30,8 +31,8 @@ public class ArbreHuffman {
      * @throws IOException si une erreur d'entrée/sortie se produit
      */
     public ArbreHuffman(String cheminFichier) throws IOException {
-        String contenu = OutilsGestionFichier.getContenuFichier(cheminFichier);
-        Map<Character, Double> frequences = OutilsGestionFichier.getFrequences(contenu);
+        String contenu = OutilsAnalyseFichier.getContenuFichier(cheminFichier);
+        Map<Character, Double> frequences = OutilsAnalyseFichier.getFrequences(contenu);
         racine = construireArbreHuffman(frequences);
     }
 
