@@ -2,8 +2,13 @@ package iut.groupesae.compileurhuffman.objets;
 
 import iut.groupesae.compileurhuffman.GestionFichier;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.Map;
+import java.io.BufferedWriter;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 
 /**
  * ArbreHuffman représente un arbre de Huffman utilisé pour la compression et la décompression des données.

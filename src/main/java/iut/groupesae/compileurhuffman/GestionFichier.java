@@ -1,7 +1,14 @@
 package iut.groupesae.compileurhuffman;
 
-import java.io.*;
-import java.util.*;
+import java.util.Scanner;
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.util.Map;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.HashMap;
 
 import static java.lang.System.out;
 

@@ -2,9 +2,13 @@ package iut.groupesae.compileurhuffman;
 
 import iut.groupesae.compileurhuffman.objets.ArbreHuffman;
 
-import java.io.*;
-import java.util.Map;
 import java.util.Scanner;
+import java.util.Map;
+import java.io.IOException;
+import java.io.File;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.FileOutputStream;
 
 import static java.lang.System.out;
 

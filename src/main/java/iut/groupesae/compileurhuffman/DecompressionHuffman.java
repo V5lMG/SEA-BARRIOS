@@ -2,11 +2,16 @@ package iut.groupesae.compileurhuffman;
 
 import iut.groupesae.compileurhuffman.objets.ArbreHuffman;
 
-import java.io.*;
+import java.util.Scanner;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.List;
+import java.util.ArrayList;
+import java.io.File;
 
 import static java.lang.System.out;
 
