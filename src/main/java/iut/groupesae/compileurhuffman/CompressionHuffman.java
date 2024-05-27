@@ -53,8 +53,7 @@ public class CompressionHuffman {
                 }
                 continuer = demanderRecommencer();
             } catch (IOException e) {
-                out.println("Erreur lors de la lecture du fichier à compiler !\n" +
-                             "Erreur : " + e);
+                out.println("Erreur lors de la lecture du fichier à compiler !" + e.getMessage());
 
                 continuer = demanderRecommencer();
             }

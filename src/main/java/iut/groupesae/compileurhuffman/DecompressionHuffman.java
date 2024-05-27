@@ -51,7 +51,7 @@ public class DecompressionHuffman {
                 }
                 continuer = demanderRecommencer();
             } catch (IOException e) {
-                out.println("Erreur lors de la lecture du fichier à décompresser !\nErreur :" + e);
+                out.println("Erreur lors de la lecture du fichier à décompresser !" + e.getMessage());
                 continuer = demanderRecommencer();
             }
         }
