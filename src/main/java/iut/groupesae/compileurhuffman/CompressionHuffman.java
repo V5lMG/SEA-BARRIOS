@@ -134,8 +134,8 @@ public class CompressionHuffman {
     private static void creerFichierCompile() throws IOException {
         byte[] bytes = arbre.encoderFichier(contenu);
         String cheminFichierCompile = dossierDestination + "\\" + nomFichierCompile + ".bin";
-        try (FileOutputStream fos = new FileOutputStream(cheminFichierCompile)) {
-            fos.write(bytes);
+        try (FileOutputStream ouvreurFichier = new FileOutputStream(cheminFichierCompile)) {
+            ouvreurFichier.write(bytes);
         }
         out.println("Le fichier fourni a bien été compilé.");
         resumeCompression(cheminFichierCompile);

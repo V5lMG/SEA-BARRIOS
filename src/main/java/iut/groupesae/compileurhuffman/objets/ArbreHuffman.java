@@ -29,18 +29,9 @@ public class ArbreHuffman {
      * @throws IOException si une erreur d'entrée/sortie se produit
      */
     public ArbreHuffman(String cheminFichier) throws IOException {
-        if (cheminFichier.endsWith("ArbreHuffman.txt")) {
-            this.racine = reConstruireArbreHuffman(cheminFichier);
-        } else {
-            String contenu = GestionFichier.getContenuFichier(cheminFichier);
-            Map<Character, Double> frequences = GestionFichier.getFrequences(contenu);
-            this.racine = construireArbreHuffman(frequences);
-        }
-    }
-
-    private NoeudHuffman reConstruireArbreHuffman(String cheminArbreHuffman) throws IOException {
-        // todo
-        return null;
+        String contenu = GestionFichier.getContenuFichier(cheminFichier);
+        Map<Character, Double> frequences = GestionFichier.getFrequences(contenu);
+        this.racine = construireArbreHuffman(frequences);
     }
 
     /**
@@ -121,7 +112,7 @@ public class ArbreHuffman {
         }
 
         noeud.setCodeHuffman(code);
-
+        //TODO echanger gauche = 0 et droite = 1
         setCodesHuffman(noeud.getGauche(), code + "1");
         setCodesHuffman(noeud.getDroite(), code + "0");
     }
@@ -169,7 +160,7 @@ public class ArbreHuffman {
      * @param contenu la chaîne de caractères à encoder.
      * @return un tableau d'octets représentant la chaîne de caractères encodée.
      */
-    public byte[] encoderFichier(String contenu) {
+    public byte[] encoderFichier(String contenu) throws IOException {
         String contenuEncode = encoderContenu(contenu);
         return convertirBinaireEnBytes(contenuEncode);
     }
@@ -179,6 +170,7 @@ public class ArbreHuffman {
      *
      * @param contenu la chaîne de caractères à encoder.
      * @return une chaîne de caractères représentant la chaîne de caractères encodée en binaire.
+     * @throws IllegalArgumentException si un caractère UTF-16 est détecté.
      */
     public String encoderContenu(String contenu) {
         Map<Character, String> codesHuffman = getCodesHuffman();
@@ -220,6 +212,9 @@ public class ArbreHuffman {
      *                          DÉCODAGE
      *
      * *============================================================*
+     * if (longueur > 8) {
+            throw new IllegalArgumentException("caractere utf-16 detecté");
+        }
      */
     /**
      * Décode un tableau d'octets en une chaîne de caractères en utilisant l'arbre Huffman fourni.
