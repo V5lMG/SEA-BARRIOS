@@ -12,17 +12,25 @@ import static java.lang.System.out;
 /* TODO LIST
  * TODO : gérer les arguments en lignes de commandes
  * TODO : empêcher les fichiers texte a la décompression
- * TODO : faire une liste de toutes les méthodes du JDk utilisé et les expliquer
- * TODO : améliorer la gestion des exceptions, faire une classe à part pour la récéption des erreurs
- * TODO : revoir tous les noms de variables
+ * TODO : faire une liste de toutes les méthodes du JDK utilisé et les expliquer
+ * TODO : améliorer la gestion des exceptions
+ * TODO : Faire une classe à part pour la récéption des erreurs
  * TODO : limiter tous le code à 121 colonnes
  * TODO : refaire les statistiques de la décompression
  * TODO : Problème avec inversion des 1 et 0 dans l'algo d'Huffman
+ * TODO : Empêcher les caractères non UTF8
+ * TODO : JavaDoc et Refactoring des trois Outils
+ * TODO : test
+ * TODO : bloqué réponse vide
+ * TODO : ne pas compiler un fichier vide
+ * TODO : enlever le caractère en trop a la fin de la décompression
+ * TODO : trier correctement l'arbre d'Huffman
+ * TODO : encoder Huffman sur 4 bits et pas 3
  */
 
 /**
- * Classe principale permettant de gérer l'application de compression et de décompression de fichiers en ligne de commande.
- * Elle fournit un point d'entrée pour l'interaction avec l'utilisateur via la console.
+ * Classe principale permettant de gérer l'application de compression et de décompression de fichiers
+ * en ligne de commande. Elle fournit un point d'entrée pour l'interaction avec l'utilisateur via la console.
  * Elle permet à l'utilisateur de choisir entre la compression et la décompression de fichiers texte.
  * L'application s'exécute jusqu'à ce que l'utilisateur choisisse de quitter.
  *

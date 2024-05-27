@@ -72,7 +72,7 @@ public class DecompressionHuffman {
 
         out.println("Où voulez-vous enregistrer le fichier une fois décompressé ? (Entrez le chemin complet du répertoire)");
         String cheminDestination = OutilsGestionFichier.nettoyerChemin(OutilsGestionFichier.getCheminDestination(scanner));
-        OutilsGestionFichier.verifierRepertoireValide(scanner, cheminDestination);
+        OutilsGestionFichier.verifierRepertoireValide(cheminDestination);
 
         out.println("Sous quel nom voulez-vous enregistrer le fichier une fois décompressé ? (Entrez le nom du fichier)");
         String nomFichierDecomprime = OutilsGestionFichier.getNomFichierDestinationUnique(scanner, cheminDestination);

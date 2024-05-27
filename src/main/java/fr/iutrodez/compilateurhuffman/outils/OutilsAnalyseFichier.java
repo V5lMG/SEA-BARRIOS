@@ -1,3 +1,7 @@
+/*
+ * Pas de copyright, ni de droit d'auteur.
+ * OutilsAnalyseFichier.java               27/05/2024
+ */
 package fr.iutrodez.compilateurhuffman.outils;
 
 import java.io.BufferedReader;

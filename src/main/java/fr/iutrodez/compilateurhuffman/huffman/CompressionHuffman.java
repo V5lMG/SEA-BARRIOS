@@ -84,7 +84,7 @@ public class CompressionHuffman {
 
         out.println("Où voulez-vous enregistrer le fichier une fois compilé ? (Entrez le chemin complet du répertoire)");
         String cheminFichierDestination = OutilsGestionFichier.nettoyerChemin(OutilsGestionFichier.getCheminDestination(scanner));
-        OutilsGestionFichier.verifierRepertoireValide(scanner, cheminFichierDestination);
+        OutilsGestionFichier.verifierRepertoireValide(cheminFichierDestination);
 
         out.println("Sous quel nom voulez-vous enregistrer le fichier une fois compilé ? (Entrez le nom du fichier)");
         String nomFichierCompresse = OutilsGestionFichier.getNomFichierDestinationUnique(scanner, cheminFichierDestination);

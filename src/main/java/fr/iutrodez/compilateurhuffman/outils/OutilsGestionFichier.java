@@ -1,8 +1,11 @@
+/*
+ * Pas de copyright, ni de droit d'auteur.
+ * OutilsGestionFichier.java               27/05/2024
+ */
 package fr.iutrodez.compilateurhuffman.outils;
 
 import fr.iutrodez.compilateurhuffman.ApplicationLigneCommande;
 import fr.iutrodez.compilateurhuffman.objets.ArbreHuffman;
-
 
 import java.io.*;
 import java.nio.file.Files;
@@ -10,8 +13,6 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Scanner;
 
-import static fr.iutrodez.compilateurhuffman.outils.OutilsGestionBinaire.getBytesADecompresser;
-import static fr.iutrodez.compilateurhuffman.outils.OutilsGestionBinaire.recupererBytesDansArbreHuffman;
 import static java.lang.System.out;
 
 /**
@@ -47,7 +48,7 @@ public class OutilsGestionFichier {
     public static String getNomFichierDestinationUnique(Scanner scanner, String cheminFichierDestination) {
         String nomFichier = getNomFichierDestination(scanner);
         File fichier = new File(cheminFichierDestination, nomFichier);
-        while (fichier.exists()) {
+        if (fichier.exists()) {
             throw new RuntimeException("Un fichier ou dossier avec ce nom existe déjà. Veuillez entrer un nom différent.");
         }
         return nomFichier;
@@ -114,11 +115,10 @@ public class OutilsGestionFichier {
     /**
      * Vérifie que le répertoire de destination spécifié par l'utilisateur est valide et accessible en écriture.
      *
-     * @param scanner Le scanner utilisé pour lire les entrées de l'utilisateur.
      * @param cheminFichierDestination Le chemin du répertoire de destination.
      * @throws RuntimeException Si le répertoire est invalide ou inaccessible en écriture.
      */
-    public static void verifierRepertoireValide(Scanner scanner, String cheminFichierDestination) {
+    public static void verifierRepertoireValide(String cheminFichierDestination) {
         File repertoireFile = new File(cheminFichierDestination);
         while (!repertoireFile.exists() || !repertoireFile.isDirectory() || !repertoireFile.canWrite()) {
             throw new RuntimeException("Répertoire invalide ou vous n'avez pas les droits d'écriture. Assurez-vous d'entrer un chemin de répertoire valide et accessible en écriture.");
@@ -185,8 +185,8 @@ public class OutilsGestionFichier {
      */
     public static void creerFichierDecompresse(String cheminFichierDecompresse, String cheminFichierADecompresser) throws IOException {
         String cheminArbreHuffman = cheminFichierADecompresser.substring(0, cheminFichierADecompresser.lastIndexOf("\\")) + "\\arbreHuffman.txt";
-        List<String> arbreHuffmanString = recupererBytesDansArbreHuffman(cheminArbreHuffman);
-        String contenueDecompresse = ArbreHuffman.decoderFichier(arbreHuffmanString, getBytesADecompresser(cheminFichierADecompresser));
+        List<String> arbreHuffmanString = OutilsGestionBinaire.recupererBytesDansArbreHuffman(cheminArbreHuffman);
+        String contenueDecompresse = ArbreHuffman.decoderFichier(arbreHuffmanString, OutilsGestionBinaire.getBytesADecompresser(cheminFichierADecompresser));
         Files.write(Path.of(cheminFichierDecompresse), contenueDecompresse.getBytes());
         out.println("Le fichier a bien été décompressé et enregistré à l'emplacement suivant : " + cheminFichierDecompresse);
     }

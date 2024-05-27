@@ -32,7 +32,7 @@ public class StatistiquesCompilateur {
         out.println("Taille du fichier original : " + tailleFichierOriginal + " octets");
         out.println("Taille du fichier compressé : " + tailleFichierCompile + " octets");
 
-        double tauxCompression = ((double) tailleFichierCompile / tailleFichierOriginal) * 100;
+        double tauxCompression = (double) tailleFichierCompile / tailleFichierOriginal * 100;
         out.printf("Taux de compression : %.2f %%\n", tauxCompression);
     }
 
@@ -45,18 +45,18 @@ public class StatistiquesCompilateur {
      * @param tempsDeCompression Le temps initial en millisecondes avant la décompression pour calculer le temps total de décompression.
      */
     public static void resumeDecompression(String cheminFichierDecompresse, String cheminFichierADecompresser, long tempsDeCompression) {
-        File fichierOriginal = new File(cheminFichierADecompresser);
+        File fichierCompresse = new File(cheminFichierADecompresser);
         File fichierDecompile = new File(cheminFichierDecompresse);
-        long tailleFichierOriginal = fichierOriginal.length();
+        long tailleFichierCompresse = fichierCompresse.length();
         long tailleFichierDecompresse = fichierDecompile.length();
 
-        double tauxDecompression = ((double) tailleFichierOriginal / tailleFichierDecompresse) * 100.0;
+        double tauxDecompression = 100.0 * tailleFichierCompresse / tailleFichierDecompresse;
 
-        out.println("Taille du fichier compressé : " + tailleFichierOriginal + " octets");
-        out.println("Taille du fichier décompressé : " + tailleFichierDecompresse + " octets");
-        out.printf("Taux de décompression : %.2f %%\n", tauxDecompression);
+        System.out.println("Taille du fichier compressé : " + tailleFichierCompresse + " octets");
+        System.out.println("Taille du fichier décompressé : " + tailleFichierDecompresse + " octets");
+        System.out.printf("Taux de décompression : %.2f %%\n", tauxDecompression);
 
         long tempsDeDecompression = System.currentTimeMillis() - tempsDeCompression;
-        out.println("Temps de décompression : " + tempsDeDecompression + " millisecondes");
+        System.out.println("Temps de décompression : " + tempsDeDecompression + " millisecondes");
     }
 }

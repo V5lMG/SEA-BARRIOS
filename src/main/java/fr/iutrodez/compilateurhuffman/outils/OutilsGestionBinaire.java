@@ -1,3 +1,7 @@
+/*
+ * Pas de copyright, ni de droit d'auteur.
+ * OutilsGestionBinaire.java               27/05/2024
+ */
 package fr.iutrodez.compilateurhuffman.outils;
 
 import fr.iutrodez.compilateurhuffman.objets.ArbreHuffman;
@@ -95,5 +99,27 @@ public class OutilsGestionBinaire {
             binaryStringBuilder.append(String.format("%8s", Integer.toBinaryString(b & 0xFF)).replace(' ', '0'));
         }
         return binaryStringBuilder.toString();
+    }
+
+    /**
+     * Décode un tableau d'octets en une chaîne de caractères en utilisant la map Huffman fournie.
+     *
+     * @param huffmanMap la map des codes Huffman et des caractères correspondants.
+     * @param bytesADecompiler le tableau d'octets à décoder.
+     * @return la chaîne de caractères décodée.
+     */
+    public static String decoderBytes(Map<String, Character> huffmanMap, String bytesADecompiler) {
+        StringBuilder decodedString = new StringBuilder();
+        StringBuilder currentBits = new StringBuilder();
+
+        for (char bit : bytesADecompiler.toCharArray()) {
+            currentBits.append(bit);
+            if (huffmanMap.containsKey(currentBits.toString())) {
+                decodedString.append(huffmanMap.get(currentBits.toString()));
+                currentBits.setLength(0); // Réinitialiser les bits actuels
+            }
+        }
+
+        return decodedString.toString();
     }
 }
