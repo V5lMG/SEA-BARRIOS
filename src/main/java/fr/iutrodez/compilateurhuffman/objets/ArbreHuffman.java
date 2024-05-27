@@ -1,6 +1,7 @@
-package iut.groupesae.compileurhuffman.objets;
+package fr.iutrodez.compilateurhuffman.objets;
 
-import iut.groupesae.compileurhuffman.GestionFichier;
+import fr.iutrodez.compilateurhuffman.outils.OutilsGestionBinaire;
+import fr.iutrodez.compilateurhuffman.outils.OutilsGestionFichier;
 
 import java.io.IOException;
 import java.util.Map;
@@ -20,7 +21,7 @@ public class ArbreHuffman {
     /**
      * Nœud racine de l'arbre de Huffman.
      */
-    private final NoeudHuffman racine;
+    private static NoeudHuffman racine;
 
     /**
      * Crée un arbre de Huffman à partir des fréquences des caractères.
@@ -29,9 +30,9 @@ public class ArbreHuffman {
      * @throws IOException si une erreur d'entrée/sortie se produit
      */
     public ArbreHuffman(String cheminFichier) throws IOException {
-        String contenu = GestionFichier.getContenuFichier(cheminFichier);
-        Map<Character, Double> frequences = GestionFichier.getFrequences(contenu);
-        this.racine = construireArbreHuffman(frequences);
+        String contenu = OutilsGestionFichier.getContenuFichier(cheminFichier);
+        Map<Character, Double> frequences = OutilsGestionFichier.getFrequences(contenu);
+        racine = construireArbreHuffman(frequences);
     }
 
     /**
@@ -112,7 +113,7 @@ public class ArbreHuffman {
         }
 
         noeud.setCodeHuffman(code);
-        //TODO echanger gauche = 0 et droite = 1
+        // TODO echanger gauche = 0 et droite = 1
         setCodesHuffman(noeud.getGauche(), code + "1");
         setCodesHuffman(noeud.getDroite(), code + "0");
     }
@@ -122,7 +123,7 @@ public class ArbreHuffman {
      *
      * @return une map des codes Huffman.
      */
-    private Map<Character, String> getCodesHuffman() {
+    public static Map<Character, String> getCodesHuffman() {
         Map<Character, String> codesHuffman = new HashMap<>();
         collecterCodesHuffman(racine, codesHuffman);
         return codesHuffman;
@@ -134,7 +135,7 @@ public class ArbreHuffman {
      * @param noeud        le nœud courant à partir duquel collecter le code Huffman
      * @param codesHuffman la map dans laquelle stocker les codes Huffman collectés
      */
-    private void collecterCodesHuffman(NoeudHuffman noeud, Map<Character, String> codesHuffman) {
+    private static void collecterCodesHuffman(NoeudHuffman noeud, Map<Character, String> codesHuffman) {
         if (noeud == null) {
             return;
         }
@@ -147,64 +148,15 @@ public class ArbreHuffman {
         collecterCodesHuffman(noeud.getDroite(), codesHuffman);
     }
 
-
-    /* *============================================================*
-     *
-     *                          ENCODAGE
-     *
-     * *============================================================*
-     */
     /**
      * Encode une chaîne de caractères en binaire en utilisant les codes de l'arbre Huffman.
      *
      * @param contenu la chaîne de caractères à encoder.
      * @return un tableau d'octets représentant la chaîne de caractères encodée.
      */
-    public byte[] encoderFichier(String contenu) throws IOException {
-        String contenuEncode = encoderContenu(contenu);
-        return convertirBinaireEnBytes(contenuEncode);
-    }
-
-    /**
-     * Encode une chaîne de caractères en utilisant les codes de l'arbre Huffman.
-     *
-     * @param contenu la chaîne de caractères à encoder.
-     * @return une chaîne de caractères représentant la chaîne de caractères encodée en binaire.
-     * @throws IllegalArgumentException si un caractère UTF-16 est détecté.
-     */
-    public String encoderContenu(String contenu) {
-        Map<Character, String> codesHuffman = getCodesHuffman();
-        StringBuilder contenuEncode = new StringBuilder();
-
-        for (char caractere : contenu.toCharArray()) {
-            contenuEncode.append(codesHuffman.get(caractere));
-        }
-
-        return contenuEncode.toString();
-    }
-
-    /**
-     * Convertit une chaîne de caractères binaires en un tableau d'octets.
-     *
-     * @param binaire la chaîne de caractères binaires à convertir.
-     * @return un tableau d'octets représentant la chaîne de caractères binaires convertie.
-     */
-    private static byte[] convertirBinaireEnBytes(String binaire) {
-        // Compléter la chaîne binaire avec des zéros pour la rendre de longueur multiple de 8.
-        int longueur = binaire.length();
-        int padding = 8 - (longueur % 8);
-        if (padding != 8) {
-            binaire += "0".repeat(padding);
-        }
-
-        // Calculer la nouvelle longueur après ajout des zéros.
-        longueur = binaire.length();
-        byte[] bytes = new byte[longueur / 8];
-        for (int i = 0; i < longueur; i += 8) {
-            String octet = binaire.substring(i, i + 8);
-            bytes[i / 8] = (byte) Integer.parseInt(octet, 2);
-        }
-        return bytes;
+    public byte[] encoderFichier(String contenu) {
+        String contenuEncode = OutilsGestionBinaire.convertirCaractereEnBinaire(contenu);
+        return OutilsGestionBinaire.convertirBinaireEnBytes(contenuEncode);
     }
 
     /* *============================================================*
@@ -212,9 +164,6 @@ public class ArbreHuffman {
      *                          DÉCODAGE
      *
      * *============================================================*
-     * if (longueur > 8) {
-            throw new IllegalArgumentException("caractere utf-16 detecté");
-        }
      */
     /**
      * Décode un tableau d'octets en une chaîne de caractères en utilisant l'arbre Huffman fourni.
