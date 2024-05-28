@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -42,9 +43,13 @@ public class TestCompressionHuffman {
     }
 
     @Test
-    public void testAfficherCaracteres() {
+    public void testAfficherCaracteres() throws Exception {
+        // Accéder à la méthode privée afficherCaracteres via réflexion
+        Method method = CompressionHuffman.class.getDeclaredMethod("afficherCaracteres", String.class);
+        method.setAccessible(true);
+
         // Appeler la méthode à tester avec le contenu de test
-        CompressionHuffman.afficherCaracteres(contenuTest);
+        method.invoke(null, contenuTest);
 
         // Vérifier la sortie console
         String sortie = sortieConsole.toString();
@@ -54,17 +59,22 @@ public class TestCompressionHuffman {
         assertTrue(sortie.contains("Caractère: d; Occurrences: 1; Fréquence: 12.5%"));
     }
 
+
     @Test
-    public void testDemanderRecommencer() {
+    public void testDemanderRecommencer() throws Exception {
         // Simuler l'entrée utilisateur pour les choix
         String input = "oui\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
 
+        // Accéder à la méthode privée demanderRecommencer via réflexion
+        Method method = CompressionHuffman.class.getDeclaredMethod("demanderRecommencer");
+        method.setAccessible(true);
+
         // Appeler la méthode à tester
-        boolean recommencer = CompressionHuffman.demanderRecommencer();
+        boolean recommencer = (boolean) method.invoke(null);
 
         // Vérifier le résultat
         assertTrue(recommencer);
     }
 }
-}
+
