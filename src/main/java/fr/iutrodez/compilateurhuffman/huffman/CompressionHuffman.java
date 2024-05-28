@@ -46,6 +46,11 @@ public class CompressionHuffman {
                     throw new IOException("\nLe chemin du fichier à compresser ne peut pas être vide.");
                 }
 
+                if (!cheminFichierSource.endsWith(".txt")) {
+                    throw new IOException("\nLe fichier à décompresser ne peut pas être de ce format. " +
+                                          "Veuillez spécifier un fichier .txt.");
+                }
+
                 ApplicationLigneCommande.afficherSeparateur();
                 out.println("Chemin du fichier spécifié : " + cheminFichierSource);
                 ApplicationLigneCommande.afficherSeparateur();

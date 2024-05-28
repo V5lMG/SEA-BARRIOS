@@ -23,7 +23,6 @@ import java.util.HashMap;
  * @version 1.0
  */
 public class ArbreHuffman {
-
     /**
      * Nœud racine de l'arbre de Huffman.
      */
