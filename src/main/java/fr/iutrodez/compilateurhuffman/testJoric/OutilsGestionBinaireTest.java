@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.nio.file.Files.write;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -60,7 +59,7 @@ public class OutilsGestionBinaireTest {
     public void testRecupererBytesDansArbreHuffman() throws IOException {
         // Créer un fichier temporaire pour les tests
         Path path = Files.createTempFile("huffmanCodes", ".txt");
-        write(path, List.of(
+        Files.write(path, List.of(
                 "codeHuffman = 00 ; encode = 0 ; symbole = a",
                 "codeHuffman = 01 ; encode = 1 ; symbole = b"
         ));
@@ -80,7 +79,7 @@ public class OutilsGestionBinaireTest {
     public void testGetBytesADecompresser() throws IOException {
         // Créer un fichier temporaire pour les tests
         Path path = Files.createTempFile("binaryFile", ".bin");
-        write(path, new byte[]{ (byte) 0b00011011 });
+        Files.write(path, new byte[]{ (byte) 0b00011011 });
 
         String expected = "00011011";
         String result = OutilsGestionBinaire.getBytesADecompresser(path.toString());
