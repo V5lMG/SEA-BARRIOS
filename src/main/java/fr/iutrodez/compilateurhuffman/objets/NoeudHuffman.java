@@ -5,7 +5,7 @@
 package fr.iutrodez.compilateurhuffman.objets;
 
 /**
- * Cette classe représente un nœud dans un arbre de Huffman utilisé pour
+ * Représente un nœud dans un arbre de Huffman utilisé pour
  * la compression et la décompression de données.
  *
  * @author ValMG, R. Xaviertaborda, J. Seychelles, B. Thenieres
@@ -28,7 +28,7 @@ public class NoeudHuffman {
     private final char caractere;
 
     /**
-     * Constructeur qui crée un nœud de Huffman avec un caractère et sa fréquence d'apparition.
+     * Crée un nœud de Huffman avec un caractère et sa fréquence d'apparition.
      *
      * @param caractere le caractère.
      * @param frequence la fréquence d'apparition du caractère.
@@ -39,7 +39,7 @@ public class NoeudHuffman {
     }
 
     /**
-     * Constructeur pour un nœud de Huffman sans caractère spécifique (utilisé pour les nœuds internes).
+     * Nœud de Huffman sans caractère spécifique (utilisé pour les nœuds internes).
      * Ce constructeur est utilisé pour créer des nœuds parents dans l'arbre de Huffman. Contrairement au
      * constructeur qui prend un caractère et une fréquence, celui-ci ne représente pas une feuille mais
      * un nœud interne qui est le résultat de la combinaison des deux nœuds enfants (gauche et droite).
@@ -58,7 +58,7 @@ public class NoeudHuffman {
     }
 
     /**
-     * Getter du caractère.
+     * Accès au caractère de ce nœud.
      *
      * @return Le caractère associé à ce nœud.
      */
@@ -67,7 +67,7 @@ public class NoeudHuffman {
     }
 
     /**
-     * Getter de la fréquence.
+     * Accès à la fréquence de ce nœud.
      *
      * @return La fréquence du nœud.
      */
@@ -76,7 +76,7 @@ public class NoeudHuffman {
     }
 
     /**
-     * Getter du nœud gauche.
+     * Accès du nœud gauche.
      *
      * @return Le nœud gauche.
      */
@@ -85,7 +85,7 @@ public class NoeudHuffman {
     }
 
     /**
-     * Getter du nœud droit.
+     * Accès du nœud droit.
      *
      * @return Le nœud droit.
      */
@@ -94,7 +94,7 @@ public class NoeudHuffman {
     }
 
     /**
-     * Getter du code Huffman.
+     * Accès du code Huffman.
      *
      * @return Le code Huffman du nœud.
      */
@@ -103,7 +103,7 @@ public class NoeudHuffman {
     }
 
     /**
-     * Setter du code Huffman.
+     * Attribue un code Huffman.
      *
      * @param codeHuffman Le nouveau code à attribuer.
      */
