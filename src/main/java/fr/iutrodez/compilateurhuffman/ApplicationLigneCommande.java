@@ -14,7 +14,9 @@ import static java.lang.System.out;
  * TODO : empêcher les fichiers texte a la décompression
  * TODO : faire une liste de toutes les méthodes du JDK utilisé et les expliquer
  * TODO : modifier les imports OutilsGestionFichier
+ * TODO : description de Syteme.console().readLine()
  * TODO : enlever les map
+ *
  * TODO : améliorer la gestion des exceptions
  * TODO : Faire une classe à part pour la récéption des erreurs
  *
