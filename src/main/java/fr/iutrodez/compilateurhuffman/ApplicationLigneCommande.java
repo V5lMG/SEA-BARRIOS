@@ -10,30 +10,27 @@ import fr.iutrodez.compilateurhuffman.huffman.DecompressionHuffman;
 import static java.lang.System.out;
 
 /* TODO LIST
- * TODO : gérer les arguments en lignes de commandes
- * TODO : faire une liste de toutes les méthodes du JDK utilisé et les expliquer
- * TODO : modifier les imports OutilsGestionFichier
- * TODO : description de Systeme.console().readLine()
- * TODO : enlever les map
- *
- * TODO : améliorer la gestion des exceptions
- * TODO : Faire une classe à part pour la récéption des erreurs
- *
+ * A LA FIN
+ * TODO : gérer les arguments en lignes de commandes (shell et .jar)
  * TODO : limiter tout le code à 121 colonnes
- * TODO : refaire les statistiques de la décompression
+ * TODO : enlever le caractère en trop a la fin de la décompression
+ *  TODO : encoder Huffman sur 4 bits et pas 3 (ajout de zéro a la fin)
  *
+ *
+ * TODO : enlever les map
+ * TODO : améliorer la gestion des exceptions
+ * TODO : JavaDoc et Refactoring des trois Outils
+ *
+ * TODO : Faire une classe à part pour la récéption des erreurs
  * TODO : Problème avec inversion des 1 et 0 dans l'algo d'Huffman
  * TODO : Empêcher les caractères non UTF8
- * TODO : JavaDoc et Refactoring des trois Outils
- * TODO : vérifier la validité d'un chemin avant la fin des questions
  *
- * TODO : test
+ * TODO : test UNITAIRE
  *
- * TODO : bloqué réponse vide
+ * TODO : mettre une option stop a tous moment
+ * TODO : méthode pour reboucler sur les questions
  * TODO : ne pas compiler un fichier vide
- * TODO : enlever le caractère en trop a la fin de la décompression
  * TODO : trier correctement l'arbre d'Huffman
- * TODO : encoder Huffman sur 4 bits et pas 3 (ajout de zéro a la fin)
  */
 
 /**
@@ -90,6 +87,12 @@ public class ApplicationLigneCommande {
      */
     private static int demanderChoixUtilisateur() {
         out.print("Votre choix : ");
+        /*
+         * Lit une ligne de texte depuis la console.
+         * Cette méthode attend que l'utilisateur saisisse une ligne de texte
+         * et appuie sur la touche "Entrée". La ligne saisie est ensuite
+         * renvoyée sous forme de chaîne de caractères.
+         */
         String input = System.console().readLine();
         try {
             /*

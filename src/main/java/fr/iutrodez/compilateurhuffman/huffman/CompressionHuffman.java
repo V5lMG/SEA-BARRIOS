@@ -59,14 +59,25 @@ public class CompressionHuffman {
                 out.println("Contenu du fichier :\n" + contenu);
 
                 ApplicationLigneCommande.afficherSeparateur();
-                out.println("Voulez-vous sélectionner ce fichier ? (oui/non)");
                 Scanner scanner = new Scanner(System.in);
-                String choix = scanner.nextLine();
-                if (choix.equalsIgnoreCase("oui")) {
-                    traiterFichierAcompresser(scanner, cheminFichierSource, contenu);
-                }else if (!choix.equalsIgnoreCase("oui") || !choix.equalsIgnoreCase("non")){
-                    out.println("Réponse invalide. Veuillez répondre par 'oui' ou 'non'.");
+
+                String choix;
+                boolean reponseValide = false;
+                while (!reponseValide) {
+                    out.println("Voulez-vous sélectionner ce fichier ? (oui/non)");
+                    choix = scanner.nextLine();
+
+                    if (choix.equalsIgnoreCase("oui")) {
+                        reponseValide = true;
+                        traiterFichierAcompresser(scanner, cheminFichierSource, contenu);
+                    } else if (choix.equalsIgnoreCase("non")) {
+                        reponseValide = true;
+                    } else {
+                        out.println("Réponse invalide. Veuillez répondre par 'oui' ou 'non'.");
+                    }
                 }
+                // TODO mettre ce code dans une méthode que je peux appeler avec toutes les questions
+
                 continuer = demanderRecommencer();
             } catch (IOException e) {
                 out.println("Erreur lors de la lecture du fichier à compresser : " + e.getMessage());

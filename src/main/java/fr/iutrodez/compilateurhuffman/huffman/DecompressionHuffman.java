@@ -57,7 +57,7 @@ public class DecompressionHuffman {
                 String choix = scanner.nextLine();
                 if (choix.equalsIgnoreCase("oui")) {
                     traiterFichierADecompresser(scanner, cheminFichierADecompresser);
-                }else if (!choix.equalsIgnoreCase("oui") || !choix.equalsIgnoreCase("non")){
+                } else if (!choix.equalsIgnoreCase("oui") || !choix.equalsIgnoreCase("non")){
                     out.println("Réponse invalide. Veuillez répondre par 'oui' ou 'non'.");
                 }
                 continuer = demanderRecommencer();

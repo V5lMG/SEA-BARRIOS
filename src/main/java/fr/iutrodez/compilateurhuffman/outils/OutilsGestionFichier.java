@@ -7,11 +7,17 @@ package fr.iutrodez.compilateurhuffman.outils;
 import fr.iutrodez.compilateurhuffman.ApplicationLigneCommande;
 import fr.iutrodez.compilateurhuffman.objets.ArbreHuffman;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.InputStreamReader;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Scanner;
+import java.util.List;
 
 import static java.lang.System.out;
 
