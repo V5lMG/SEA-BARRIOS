@@ -1,4 +1,4 @@
-package fr.iutrodez.compilateurhuffman.testJoric;
+package fr.iutrodez.testJoric;
 
 import fr.iutrodez.compilateurhuffman.outils.StatistiquesCompilateur;
 import org.junit.jupiter.api.AfterEach;
