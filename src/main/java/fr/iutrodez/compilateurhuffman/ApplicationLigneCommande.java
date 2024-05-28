@@ -14,7 +14,7 @@ import static java.lang.System.out;
  * TODO : empêcher les fichiers texte a la décompression
  * TODO : faire une liste de toutes les méthodes du JDK utilisé et les expliquer
  * TODO : modifier les imports OutilsGestionFichier
- *
+ * TODO : enlever les map
  * TODO : améliorer la gestion des exceptions
  * TODO : Faire une classe à part pour la récéption des erreurs
  *
@@ -66,18 +66,14 @@ public class ApplicationLigneCommande {
 
             int choix = demanderChoixUtilisateur();
 
-            switch (choix) {
-                case 1:
-                    CompressionHuffman.demanderFichierACompresser(args);
-                    break;
-                case 2:
-                    DecompressionHuffman.demanderFichierADecompresser(args);
-                    break;
-                case 3:
-                    continuer = false;
-                    break;
-                default:
-                    out.println("Choix invalide. Veuillez saisir un numéro valide.");
+            if (choix == 1) {
+                CompressionHuffman.demanderFichierACompresser(args);
+            } else if (choix == 2) {
+                DecompressionHuffman.demanderFichierADecompresser(args);
+            } else if (choix == 3) {
+                continuer = false;
+            } else {
+                out.println("Choix invalide. Veuillez saisir un numéro valide.");
             }
         }
 
