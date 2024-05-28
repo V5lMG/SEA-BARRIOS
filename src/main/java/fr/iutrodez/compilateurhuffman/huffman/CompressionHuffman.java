@@ -57,11 +57,11 @@ public class CompressionHuffman {
                 out.println("Voulez-vous sélectionner ce fichier ? (oui/non)");
                 Scanner scanner = new Scanner(System.in);
                 String choix = scanner.nextLine();
-
                 if (choix.equalsIgnoreCase("oui")) {
                     traiterFichierAcompresser(scanner, cheminFichierSource, contenu);
+                }else if (!choix.equalsIgnoreCase("oui") || !choix.equalsIgnoreCase("non")){
+                    out.println("Réponse invalide. Veuillez répondre par 'oui' ou 'non'.");
                 }
-
                 continuer = demanderRecommencer();
             } catch (IOException e) {
                 out.println("Erreur lors de la lecture du fichier à compresser : " + e.getMessage());

@@ -43,6 +43,10 @@ public class DecompressionHuffman {
                     throw new IOException("\nLe chemin du fichier à décompresser ne peut pas être vide.");
                 }
 
+                if (cheminFichierADecompresser.endsWith(".txt")) {
+                    throw new IOException("\nLe fichier à décompresser ne peut pas être un fichier .txt. Veuillez spécifier un fichier .bin.");
+                }
+
                 ApplicationLigneCommande.afficherSeparateur();
                 out.println("Chemin du fichier spécifié : " + cheminFichierADecompresser);
                 ApplicationLigneCommande.afficherSeparateur();
@@ -52,6 +56,8 @@ public class DecompressionHuffman {
                 String choix = scanner.nextLine();
                 if (choix.equalsIgnoreCase("oui")) {
                     traiterFichierADecompresser(scanner, cheminFichierADecompresser);
+                }else if (!choix.equalsIgnoreCase("oui") || !choix.equalsIgnoreCase("non")){
+                    out.println("Réponse invalide. Veuillez répondre par 'oui' ou 'non'.");
                 }
                 continuer = demanderRecommencer();
             } catch (IOException e) {

@@ -11,16 +11,15 @@ import static java.lang.System.out;
 
 /* TODO LIST
  * TODO : gérer les arguments en lignes de commandes
- * TODO : empêcher les fichiers texte a la décompression
  * TODO : faire une liste de toutes les méthodes du JDK utilisé et les expliquer
  * TODO : modifier les imports OutilsGestionFichier
- * TODO : description de Syteme.console().readLine()
+ * TODO : description de Systeme.console().readLine()
  * TODO : enlever les map
  *
  * TODO : améliorer la gestion des exceptions
  * TODO : Faire une classe à part pour la récéption des erreurs
  *
- * TODO : limiter tous le code à 121 colonnes
+ * TODO : limiter tout le code à 121 colonnes
  * TODO : refaire les statistiques de la décompression
  *
  * TODO : Problème avec inversion des 1 et 0 dans l'algo d'Huffman
