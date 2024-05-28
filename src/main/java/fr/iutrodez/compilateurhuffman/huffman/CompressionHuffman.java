@@ -59,7 +59,7 @@ public class CompressionHuffman {
                 String choix = scanner.nextLine();
                 if (choix.equalsIgnoreCase("oui")) {
                     traiterFichierAcompresser(scanner, cheminFichierSource, contenu);
-                }else if (!choix.equalsIgnoreCase("oui") || !choix.equalsIgnoreCase("non")){
+                } else if (!choix.equalsIgnoreCase("oui") || !choix.equalsIgnoreCase("non")){
                     out.println("Réponse invalide. Veuillez répondre par 'oui' ou 'non'.");
                 }
                 continuer = demanderRecommencer();
