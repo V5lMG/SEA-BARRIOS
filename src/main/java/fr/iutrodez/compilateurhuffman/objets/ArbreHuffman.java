@@ -166,8 +166,8 @@ public class ArbreHuffman {
             return;
         }
         noeud.setCodeHuffman(code);
-        setCodesHuffman(noeud.getGauche(), code + "1");
-        setCodesHuffman(noeud.getDroite(), code + "0");
+        setCodesHuffman(noeud.getGauche(), code + "0");
+        setCodesHuffman(noeud.getDroite(), code + "1");
     }
 
     /**
@@ -189,7 +189,8 @@ public class ArbreHuffman {
          * HashMap ne garantit pas un ordre spécifique des éléments.
          * Les éléments dans HashMap sont stockés de manière désordonnée.
          *
-         * La méthode collecterCodesHuffman() est appelée pour parcourir l'arbre de Huffman et collecter les codes Huffman de chaque nœud dans la Map.
+         * La méthode collecterCodesHuffman() est appelée pour parcourir l'arbre de Huffman et collecter les codes
+         * Huffman de chaque nœud dans la Map.
          * Une fois que tous les codes Huffman sont collectés, la Map est retournée.
          */
         Map<Character, String> codesHuffman = new HashMap<>();
