@@ -13,19 +13,26 @@ import static java.lang.System.out;
  * TODO : gérer les arguments en lignes de commandes
  * TODO : empêcher les fichiers texte a la décompression
  * TODO : faire une liste de toutes les méthodes du JDK utilisé et les expliquer
+ * TODO : modifier les imports OutilsGestionFichier
+ *
  * TODO : améliorer la gestion des exceptions
  * TODO : Faire une classe à part pour la récéption des erreurs
+ *
  * TODO : limiter tous le code à 121 colonnes
  * TODO : refaire les statistiques de la décompression
+ *
  * TODO : Problème avec inversion des 1 et 0 dans l'algo d'Huffman
  * TODO : Empêcher les caractères non UTF8
  * TODO : JavaDoc et Refactoring des trois Outils
+ * TODO : vérifier la validité d'un chemin avant la fin des questions
+ *
  * TODO : test
+ *
  * TODO : bloqué réponse vide
  * TODO : ne pas compiler un fichier vide
  * TODO : enlever le caractère en trop a la fin de la décompression
  * TODO : trier correctement l'arbre d'Huffman
- * TODO : encoder Huffman sur 4 bits et pas 3
+ * TODO : encoder Huffman sur 4 bits et pas 3 (ajout de zéro a la fin)
  */
 
 /**

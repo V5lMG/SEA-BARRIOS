@@ -72,9 +72,9 @@ public class CompressionHuffman {
     /**
      * Traite le fichier à compresser en demandant l'emplacement de destination et en générant le fichier compilé.
      *
-     * @param scanner             le scanner utilisé pour lire les entrées de l'utilisateur
+     * @param scanner le scanner utilisé pour lire les entrées de l'utilisateur
      * @param cheminFichierSource le chemin du fichier source à compresser
-     * @param contenu             le contenu du fichier source
+     * @param contenu le contenu du fichier source
      * @throws IOException si une erreur survient lors de la manipulation des fichiers
      */
     private static void traiterFichierAcompresser(Scanner scanner, String cheminFichierSource, String contenu) throws IOException {
