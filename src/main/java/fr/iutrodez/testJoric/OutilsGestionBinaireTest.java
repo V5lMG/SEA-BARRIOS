@@ -7,92 +7,99 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class OutilsGestionBinaireTest {
 
-    private static Map<Character, String> codesHuffman;
-    private static Map<String, Character> huffmanMap;
-
     @BeforeAll
-    public static void setUp() {
-        // Initialiser les maps pour les tests
-        codesHuffman = new HashMap<>();
-        codesHuffman.put('a', "00");
-        codesHuffman.put('b', "01");
-        codesHuffman.put('c', "10");
-        codesHuffman.put('d', "11");
-        ArbreHuffman.setCodesHuffman(codesHuffman); // Suppose que ArbreHuffman a une méthode statique setCodesHuffman
-
-        huffmanMap = new HashMap<>();
-        huffmanMap.put("00", 'a');
-        huffmanMap.put("01", 'b');
-        huffmanMap.put("10", 'c');
-        huffmanMap.put("11", 'd');
+    public static void setUp() throws IOException {
+        // Initialiser un arbre de Huffman pour les tests
+        String cheminFichier = "test_file.txt";
+        Files.write(Paths.get(cheminFichier), "aaaabbbccd".getBytes());
+        new ArbreHuffman(cheminFichier);
     }
 
     @Test
     public void testConvertirCaractereEnBinaire() {
-        String contenu = "abcd";
-        String expected = "00011011";
-        String result = OutilsGestionBinaire.convertirCaractereEnBinaire(contenu);
-        assertEquals(expected, result);
+        // Chaîne de test
+        String contenu = "abc";
+        String contenuEncode = OutilsGestionBinaire.convertirCaractereEnBinaire(contenu);
+
+        // Récupérer les codes Huffman générés pour vérifier le résultat attendu
+        Map<Character, String> codesHuffman = ArbreHuffman.getCodesHuffman();
+        StringBuilder expectedEncode = new StringBuilder();
+        for (char c : contenu.toCharArray()) {
+            expectedEncode.append(codesHuffman.get(c));
+        }
+
+        assertEquals(expectedEncode.toString(), contenuEncode);
     }
 
     @Test
     public void testConvertirBinaireEnBytes() {
-        String binaire = "00011011";
-        byte[] expected = { (byte) 0b00011011 };
-        byte[] result = OutilsGestionBinaire.convertirBinaireEnBytes(binaire);
-        assertArrayEquals(expected, result);
+        String binaire = "101011100001";
+        byte[] bytes = OutilsGestionBinaire.convertirBinaireEnBytes(binaire);
+
+        // Résultat attendu : [10101110, 00010000] en binaire → [-82, 16] en décimal
+        byte[] expectedBytes = new byte[] { (byte) 0xAE, 0x10 };
+        assertArrayEquals(expectedBytes, bytes);
     }
 
     @Test
     public void testRecupererBytesDansArbreHuffman() throws IOException {
-        // Créer un fichier temporaire pour les tests
-        Path path = Files.createTempFile("huffmanCodes", ".txt");
-        Files.write(path, List.of(
-                "codeHuffman = 00 ; encode = 0 ; symbole = a",
-                "codeHuffman = 01 ; encode = 1 ; symbole = b"
-        ));
+        // Créer un fichier temporaire
+        String cheminArbreHuffman = "test_huffman.txt";
+        String contenu = "codeHuffman = 1010 ; encode = a ; symbole = a\n"
+                + "codeHuffman = 1110 ; encode = b ; symbole = b\n";
+        Files.write(Paths.get(cheminArbreHuffman), contenu.getBytes());
 
-        List<String> expected = List.of(
-                "codeHuffman = 00 ; encode = 0 ; symbole = a",
-                "codeHuffman = 01 ; encode = 1 ; symbole = b"
-        );
-        List<String> result = OutilsGestionBinaire.recupererBytesDansArbreHuffman(path.toString());
-        assertEquals(expected, result);
+        // Lire le fichier
+        List<String> codes = OutilsGestionBinaire.recupererBytesDansArbreHuffman(cheminArbreHuffman);
+
+        // Vérifier le résultat attendu
+        assertEquals(2, codes.size());
+        assertEquals("codeHuffman = 1010 ; encode = a ; symbole = a", codes.get(0));
+        assertEquals("codeHuffman = 1110 ; encode = b ; symbole = b", codes.get(1));
 
         // Supprimer le fichier temporaire
-        Files.deleteIfExists(path);
+        Files.delete(Paths.get(cheminArbreHuffman));
     }
 
     @Test
     public void testGetBytesADecompresser() throws IOException {
-        // Créer un fichier temporaire pour les tests
-        Path path = Files.createTempFile("binaryFile", ".bin");
-        Files.write(path, new byte[]{ (byte) 0b00011011 });
+        // Créer un fichier temporaire
+        String cheminFichierADecompiler = "test_file.bin";
+        byte[] contenu = new byte[] { (byte) 0xAE, 0x10 }; // 10101110 00010000 en binaire
+        Files.write(Paths.get(cheminFichierADecompiler), contenu);
 
-        String expected = "00011011";
-        String result = OutilsGestionBinaire.getBytesADecompresser(path.toString());
-        assertEquals(expected, result);
+        // Lire le fichier
+        String binaire = OutilsGestionBinaire.getBytesADecompresser(cheminFichierADecompiler);
+
+        // Vérifier le résultat attendu
+        assertEquals("1010111000010000", binaire);
 
         // Supprimer le fichier temporaire
-        Files.deleteIfExists(path);
+        Files.delete(Paths.get(cheminFichierADecompiler));
     }
 
     @Test
     public void testDecoderBytes() {
-        String bytesADecompiler = "00011011";
-        String expected = "abcd";
-        String result = OutilsGestionBinaire.decoderBytes(huffmanMap, bytesADecompiler);
-        assertEquals(expected, result);
+        // Initialiser la map Huffman
+        Map<String, Character> huffmanMap = new HashMap<>();
+        huffmanMap.put("1010", 'a');
+        huffmanMap.put("1110", 'b');
+        huffmanMap.put("0001", 'c');
+
+        // Chaîne de test
+        String bytesADecompiler = "101011100001";
+        String decodedString = OutilsGestionBinaire.decoderBytes(huffmanMap, bytesADecompiler);
+
+        // Vérifier le résultat attendu
+        assertEquals("abc", decodedString);
     }
 }
