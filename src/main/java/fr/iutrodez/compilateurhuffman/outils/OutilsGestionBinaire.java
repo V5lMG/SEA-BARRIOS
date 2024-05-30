@@ -4,8 +4,6 @@
  */
 package fr.iutrodez.compilateurhuffman.outils;
 
-import fr.iutrodez.compilateurhuffman.objets.ArbreHuffman;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -27,10 +25,10 @@ public class OutilsGestionBinaire {
      * Encode une chaîne de caractères en utilisant les codes de l'arbre Huffman.
      *
      * @param contenu la chaîne de caractères à encoder.
+     * @param codesHuffman la map des codes Huffman pour chaque caractère.
      * @return une chaîne de caractères représentant la chaîne de caractères encodée en binaire.
      */
-    public static String convertirCaractereEnBinaire(String contenu) {
-        Map<Character, String> codesHuffman = ArbreHuffman.getCodesHuffman();
+    public static String convertirCaractereEnBinaire(String contenu, Map<Character, String> codesHuffman) {
         StringBuilder contenuEncode = new StringBuilder();
 
         for (char caractere : contenu.toCharArray()) {
@@ -109,7 +107,6 @@ public class OutilsGestionBinaire {
         return binaryStringBuilder.toString();
     }
 
-
     /**
      * Décode un tableau d'octets en une chaîne de caractères en utilisant la map Huffman fournie.
      *
@@ -117,7 +114,7 @@ public class OutilsGestionBinaire {
      * @param bytesADecompiler le tableau d'octets à décoder.
      * @return la chaîne de caractères décodée.
      */
-    public static String decoderBytes(Map<String, Character> huffmanMap, String bytesADecompiler) {
+    public static String decompresserBytes(Map<String, Character> huffmanMap, String bytesADecompiler) {
         StringBuilder decodedString = new StringBuilder();
         StringBuilder currentBits = new StringBuilder();
 

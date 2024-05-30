@@ -14,17 +14,25 @@ import java.util.Map;
 public class OutilsAnalyseFichier {
 
     /**
-     * Obtient le contenu du fichier spécifié.
-     * @param cheminFichier le chemin du fichier
-     * @return le contenu du fichier
-     * @throws IOException en cas d'erreur d'entrée/sortie lors de la lecture du fichier
+     * Lit le contenu d'un fichier texte.
+     *
+     * @param cheminFichier le chemin d'accès au fichier texte
+     * @return le contenu du fichier sous forme de chaîne de caractères
+     * @throws IOException si une erreur d'entrée/sortie se produit ou si le fichier est vide
      */
     public static String getContenuFichier(String cheminFichier) throws IOException {
         try (BufferedReader lecteur = new BufferedReader(new FileReader(cheminFichier))) {
             StringBuilder contenu = new StringBuilder();
             String ligne;
+            boolean estVide = true;
             while ((ligne = lecteur.readLine()) != null) {
+                if (!ligne.trim().isEmpty()) {
+                    estVide = false;
+                }
                 contenu.append(ligne).append("\n");
+            }
+            if (estVide) {
+                throw new IOException("Vous ne pouvez pas entrer un fichier vide.");
             }
             return contenu.toString();
         }

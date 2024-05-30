@@ -30,8 +30,6 @@ public class CompressionHuffman {
 
     /**
      * Demande à l'utilisateur de spécifier le fichier à compresser.
-     *
-     * @param args les arguments de la ligne de commande (optionnelle)
      */
     public static void demanderFichierACompresser(String[] args) {
         boolean continuer = true;
@@ -67,7 +65,6 @@ public class CompressionHuffman {
 
         ApplicationLigneCommande.afficherSeparateur();
         out.println("Contenu du fichier :\n" + contenu);
-        ApplicationLigneCommande.afficherSeparateur();
     }
 
     /**
@@ -104,7 +101,7 @@ public class CompressionHuffman {
 
             StatistiquesCompilateur.resumeCompression(cheminFichierCompresse, cheminFichierSource);
             ApplicationLigneCommande.afficherSeparateur();
-            out.println("\n\n");
+            out.println();
         } catch (IOException e) {
             out.println("Erreur : " + e.getMessage());
         }

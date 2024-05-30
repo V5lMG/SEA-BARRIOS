@@ -26,7 +26,7 @@ public class ArbreHuffman {
     /**
      * Nœud racine de l'arbre de Huffman.
      */
-    private static NoeudHuffman racine;
+    private NoeudHuffman racine;
 
     /**
      * Crée un arbre de Huffman à partir des fréquences des caractères dans un fichier texte.
@@ -37,7 +37,7 @@ public class ArbreHuffman {
     public ArbreHuffman(String cheminFichier) throws IOException {
         String contenu = OutilsAnalyseFichier.getContenuFichier(cheminFichier);
         Map<Character, Double> frequences = OutilsAnalyseFichier.getFrequences(contenu);
-        racine = construireArbreHuffman(frequences);
+        this.racine = construireArbreHuffman(frequences);
     }
 
     /**
@@ -175,7 +175,7 @@ public class ArbreHuffman {
      *
      * @return une Map contenant les associations entre les caractères et leurs codes Huffman.
      */
-    public static Map<Character, String> getCodesHuffman() {
+    public Map<Character, String> getCodesHuffman() {
         /*
          * Une Map est une structure de données qui associe des clés à des valeurs.
          *
@@ -194,7 +194,7 @@ public class ArbreHuffman {
          * Une fois que tous les codes Huffman sont collectés, la Map est retournée.
          */
         Map<Character, String> codesHuffman = new HashMap<>();
-        collecterCodesHuffman(racine, codesHuffman);
+        collecterCodesHuffman(this.racine, "", codesHuffman);
         return codesHuffman;
     }
 
@@ -202,20 +202,17 @@ public class ArbreHuffman {
      * Parcourt l'arbre de Huffman et collecte les codes Huffman de chaque nœud dans une map.
      * Utilisation de méthode recursive.
      *
-     * @param noeud        le nœud courant à partir duquel collecter le code Huffman
+     * @param noeud le nœud courant à partir duquel collecter le code Huffman
+     * @param code  le code Huffman préfixe
      * @param codesHuffman la map dans laquelle stocker les codes Huffman collectés
      */
-    private static void collecterCodesHuffman(NoeudHuffman noeud, Map<Character, String> codesHuffman) {
-        if (noeud == null) {
-            return;
-        }
-
+    private void collecterCodesHuffman(NoeudHuffman noeud, String code, Map<Character, String> codesHuffman) {
+        if (noeud == null) return;
         if (noeud.estFeuille()) {
-            codesHuffman.put(noeud.getCaractere(), noeud.getCodeHuffman());
+            codesHuffman.put(noeud.getCaractere(), code);
         }
-
-        collecterCodesHuffman(noeud.getGauche(), codesHuffman);
-        collecterCodesHuffman(noeud.getDroite(), codesHuffman);
+        collecterCodesHuffman(noeud.getGauche(), code + "0", codesHuffman);
+        collecterCodesHuffman(noeud.getDroite(), code + "1", codesHuffman);
     }
 
     /**
@@ -225,7 +222,7 @@ public class ArbreHuffman {
      * @return un tableau d'octets représentant la chaîne de caractères encodée.
      */
     public byte[] encoderFichier(String contenu) {
-        String contenuEncode = OutilsGestionBinaire.convertirCaractereEnBinaire(contenu);
+        String contenuEncode = OutilsGestionBinaire.convertirCaractereEnBinaire(contenu, getCodesHuffman());
         return OutilsGestionBinaire.convertirBinaireEnBytes(contenuEncode);
     }
 
@@ -244,10 +241,10 @@ public class ArbreHuffman {
      */
     public static String decoderFichier(List<String> arbreHuffman, String bytesADecompiler) {
         /*
-         * Utilisation de Map bien décrite ci-dessus.
+         * Utilisation de Map, décrite ci-dessus.
          */
         Map<String, Character> huffmanMap = creerHuffmanMap(arbreHuffman);
-        return OutilsGestionBinaire.decoderBytes(huffmanMap, bytesADecompiler);
+        return OutilsGestionBinaire.decompresserBytes(huffmanMap, bytesADecompiler);
     }
 
     /**
@@ -258,7 +255,7 @@ public class ArbreHuffman {
      */
     private static Map<String, Character> creerHuffmanMap(List<String> arbreHuffman) {
         /*
-         * Utilisation de HashMap bien décrite au-dessus.
+         * Utilisation de HashMap, décrite au-dessus.
          */
         Map<String, Character> huffmanMap = new HashMap<>();
         for (String entry : arbreHuffman) {

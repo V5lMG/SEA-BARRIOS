@@ -4,6 +4,7 @@
  */
 package fr.iutrodez.compilateurhuffman;
 
+import fr.iutrodez.compilateurhuffman.huffman.CreerArbreHuffman;
 import fr.iutrodez.compilateurhuffman.huffman.CompressionHuffman;
 import fr.iutrodez.compilateurhuffman.huffman.DecompressionHuffman;
 
@@ -12,23 +13,18 @@ import java.util.Scanner;
 import static java.lang.System.out;
 
 /* TODO LIST
- * A LA FIN
- * TODO : gérer les arguments en lignes de commandes (shell et .jar)
+ * TODO : mettre une option stop a tous moment
+ *
  * TODO : limiter tout le code à 121 colonnes
+ * TODO : revoir l'orienté objet
  *
- *
- * TODO : enlever les map
  * TODO : JavaDoc et explication code / revoir variable
  *
- * TODO : Problème avec inversion des 1 et 0 dans l'algo d'Huffman
  * TODO : Empêcher les caractères non UTF8
  *
  * TODO : test UNITAIRE
  *
- * TODO : mettre une option stop a tous moment
- * TODO : méthode pour reboucler sur les questions
- * TODO : ne pas compiler un fichier vide
- * TODO : trier correctement l'arbre d'Huffman
+ * TODO : enlever debugeur sur argument
  */
 
 /**
@@ -51,30 +47,45 @@ public class ApplicationLigneCommande {
         afficherSeparateur();
         out.println("L'application est lancée.");
 
-        boolean continuer = true;
-        while (continuer) {
-            afficherSeparateur();
-            out.println("Choisissez une action :");
-            out.println("1. Compression de fichier");
-            out.println("2. Décompression de fichier");
-            out.println("3. Quitter l'application");
-            afficherSeparateur();
+        if (args.length > 0) {
+            ArgumentLigneCommande.gererArgumentsEnLigneCommande(args);
+        } else {
+            boolean continuer = true;
+            while (continuer) {
+                afficherMenu();
+                int choix = demanderChoixUtilisateur();
 
-            int choix = demanderChoixUtilisateur();
-
-            if (choix == 1) {
-                CompressionHuffman.demanderFichierACompresser(args);
-            } else if (choix == 2) {
-                DecompressionHuffman.demanderFichierADecompresser(args);
-            } else if (choix == 3) {
-                continuer = false;
-            } else {
-                out.println("Choix invalide. Veuillez saisir un numéro valide.");
+                switch (choix) {
+                    case 1:
+                        CompressionHuffman.demanderFichierACompresser(args);
+                        break;
+                    case 2:
+                        DecompressionHuffman.demanderFichierADecompresser(args);
+                        break;
+                    case 3:
+                        CreerArbreHuffman.creerSeulementArbre(args);
+                        break;
+                    case 4:
+                        continuer = false;
+                        break;
+                    default:
+                        out.println("Choix invalide. Veuillez saisir un numéro valide.");
+                        break;
+                }
             }
+            afficherSeparateur();
+            out.println("Fin de l'application.");
+            afficherSeparateur();
         }
+    }
 
+    private static void afficherMenu() {
         afficherSeparateur();
-        out.println("Fin de l'application.");
+        out.println("Choisissez une action :");
+        out.println("1. Compression de fichier");
+        out.println("2. Décompression de fichier");
+        out.println("3. Créer un arbre d'Huffman");
+        out.println("4. Quitter l'application");
         afficherSeparateur();
     }
 
@@ -106,7 +117,6 @@ public class ApplicationLigneCommande {
         }
     }
 
-
     public static boolean demanderOuiOuNon(String message) {
         Scanner scanner = new Scanner(System.in);
         System.out.println(message);
@@ -120,8 +130,6 @@ public class ApplicationLigneCommande {
 
         return reponse.equals("oui");
     }
-
-
 
     /**
      * Affiche un séparateur visuel.
