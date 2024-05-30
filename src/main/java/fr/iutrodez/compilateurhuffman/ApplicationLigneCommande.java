@@ -13,18 +13,12 @@ import java.util.Scanner;
 import static java.lang.System.out;
 
 /* TODO LIST
- * TODO : mettre une option stop a tous moment
- *
  * TODO : limiter tout le code à 121 colonnes
  * TODO : revoir l'orienté objet
- *
  * TODO : JavaDoc et explication code / revoir variable
  *
  * TODO : Empêcher les caractères non UTF8
- *
  * TODO : test UNITAIRE
- *
- * TODO : enlever debugeur sur argument
  */
 
 /**
