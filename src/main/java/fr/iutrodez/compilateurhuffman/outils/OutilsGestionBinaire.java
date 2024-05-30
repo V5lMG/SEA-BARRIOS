@@ -47,15 +47,17 @@ public class OutilsGestionBinaire {
      * @return un tableau d'octets représentant la chaîne de caractères binaires convertie.
      */
     public static byte[] convertirBinaireEnBytes(String binaire) {
-        // Compléter la chaîne binaire avec des zéros pour la rendre de longueur multiple de 8.
-        int longueur = binaire.length();
-        int padding = 8 - (longueur % 8);
+        int longueurOriginale = binaire.length();
+        int padding = 8 - (longueurOriginale % 8);
         if (padding != 8) {
             binaire += "0".repeat(padding);
         }
 
-        // Calculer la nouvelle longueur après ajout des zéros.
-        longueur = binaire.length();
+        // Stocker le padding dans les derniers bits ou via un en-tête
+        String header = String.format("%8s", Integer.toBinaryString(padding)).replace(' ', '0');
+        binaire = header + binaire; // Ajouter l'en-tête au début
+
+        int longueur = binaire.length();
         byte[] bytes = new byte[longueur / 8];
         for (int i = 0; i < longueur; i += 8) {
             String octet = binaire.substring(i, i + 8);
@@ -70,7 +72,7 @@ public class OutilsGestionBinaire {
      *
      * *============================================================*
      */
-    public static List<String> recupererBytesDansArbreHuffman(String cheminArbreHuffman) throws IOException {
+    public static List<String> getBytesDansArbreHuffman(String cheminArbreHuffman) throws IOException {
         List<String> huffmanCodes = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(cheminArbreHuffman))) {
             String line;
@@ -98,8 +100,15 @@ public class OutilsGestionBinaire {
         for (byte b : fileBytes) {
             binaryStringBuilder.append(String.format("%8s", Integer.toBinaryString(b & 0xFF)).replace(' ', '0'));
         }
+
+        // Supprimer l'en-tête ou le traiter ici pour ajuster le padding
+        int padding = Integer.parseInt(binaryStringBuilder.substring(0, 8), 2);
+        binaryStringBuilder.delete(0, 8); // Supprimer l'en-tête
+        binaryStringBuilder.setLength(binaryStringBuilder.length() - padding); // Ajuster la fin selon le padding
+
         return binaryStringBuilder.toString();
     }
+
 
     /**
      * Décode un tableau d'octets en une chaîne de caractères en utilisant la map Huffman fournie.

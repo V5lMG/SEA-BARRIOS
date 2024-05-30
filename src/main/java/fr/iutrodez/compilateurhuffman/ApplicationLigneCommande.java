@@ -7,21 +7,19 @@ package fr.iutrodez.compilateurhuffman;
 import fr.iutrodez.compilateurhuffman.huffman.CompressionHuffman;
 import fr.iutrodez.compilateurhuffman.huffman.DecompressionHuffman;
 
+import java.util.Scanner;
+
 import static java.lang.System.out;
 
 /* TODO LIST
  * A LA FIN
  * TODO : gérer les arguments en lignes de commandes (shell et .jar)
  * TODO : limiter tout le code à 121 colonnes
- * TODO : enlever le caractère en trop a la fin de la décompression
- *  TODO : encoder Huffman sur 4 bits et pas 3 (ajout de zéro a la fin)
  *
  *
  * TODO : enlever les map
- * TODO : améliorer la gestion des exceptions
- * TODO : JavaDoc et Refactoring des trois Outils
+ * TODO : JavaDoc et explication code / revoir variable
  *
- * TODO : Faire une classe à part pour la récéption des erreurs
  * TODO : Problème avec inversion des 1 et 0 dans l'algo d'Huffman
  * TODO : Empêcher les caractères non UTF8
  *
@@ -107,6 +105,23 @@ public class ApplicationLigneCommande {
             return demanderChoixUtilisateur();
         }
     }
+
+
+    public static boolean demanderOuiOuNon(String message) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println(message);
+
+        String reponse = scanner.nextLine().trim().toLowerCase();
+        while (!reponse.equals("oui") && !reponse.equals("non")) {
+            System.out.println("Veuillez saisir une option valide (oui/non).");
+            System.out.println(message);
+            reponse = scanner.nextLine().trim().toLowerCase();
+        }
+
+        return reponse.equals("oui");
+    }
+
+
 
     /**
      * Affiche un séparateur visuel.

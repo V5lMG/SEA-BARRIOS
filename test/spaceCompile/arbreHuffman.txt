@@ -1,5 +1,0 @@
-codeHuffman = 0 ; encode = 00100000 ; symbole =  
-codeHuffman = 11 ; encode = 00001001 ; symbole = 	
-codeHuffman = 101 ; encode = 00001010 ; symbole = 
-
-codeHuffman = 100 ; encode = 01100110 ; symbole = f

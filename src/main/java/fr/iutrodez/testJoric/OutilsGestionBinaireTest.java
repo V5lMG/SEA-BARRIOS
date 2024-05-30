@@ -59,7 +59,7 @@ public class OutilsGestionBinaireTest {
         Files.write(Paths.get(cheminArbreHuffman), contenu.getBytes());
 
         // Lire le fichier
-        List<String> codes = OutilsGestionBinaire.recupererBytesDansArbreHuffman(cheminArbreHuffman);
+        List<String> codes = OutilsGestionBinaire.getBytesDansArbreHuffman(cheminArbreHuffman);
 
         // Vérifier le résultat attendu
         assertEquals(2, codes.size());

@@ -7,16 +7,14 @@ package fr.iutrodez.compilateurhuffman.outils;
 import fr.iutrodez.compilateurhuffman.ApplicationLigneCommande;
 import fr.iutrodez.compilateurhuffman.objets.ArbreHuffman;
 
-import java.io.BufferedReader;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.InputStreamReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Scanner;
 import java.util.List;
 
 import static java.lang.System.out;
@@ -26,110 +24,6 @@ import static java.lang.System.out;
  */
 public class OutilsGestionFichier {
     private static ArbreHuffman arbre;
-
-    /**
-     * Obtient le chemin du fichier à partir des arguments de la ligne de commande ou de l'entrée utilisateur.
-     *
-     * @param args Les arguments de la ligne de commande.
-     * @return Le chemin du fichier nettoyé.
-     * @throws IOException En cas d'erreur de lecture de la ligne de commande.
-     */
-    public static String getCheminFichierSource(String[] args) throws IOException {
-        if (args.length > 0) {
-            return nettoyerChemin(args[0]);
-        } else {
-            BufferedReader lecteurConsole = new BufferedReader(new InputStreamReader(System.in));
-            return nettoyerChemin(lecteurConsole.readLine());
-        }
-    }
-
-    /**
-     * Obtient un nom de fichier unique dans le répertoire de destination pour éviter les conflits.
-     *
-     * @param scanner Le scanner utilisé pour lire les entrées de l'utilisateur.
-     * @param cheminFichierDestination Le chemin du répertoire de destination.
-     * @return Un nom de fichier unique.
-     * @throws RuntimeException Si un fichier ou dossier avec le même nom existe déjà.
-     */
-    public static String getNomFichierDestinationUnique(Scanner scanner, String cheminFichierDestination) {
-        String nomFichier = getNomFichierDestination(scanner);
-        File fichier = new File(cheminFichierDestination, nomFichier);
-        if (fichier.exists()) {
-            throw new RuntimeException("Un fichier ou dossier avec ce nom existe déjà. Veuillez entrer un nom différent.");
-        }
-        return nomFichier;
-    }
-
-    /**
-     * Permet à l'utilisateur de saisir un nom de fichier pour le fichier décompressé.
-     * Vérifie la validité du nom de fichier en s'assurant qu'il ne contient pas de caractères spéciaux.
-     *
-     * @param scanner Le scanner utilisé pour lire les entrées de l'utilisateur.
-     * @return Un nom de fichier valide.
-     * @throws RuntimeException Si le nom de fichier est invalide.
-     */
-    private static String getNomFichierDestination(Scanner scanner) {
-        String nomFichier = "";
-        boolean isNomFichierValide = false;
-        while (!isNomFichierValide) {
-            nomFichier = scanner.nextLine();
-            if (!nomFichier.isEmpty() && nomFichier.matches("[a-zA-Z0-9._-]+")) { // regex pour les caracteres invalides
-                isNomFichierValide = true;
-            } else {
-                throw new RuntimeException("Nom de fichier invalide. Assurez-vous d'entrer un nom de fichier valide sans caractères spéciaux autres que '.', '_', ou '-'.");
-            }
-        }
-        return nomFichier;
-    }
-
-    /**
-     * Permet à l'utilisateur de saisir un chemin de répertoire valide pour la décompression.
-     * Vérifie que le chemin existe et qu'il s'agit bien d'un répertoire.
-     *
-     * @param scanner Le scanner utilisé pour lire les entrées de l'utilisateur.
-     * @return Le chemin du répertoire de destination validé.
-     * @throws RuntimeException Si le répertoire est invalide.
-     */
-    public static String getCheminDestination(Scanner scanner) {
-        String repertoire = "";
-        boolean isRepertoireValide = false;
-        while (!isRepertoireValide) {
-            repertoire = scanner.nextLine();
-            File repertoireFile = new File(repertoire);
-            if (repertoireFile.exists() && repertoireFile.isDirectory()) {
-                isRepertoireValide = true;
-            } else {
-                throw new RuntimeException("Répertoire invalide. Assurez-vous d'entrer un chemin de répertoire valide.");
-            }
-        }
-        return repertoire;
-    }
-
-    /**
-     * Nettoie le chemin du fichier en supprimant les guillemets entourant le chemin si présents.
-     *
-     * @param chemin Le chemin du fichier.
-     * @return Le chemin du fichier nettoyé.
-     */
-    public static String nettoyerChemin(String chemin) {
-        if (chemin.startsWith("\"") && chemin.endsWith("\"")) {
-            return chemin.substring(1, chemin.length() - 1);
-        }
-        return chemin;
-    }
-
-    /**
-     * Vérifie que le répertoire de destination spécifié par l'utilisateur est valide et accessible en écriture.
-     *
-     * @param cheminFichierDestination Le chemin du répertoire de destination.
-     * @throws RuntimeException Si le répertoire est invalide ou inaccessible en écriture.
-     */
-    public static void verifierRepertoireValide(String cheminFichierDestination) {
-        File repertoireFile = new File(cheminFichierDestination);
-        while (!repertoireFile.exists() || !repertoireFile.isDirectory() || !repertoireFile.canWrite()) {
-            throw new RuntimeException("Répertoire invalide ou vous n'avez pas les droits d'écriture. Assurez-vous d'entrer un chemin de répertoire valide et accessible en écriture.");
-        }
-    }
 
     /**
      * Crée le répertoire de compilation s'il n'existe pas.
@@ -191,7 +85,7 @@ public class OutilsGestionFichier {
      */
     public static void creerFichierDecompresse(String cheminFichierDecompresse, String cheminFichierADecompresser) throws IOException {
         String cheminArbreHuffman = cheminFichierADecompresser.substring(0, cheminFichierADecompresser.lastIndexOf("\\")) + "\\arbreHuffman.txt";
-        List<String> arbreHuffmanString = OutilsGestionBinaire.recupererBytesDansArbreHuffman(cheminArbreHuffman);
+        List<String> arbreHuffmanString = OutilsGestionBinaire.getBytesDansArbreHuffman(cheminArbreHuffman);
         String contenueDecompresse = ArbreHuffman.decoderFichier(arbreHuffmanString, OutilsGestionBinaire.getBytesADecompresser(cheminFichierADecompresser));
         Files.write(Path.of(cheminFichierDecompresse), contenueDecompresse.getBytes());
         out.println("Le fichier a bien été décompressé et enregistré à l'emplacement suivant : " + cheminFichierDecompresse);

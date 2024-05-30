@@ -6,6 +6,7 @@ package fr.iutrodez.compilateurhuffman.huffman;
 
 import fr.iutrodez.compilateurhuffman.ApplicationLigneCommande;
 import fr.iutrodez.compilateurhuffman.outils.OutilsAnalyseFichier;
+import fr.iutrodez.compilateurhuffman.outils.OutilsGestionChemin;
 import fr.iutrodez.compilateurhuffman.outils.OutilsGestionFichier;
 import fr.iutrodez.compilateurhuffman.outils.StatistiquesCompilateur;
 
@@ -26,6 +27,7 @@ import static java.lang.System.out;
  * @version 1.0
  */
 public class CompressionHuffman {
+
     /**
      * Demande à l'utilisateur de spécifier le fichier à compresser.
      *
@@ -35,85 +37,114 @@ public class CompressionHuffman {
         boolean continuer = true;
         while (continuer) {
             try {
-                out.print("""
-                   Entrez le chemin de votre fichier (URL) :
-                   Exemple de chemin valide : "dossier1\\dossier2\\monFichier.txt"
-                                               dossier1/dossier2/monFichier.txt
-                   ==>\s""");
-                String cheminFichierSource = OutilsGestionFichier.getCheminFichierSource(args);
-
-                if (cheminFichierSource.isEmpty()) {
-                    throw new IOException("\nLe chemin du fichier à compresser ne peut pas être vide.");
-                }
-
-                if (!cheminFichierSource.endsWith(".txt")) {
-                    throw new IOException("\nLe fichier à décompresser ne peut pas être de ce format. " +
-                                          "Veuillez spécifier un fichier .txt.");
-                }
-
-                ApplicationLigneCommande.afficherSeparateur();
-                out.println("Chemin du fichier spécifié : " + cheminFichierSource);
-                ApplicationLigneCommande.afficherSeparateur();
-
+                String cheminFichierSource = promptCheminFichier(args);
                 String contenu = OutilsAnalyseFichier.getContenuFichier(cheminFichierSource);
-                out.println("Contenu du fichier :\n" + contenu);
+                afficherContenuFichier(contenu, cheminFichierSource);
 
-                ApplicationLigneCommande.afficherSeparateur();
-                Scanner scanner = new Scanner(System.in);
-
-                String choix;
-                boolean reponseValide = false;
-                while (!reponseValide) {
-                    out.println("Voulez-vous sélectionner ce fichier ? (oui/non)");
-                    choix = scanner.nextLine();
-
-                    if (choix.equalsIgnoreCase("oui")) {
-                        reponseValide = true;
-                        traiterFichierAcompresser(scanner, cheminFichierSource, contenu);
-                    } else if (choix.equalsIgnoreCase("non")) {
-                        reponseValide = true;
-                    } else {
-                        out.println("Réponse invalide. Veuillez répondre par 'oui' ou 'non'.");
-                    }
-                }
-                // TODO mettre ce code dans une méthode que je peux appeler avec toutes les questions
-
-                continuer = demanderRecommencer();
-            } catch (IOException e) {
-                out.println("Erreur lors de la lecture du fichier à compresser : " + e.getMessage());
+                continuer = traiterCompressionSiConfirme(cheminFichierSource, contenu);
+            } catch (Exception e) {
+                out.println("Erreur: " + e.getMessage());
+                continuer = ApplicationLigneCommande.demanderOuiOuNon("Voulez-vous recommencer le procéssus de compression ? (oui/non)");
             }
         }
+    }
+
+    private static String promptCheminFichier(String[] args) throws IOException {
+        ApplicationLigneCommande.afficherSeparateur();
+        out.print("""
+            Entrez le chemin de votre fichier (URL) :
+            Exemple de chemin valide : "dossier1\\dossier2\\monFichier.txt"
+                                        dossier1/dossier2/monFichier.txt
+            ==>\s""");
+        String cheminFichierSource = OutilsGestionChemin.getCheminFichierSource(args);
+        OutilsGestionChemin.verifierCheminFichierSourceValide(cheminFichierSource, "txt");
+        return cheminFichierSource;
+    }
+
+    private static void afficherContenuFichier(String contenu, String cheminFichierSource) {
+        ApplicationLigneCommande.afficherSeparateur();
+        out.println("Chemin du fichier spécifié : " + cheminFichierSource);
+
+        ApplicationLigneCommande.afficherSeparateur();
+        out.println("Contenu du fichier :\n" + contenu);
+        ApplicationLigneCommande.afficherSeparateur();
     }
 
     /**
      * Traite le fichier à compresser en demandant l'emplacement de destination et en générant le fichier compilé.
      *
-     * @param scanner le scanner utilisé pour lire les entrées de l'utilisateur
      * @param cheminFichierSource le chemin du fichier source à compresser
      * @param contenu le contenu du fichier source
-     * @throws IOException si une erreur survient lors de la manipulation des fichiers
      */
-    private static void traiterFichierAcompresser(Scanner scanner, String cheminFichierSource, String contenu) throws IOException {
-        ApplicationLigneCommande.afficherSeparateur();
-        afficherCaracteres(contenu);
-        ApplicationLigneCommande.afficherSeparateur();
+    private static boolean traiterCompressionSiConfirme(String cheminFichierSource, String contenu) {
+        Scanner scanner = new Scanner(System.in);
+        if (ApplicationLigneCommande.demanderOuiOuNon("Voulez-vous sélectionner ce fichier : " + cheminFichierSource + " ? (oui/non)")) {
+            traiterFichierACompresser(scanner, cheminFichierSource, contenu);
+            return false;
+        }
+        return ApplicationLigneCommande.demanderOuiOuNon("Voulez-vous recommencer ? (oui/non)");
+    }
 
-        out.println("Où voulez-vous enregistrer le fichier une fois compilé ? (Entrez le chemin complet du répertoire)");
-        String cheminFichierDestination = OutilsGestionFichier.nettoyerChemin(OutilsGestionFichier.getCheminDestination(scanner));
-        OutilsGestionFichier.verifierRepertoireValide(cheminFichierDestination);
+    private static void traiterFichierACompresser(Scanner scanner, String cheminFichierSource, String contenu) {
+        try {
+            ApplicationLigneCommande.afficherSeparateur();
+            afficherCaracteres(contenu);
+            ApplicationLigneCommande.afficherSeparateur();
 
-        out.println("Sous quel nom voulez-vous enregistrer le fichier une fois compilé ? (Entrez le nom du fichier)");
-        String nomFichierCompresse = OutilsGestionFichier.getNomFichierDestinationUnique(scanner, cheminFichierDestination);
-        String cheminDossierDestination = cheminFichierDestination + "\\" + nomFichierCompresse;
-        String cheminFichierCompresse = cheminDossierDestination + "\\" + nomFichierCompresse + ".bin";
+            String cheminFichierDestination = obtenirCheminDestination();
+            String nomFichierCompresse = obtenirNomFichierDestination(scanner, cheminFichierDestination);
+            String cheminDossierDestination = cheminFichierDestination + "\\" + nomFichierCompresse;
+            String cheminFichierCompresse = cheminDossierDestination + "\\" + nomFichierCompresse + ".bin";
 
-        ApplicationLigneCommande.afficherSeparateur();
-        OutilsGestionFichier.creerDossierPourCompilation(cheminDossierDestination);
-        OutilsGestionFichier.creerFichierArbreHuffman(cheminFichierSource, cheminDossierDestination);
-        OutilsGestionFichier.creerFichierCompresse(cheminFichierCompresse, contenu);
+            ApplicationLigneCommande.afficherSeparateur();
 
-        StatistiquesCompilateur.resumeCompression(cheminFichierCompresse, cheminFichierSource);
-        ApplicationLigneCommande.afficherSeparateur();
+            OutilsGestionFichier.creerDossierPourCompilation(cheminDossierDestination);
+            OutilsGestionFichier.creerFichierArbreHuffman(cheminFichierSource, cheminDossierDestination);
+            OutilsGestionFichier.creerFichierCompresse(cheminFichierCompresse, contenu);
+
+            StatistiquesCompilateur.resumeCompression(cheminFichierCompresse, cheminFichierSource);
+            ApplicationLigneCommande.afficherSeparateur();
+            out.println("\n\n");
+        } catch (IOException e) {
+            out.println("Erreur : " + e.getMessage());
+        }
+    }
+
+    private static String obtenirCheminDestination() {
+        Scanner scanner = new Scanner(System.in);
+        String cheminDestination;
+        boolean continuer = true;
+
+        while (continuer) {
+            try {
+                out.println("Où voulez-vous enregistrer le fichier une fois compilé ? (Entrez le chemin complet du répertoire)");
+                cheminDestination = OutilsGestionChemin.getCheminDestination(scanner);
+                return OutilsGestionChemin.enleverGuillemet(cheminDestination);
+            } catch (RuntimeException e) {
+                out.println("Erreur : " + e.getMessage());
+                if (!ApplicationLigneCommande.demanderOuiOuNon("Voulez-vous continuer le procéssus de compression ? (oui/non)")) {
+                    continuer = false;
+                }
+            }
+        }
+        return null;
+    }
+
+    private static String obtenirNomFichierDestination(Scanner scanner, String cheminFichierDestination) {
+        String nomFichier = null;
+        boolean continuer = true;
+
+        while (continuer) {
+            try {
+                out.println("Quel nom voulez-vous donner à votre fichier une fois compilé ?");
+                nomFichier = OutilsGestionChemin.getNomFichierDestinationUnique(scanner, cheminFichierDestination);
+                continuer = false;
+            } catch (RuntimeException e) {
+                out.println("Erreur : " + e.getMessage() + " Veuillez essayer un autre nom.");
+                continuer = ApplicationLigneCommande.demanderOuiOuNon("Voulez-vous rentrer un autre nom ? (oui/non)");
+            }
+        }
+        return nomFichier;
     }
 
     /**
@@ -147,17 +178,5 @@ public class CompressionHuffman {
                         + "Occurrences: " + nombreOccurrences
                         + "; Fréquence: " + (frequence * 100) + "%");
         }
-    }
-
-    /**
-     * Demande à l'utilisateur s'il veut réessayer.
-     *
-     * @return true si l'utilisateur veut réessayer, sinon false
-     */
-    private static boolean demanderRecommencer() {
-        out.println("Voulez-vous recommencer ? (oui/non)");
-        Scanner scanner = new Scanner(System.in);
-        String choix = scanner.nextLine();
-        return choix.equalsIgnoreCase("oui");
     }
 }
