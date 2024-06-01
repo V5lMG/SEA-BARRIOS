@@ -50,7 +50,7 @@ public class GestionFichier {
         }
 	}
 	
-	public static void writeBinaryStringToFile(String binaryString, String filePath) throws IOException {
+	public static void ecrireChaineBinaireDansFichier(String binaryString, String filePath) throws IOException {
         try (FileOutputStream fos = new FileOutputStream(filePath);
              DataOutputStream dos = new DataOutputStream(fos)) {
             dos.writeInt(binaryString.length());
@@ -59,7 +59,7 @@ public class GestionFichier {
 
             for (int i = 0; i < binaryString.length(); i++) {
                 if (binaryString.charAt(i) == '1') {
-                    byteArray[i / 8] |= (128 >> (i % 8));
+                    byteArray[i / 8] |= (byte) (128 >> (i % 8));
                 }
             }
 
@@ -67,7 +67,7 @@ public class GestionFichier {
         }
     }
 	
-	public static String readBinaryFileToString(String filePath) throws IOException {
+	public static String lireFichierBinaireEnChaine(String filePath) throws IOException {
         StringBuilder binaryString = new StringBuilder();
 
         try (FileInputStream fis = new FileInputStream(filePath);
