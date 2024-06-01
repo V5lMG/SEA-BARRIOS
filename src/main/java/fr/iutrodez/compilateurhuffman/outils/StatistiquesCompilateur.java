@@ -20,12 +20,12 @@ public class StatistiquesCompilateur {
     /**
      * Affiche un résumé de la compression, incluant les tailles du fichier original et compressé, ainsi que le taux de compression.
      *
-     * @param cheminFichierCompresse Le chemin du fichier compressé.
-     * @param cheminFichierSource Le chemin du fichier original.
+     * @param cheminFichierSource Le chemin du fichier compressé.
+     * @param cheminFichierDestination Le chemin du fichier original.
      */
-    public static void resumeCompression(String cheminFichierCompresse, String cheminFichierSource) {
+    public static void resumeCompression(String cheminFichierSource, String cheminFichierDestination) {
         File fichierOriginal = new File(cheminFichierSource);
-        File fichierCompile = new File(cheminFichierCompresse);
+        File fichierCompile = new File(cheminFichierDestination);
         long tailleFichierOriginal = fichierOriginal.length();
         long tailleFichierCompile = fichierCompile.length();
 
@@ -40,23 +40,23 @@ public class StatistiquesCompilateur {
      * Affiche un résumé de la décompression, incluant les tailles du fichier compressé et décompressé,
      * le taux de décompression et le temps pris pour la décompression.
      *
-     * @param cheminFichierDecompresse Le chemin du fichier décompressé.
-     * @param cheminFichierADecompresser Le chemin du fichier compressé à décompresser.
-     * @param tempsDeCompression Le temps initial en millisecondes avant la décompression pour calculer le temps total de décompression.
+     * @param source Le chemin du fichier décompressé.
+     * @param cheminFichierDestination Le chemin du fichier compressé à décompresser.
+     * @param tempsDecompression Le temps initial en millisecondes avant la décompression pour calculer le temps total de décompression.
      */
-    public static void resumeDecompression(String cheminFichierDecompresse, String cheminFichierADecompresser, long tempsDeCompression) {
-        File fichierCompresse = new File(cheminFichierADecompresser);
-        File fichierDecompile = new File(cheminFichierDecompresse);
+    public static void resumeDecompression(String source, String cheminFichierDestination, long tempsDecompression) {
+        File fichierCompresse = new File(source);
+        File fichierDecompile = new File(cheminFichierDestination);
         long tailleFichierCompresse = fichierCompresse.length();
         long tailleFichierDecompresse = fichierDecompile.length();
 
         double tauxDecompression = 100.0 * tailleFichierCompresse / tailleFichierDecompresse;
 
-        System.out.println("Taille du fichier compressé : " + tailleFichierCompresse + " octets");
-        System.out.println("Taille du fichier décompressé : " + tailleFichierDecompresse + " octets");
-        System.out.printf("Taux de décompression : %.2f %%\n", tauxDecompression);
+        out.println("Taille du fichier compressé : " + tailleFichierCompresse + " octets");
+        out.println("Taille du fichier décompressé : " + tailleFichierDecompresse + " octets");
+        out.printf("Taux de décompression : %.2f %%\n", tauxDecompression);
 
-        long tempsDeDecompression = System.currentTimeMillis() - tempsDeCompression;
-        System.out.println("Temps de décompression : " + tempsDeDecompression + " millisecondes");
+        long tempsDeDecompression = System.currentTimeMillis() - tempsDecompression;
+        out.println("Temps de décompression : " + tempsDeDecompression + " millisecondes");
     }
 }

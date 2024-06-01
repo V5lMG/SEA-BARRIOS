@@ -1,179 +1,137 @@
-/*
- * Pas de copyright, ni de droit d'auteur.
- * CompressionHuffman.java                  27/05/2024
- */
 package fr.iutrodez.compilateurhuffman.huffman;
 
-import fr.iutrodez.compilateurhuffman.ApplicationLigneCommande;
-import fr.iutrodez.compilateurhuffman.outils.OutilsAnalyseFichier;
-import fr.iutrodez.compilateurhuffman.outils.OutilsGestionChemin;
-import fr.iutrodez.compilateurhuffman.outils.OutilsGestionFichier;
-import fr.iutrodez.compilateurhuffman.outils.StatistiquesCompilateur;
+import fr.iutrodez.compilateurhuffman.outils.GestionFichier;
+import fr.iutrodez.compilateurhuffman.objets.Noeud;
 
-import java.util.Scanner;
-import java.util.Map;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import static java.lang.System.out;
 
-/**
- * Cette classe gère le processus de compression des fichiers avec l'algorithme de Huffman.
- * Les fonctionnalités principales de cette classe incluent la demande de fichier à compresser
- * à l'utilisateur, le nom du fichier, ainsi que la destination une fois compilé.
- * Les méthodes de cette classe sont conçues pour être utilisées dans une application de ligne
- * de commande, offrant ainsi une interface simple pour les utilisateurs.
- *
- * @author ValMG, R. Xaviertaborda, J. Seychelles, B. Thenieres
- * @version 1.0
- */
 public class CompressionHuffman {
 
-    /**
-     * Demande à l'utilisateur de spécifier le fichier à compresser.
-     */
-    public static void demanderFichierACompresser(String[] args) {
-        boolean continuer = true;
-        while (continuer) {
-            try {
-                String cheminFichierSource = promptCheminFichier(args);
-                String contenu = OutilsAnalyseFichier.getContenuFichier(cheminFichierSource);
-                afficherContenuFichier(contenu, cheminFichierSource);
+    private String cheminFichierSource;
+    private String cheminFichierDestination;
 
-                continuer = traiterCompressionSiConfirme(cheminFichierSource, contenu);
-            } catch (Exception e) {
-                out.println("Erreur: " + e.getMessage());
-                continuer = ApplicationLigneCommande.demanderOuiOuNon("Voulez-vous recommencer le procéssus de compression ? (oui/non)");
-            }
+    public CompressionHuffman(String cheminFichierSource, String cheminFichierDestination) {
+        this.cheminFichierSource = cheminFichierSource;
+        this.cheminFichierDestination = cheminFichierDestination;
+    }
+
+    public void compresserFichier() throws IOException {
+
+        byte[] chaine = GestionFichier.readFileToBytes(cheminFichierSource);
+
+        Map<Byte, Integer> occurencesDesCaracteres = getFrequenceDesBytes(chaine);
+
+        /* TODO explique chaque outils utilisé pour cette ligne */
+        int totalOccurrences = occurencesDesCaracteres.values().stream().mapToInt(Integer::intValue).sum();
+
+        for (Entry<Byte, Integer> entry : occurencesDesCaracteres.entrySet()) {
+            byte cle = entry.getKey();
+            int occurrences = entry.getValue();
+            double frequence = 100 * ((double) occurrences / totalOccurrences);
+            char symbole = (char) cle;
+            out.printf("Caractère : %c ; Occurrences : %d ; Fréquence : %.2f%%\n", symbole, occurrences, frequence);
         }
-    }
 
-    private static String promptCheminFichier(String[] args) throws IOException {
-        ApplicationLigneCommande.afficherSeparateur();
-        out.print("""
-            Entrez le chemin de votre fichier (URL) :
-            Exemple de chemin valide : "dossier1\\dossier2\\monFichier.txt"
-                                        dossier1/dossier2/monFichier.txt
-            ==>\s""");
-        String cheminFichierSource = OutilsGestionChemin.getCheminFichierSource(args);
-        OutilsGestionChemin.verifierCheminFichierSourceValide(cheminFichierSource, "txt");
-        return cheminFichierSource;
-    }
+        Noeud[] tableau = new Noeud[occurencesDesCaracteres.size()];
 
-    private static void afficherContenuFichier(String contenu, String cheminFichierSource) {
-        ApplicationLigneCommande.afficherSeparateur();
-        out.println("Chemin du fichier spécifié : " + cheminFichierSource);
+        int entree = 0;
+        for(Entry<Byte, Integer> encode : occurencesDesCaracteres.entrySet()) {
+            byte key = encode.getKey();
+            int value = encode.getValue();
 
-        ApplicationLigneCommande.afficherSeparateur();
-        out.println("Contenu du fichier :\n" + contenu);
-    }
-
-    /**
-     * Traite le fichier à compresser en demandant l'emplacement de destination et en générant le fichier compilé.
-     *
-     * @param cheminFichierSource le chemin du fichier source à compresser
-     * @param contenu le contenu du fichier source
-     */
-    private static boolean traiterCompressionSiConfirme(String cheminFichierSource, String contenu) {
-        Scanner scanner = new Scanner(System.in);
-        if (ApplicationLigneCommande.demanderOuiOuNon("Voulez-vous sélectionner ce fichier : " + cheminFichierSource + " ? (oui/non)")) {
-            traiterFichierACompresser(scanner, cheminFichierSource, contenu);
-            return false;
+            tableau[entree] = new Noeud(key, value);
+            entree++;
         }
-        return ApplicationLigneCommande.demanderOuiOuNon("Voulez-vous recommencer ? (oui/non)");
-    }
 
-    private static void traiterFichierACompresser(Scanner scanner, String cheminFichierSource, String contenu) {
-        try {
-            ApplicationLigneCommande.afficherSeparateur();
-            afficherCaracteres(contenu);
-            ApplicationLigneCommande.afficherSeparateur();
+        Noeud racine = contruireArbre(tableau);
 
-            String cheminFichierDestination = obtenirCheminDestination();
-            String nomFichierCompresse = obtenirNomFichierDestination(scanner, cheminFichierDestination);
-            String cheminDossierDestination = cheminFichierDestination + "\\" + nomFichierCompresse;
-            String cheminFichierCompresse = cheminDossierDestination + "\\" + nomFichierCompresse + ".bin";
+        Map<Byte, String> codageHuffman = racine.genererTableDeCodesHuffman();
+        String[] tableHuffman = new String[codageHuffman.size()];
+        // TODO affichage
+        // TODO trier
 
-            ApplicationLigneCommande.afficherSeparateur();
-
-            OutilsGestionFichier.creerDossierPourCompilation(cheminDossierDestination);
-            OutilsGestionFichier.creerFichierArbreHuffman(cheminFichierSource, cheminDossierDestination);
-            OutilsGestionFichier.creerFichierCompresse(cheminFichierCompresse, contenu);
-
-            StatistiquesCompilateur.resumeCompression(cheminFichierCompresse, cheminFichierSource);
-            ApplicationLigneCommande.afficherSeparateur();
-            out.println();
-        } catch (IOException e) {
-            out.println("Erreur : " + e.getMessage());
+        int occ = 0;
+        for(Entry<Byte, String> code : codageHuffman.entrySet()) {
+            byte key = code.getKey();
+            String value = code.getValue();
+            tableHuffman[occ] = "codeHuffman = " + value + " ; encode = " + key + " ; symbole = " + (char) key;
+            occ++;
         }
+
+        String codage = encoder(chaine, codageHuffman);
+        GestionFichier.writeBinaryStringToFile(codage, cheminFichierDestination);
+
+        /* Enlever l'extension et le nom du fichier et le remplacer par arbreHuffman.txt */
+        int dernierSeparateur = cheminFichierDestination.lastIndexOf("\\");
+        String cheminDossier  = cheminFichierDestination.substring(0, dernierSeparateur + 1);
+        cheminFichierDestination = cheminDossier  + "arbreHuffman.txt";
+
+        GestionFichier.ecrireArbreHuffman(cheminFichierDestination, tableHuffman);
     }
 
-    private static String obtenirCheminDestination() {
-        Scanner scanner = new Scanner(System.in);
-        String cheminDestination;
-        boolean continuer = true;
+    private String encoder(byte[] chaine, Map<Byte, String> codageHuffman) {
+        StringBuilder chaineBinaireEncodee = new StringBuilder();
 
-        while (continuer) {
-            try {
-                out.println("Où voulez-vous enregistrer le fichier une fois compilé ? (Entrez le chemin complet du répertoire)");
-                cheminDestination = OutilsGestionChemin.getCheminDestination(scanner);
-                return OutilsGestionChemin.enleverGuillemet(cheminDestination);
-            } catch (RuntimeException e) {
-                out.println("Erreur : " + e.getMessage());
-                if (!ApplicationLigneCommande.demanderOuiOuNon("Voulez-vous continuer le procéssus de compression ? (oui/non)")) {
-                    continuer = false;
+        for (byte b : chaine) {
+            chaineBinaireEncodee.append(codageHuffman.get(b));
+        }
+
+        return chaineBinaireEncodee.toString();
+    }
+
+    private Noeud contruireArbre(Noeud[] listDeNoeuds) {
+        Noeud[] noeuds = listDeNoeuds;
+
+        while(noeuds.length > 1) {
+            Noeud premierNoeud = null;
+            Noeud deuxiemeNoeud = null;
+
+            for(Noeud noeud : noeuds) {
+                if (premierNoeud == null || noeud.getValue() < premierNoeud.getValue()) {
+                    deuxiemeNoeud = premierNoeud;
+                    premierNoeud = noeud;
+                } else if (deuxiemeNoeud == null || noeud.getValue() < deuxiemeNoeud.getValue()) {
+                    deuxiemeNoeud = noeud;
                 }
             }
+
+            Noeud[] nouveauTableau = new Noeud[noeuds.length - 2];
+            int index = 0;
+            for(Noeud noeud : noeuds) {
+                if(noeud != premierNoeud && noeud != deuxiemeNoeud) {
+                    nouveauTableau[index++] = noeud;
+                }
+            }
+
+            Noeud nouveauNoeud = new Noeud(premierNoeud.getValue() + deuxiemeNoeud.getValue());
+            nouveauNoeud.setGauche(premierNoeud);
+            nouveauNoeud.setDroite(deuxiemeNoeud);
+
+            Noeud[] tableauAvecNouveauNoeud = new Noeud[nouveauTableau.length + 1];
+            System.arraycopy(nouveauTableau, 0, tableauAvecNouveauNoeud, 0, nouveauTableau.length);
+            tableauAvecNouveauNoeud[tableauAvecNouveauNoeud.length - 1] = nouveauNoeud;
+            noeuds = tableauAvecNouveauNoeud;
+
         }
-        return null;
+
+        return noeuds[0];
+
     }
 
-    private static String obtenirNomFichierDestination(Scanner scanner, String cheminFichierDestination) {
-        String nomFichier = null;
-        boolean continuer = true;
-
-        while (continuer) {
-            try {
-                out.println("Quel nom voulez-vous donner à votre fichier une fois compilé ?");
-                nomFichier = OutilsGestionChemin.getNomFichierDestinationUnique(scanner, cheminFichierDestination);
-                continuer = false;
-            } catch (RuntimeException e) {
-                out.println("Erreur : " + e.getMessage() + " Veuillez essayer un autre nom.");
-                continuer = ApplicationLigneCommande.demanderOuiOuNon("Voulez-vous rentrer un autre nom ? (oui/non)");
+    private HashMap<Byte, Integer> getFrequenceDesBytes(byte[] bytes) {
+        HashMap<Byte, Integer> bytesFrequency = new HashMap<>();
+        for(byte b : bytes) {
+            if(bytesFrequency.containsKey(b)) {
+                bytesFrequency.put(b, bytesFrequency.get(b) + 1);
+            } else {
+                bytesFrequency.put(b, 1);
             }
         }
-        return nomFichier;
-    }
-
-    /**
-     * Affiche les caractères et leurs fréquences pour le fichier spécifié.
-     *
-     * @param contenu le contenu à analyser
-     */
-    private static void afficherCaracteres(String contenu) {
-        int[][] occurrences = OutilsAnalyseFichier.getOccurrencesOrdonnee(contenu);
-
-        /*
-         * La Map<Character, Double> frequenceMap est utilisée pour stocker les fréquences des caractères
-         * présents dans le contenu d'un fichier.
-         *
-         * - Chaque caractère est utilisé comme clé.
-         * - Chaque fréquence est utilisée comme valeur associée à la clé correspondante.
-         *
-         * Par exemple, si le caractère 'a' apparaît dans le contenu avec une fréquence de 0.15,
-         * alors il sera stocké dans la map de la manière suivante :
-         *   clé : 'a', valeur : 0.15
-         *
-         * Cela permet de récupérer rapidement la fréquence d'un caractère donné lorsque nécessaire.
-         */
-        Map<Character, Double> frequenceMap = OutilsAnalyseFichier.getFrequences(contenu);
-
-        for (int[] occurrence : occurrences) {
-            char caractere = (char) occurrence[0];
-            int nombreOccurrences = occurrence[1];
-            double frequence = frequenceMap.get(caractere);
-            out.println("Caractère: " + caractere + "; "
-                        + "Occurrences: " + nombreOccurrences
-                        + "; Fréquence: " + (frequence * 100) + "%");
-        }
+        return bytesFrequency;
     }
 }

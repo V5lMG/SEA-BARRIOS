@@ -1,7 +1,7 @@
 package fr.iutrodez.compilateurhuffman;
 
-import fr.iutrodez.compilateurhuffman.outils.OutilsAnalyseFichier;
-import fr.iutrodez.compilateurhuffman.outils.OutilsGestionFichier;
+import fr.iutrodez.compilateurhuffman.huffman.CompressionHuffman;
+import fr.iutrodez.compilateurhuffman.huffman.DecompressionHuffman;
 import fr.iutrodez.compilateurhuffman.outils.StatistiquesCompilateur;
 
 import java.io.IOException;
@@ -41,13 +41,6 @@ public class ArgumentLigneCommande {
                     decompresserFichier(args[1], args[2], args[3]);
                 }
                 break;
-            case "construire":
-                if (args.length < 3) {
-                    out.println("Arguments manquants. Utilisation : construire <chemin_fichier_base_arbre> <nom_dossier_destination>");
-                } else {
-                    construireArbreHuffman(args[1], args[2]);
-                }
-                break;
             case "help":
                 afficherAide();
                 break;
@@ -61,43 +54,37 @@ public class ArgumentLigneCommande {
 
     private static void compresserFichier(String cheminFichierSource, String cheminDossierDestination, String nomFichierCompresse) {
         out.println("Compression du fichier : " + cheminFichierSource);
+        cheminDossierDestination =      cheminDossierDestination + "\\" + nomFichierCompresse;
+        String cheminCompletFichierDestination = cheminDossierDestination + "\\" + nomFichierCompresse + ".bin";
+
+        CompressionHuffman compresser = new CompressionHuffman(cheminFichierSource, cheminCompletFichierDestination);
         try {
-            cheminDossierDestination =      cheminDossierDestination + "\\" + nomFichierCompresse;
-            String cheminFichierCompresse = cheminDossierDestination + "\\" + nomFichierCompresse + ".bin";
-
-            String contenu = OutilsAnalyseFichier.getContenuFichier(cheminFichierSource);
-
-            OutilsGestionFichier.creerDossierPourCompilation(cheminDossierDestination);
-            OutilsGestionFichier.creerFichierArbreHuffman(cheminFichierSource, cheminDossierDestination);
-            OutilsGestionFichier.creerFichierCompresse(cheminFichierCompresse, contenu);
+            compresser.compresserFichier();
 
             ApplicationLigneCommande.afficherSeparateur();
-            StatistiquesCompilateur.resumeCompression(cheminFichierCompresse, cheminFichierSource);
-        } catch (IOException e) {
-            out.println("Erreur : " + e.getMessage());
+            StatistiquesCompilateur.resumeCompression(cheminFichierSource, cheminCompletFichierDestination);
+            ApplicationLigneCommande.afficherSeparateur();
+            out.println();
+        } catch (IOException erreur) {
+            out.println("Erreur lors de la compression du fichier : " + erreur.getMessage());
         }
     }
 
-    private static void decompresserFichier(String cheminFichierADecompresser, String cheminDossierDestination, String nomFichierDecompresse) {
-        out.println("Décompression du fichier : " + cheminFichierADecompresser);
+    private static void decompresserFichier(String cheminFichierSource, String cheminDossierDestination, String nomFichierDecompresse) {
+        out.println("Décompression du fichier : " + cheminFichierSource);
+        String cheminCompletFichierDestination = cheminDossierDestination + "\\" + nomFichierDecompresse + ".txt";
+
+        DecompressionHuffman decompresser = new DecompressionHuffman(cheminFichierSource, cheminCompletFichierDestination);
         try {
-            String cheminCompletFichierDecompresse = cheminDossierDestination + "\\" + nomFichierDecompresse + ".txt";
-            OutilsGestionFichier.creerFichierDecompresse(cheminCompletFichierDecompresse, cheminFichierADecompresser);
+            long tempsDecompression = System.currentTimeMillis();
+            decompresser.decompresserFichier();
 
             ApplicationLigneCommande.afficherSeparateur();
-            long tempsDebut = System.currentTimeMillis();
-            StatistiquesCompilateur.resumeDecompression(cheminCompletFichierDecompresse, cheminFichierADecompresser, tempsDebut);
-        } catch (IOException e) {
-            out.println("Erreur : " + e.getMessage());
-        }
-    }
-
-    private static void construireArbreHuffman(String cheminFichierPourArbre, String cheminDossierDestination) {
-        out.println("Création de l'arbre : " + cheminDossierDestination + "\\arbreHuffman.txt");
-        try {
-            OutilsGestionFichier.creerFichierArbreHuffman(cheminFichierPourArbre, cheminDossierDestination);
-        } catch (IOException e) {
-            out.println("Erreur : " + e.getMessage());
+            StatistiquesCompilateur.resumeDecompression(cheminFichierSource, cheminCompletFichierDestination, tempsDecompression);
+            ApplicationLigneCommande.afficherSeparateur();
+            out.println();
+        } catch (IOException erreur) {
+            out.println("Erreur lors de la décompression du fichier : " + erreur.getMessage());
         }
     }
 
@@ -107,10 +94,7 @@ public class ArgumentLigneCommande {
         out.println("     Compresse le fichier spécifié et enregistre le résultat dans le dossier de destination sous le nouveau nom de fichier.");
         out.println("----  decompresser <chemin_fichier_a_decompresser> <nom_dossier_destination> <nom_fichier>   ----");
         out.println("     Décompresse le fichier spécifié et enregistre le résultat dans le dossier de destination sous le nouveau nom de fichier.");
-        out.println("----  construire <chemin_fichier_base_arbre> <nom_dossier_destination>   ----");
-        out.println("     Construit l'arbre de Huffman à partir du fichier spécifié et enregistre la structure dans le dossier de destination.");
         out.println("--------  help   --------");
         out.println("     Affiche ce message d'aide, expliquant comment utiliser toutes les commandes disponibles.");
     }
-
 }

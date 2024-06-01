@@ -1,136 +1,114 @@
-/*
- * Pas de copyright, ni de droit d'auteur.
- * DecompressionHuffman.java                  27/05/2024
- */
 package fr.iutrodez.compilateurhuffman.huffman;
 
-import fr.iutrodez.compilateurhuffman.ApplicationLigneCommande;
-import fr.iutrodez.compilateurhuffman.outils.OutilsGestionChemin;
-import fr.iutrodez.compilateurhuffman.outils.OutilsGestionFichier;
-import fr.iutrodez.compilateurhuffman.outils.StatistiquesCompilateur;
+import fr.iutrodez.compilateurhuffman.outils.GestionFichier;
+import fr.iutrodez.compilateurhuffman.objets.Noeud;
 
-import java.util.Scanner;
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static java.lang.System.out;
 
-/**
- * Cette classe gère le processus de décompression des fichiers compressés avec l'algorithme de Huffman.
- * Elle permet à l'utilisateur de spécifier le fichier à décompresser, ainsi que l'emplacement et le nom du fichier décompressé.
- * Les méthodes de cette classe sont conçues pour être utilisées dans une application de ligne
- * de commande, offrant ainsi une interface simple pour les utilisateurs.
- *
- * @author ValMG, R. Xaviertaborda, J. Seychelles, B. Thenieres
- * @version 1.0
- */
 public class DecompressionHuffman {
 
-    /**
-     * Demande à l'utilisateur de spécifier le fichier à décompresser et gère le processus de décompression.
-     * @param args les arguments de la ligne de commande (optionnels)
-     */
-    public static void demanderFichierADecompresser(String[] args) {
-        boolean continuer = true;
-        while (continuer) {
-            try {
-                String cheminFichierADecompresser = promptCheminFichierADecompresser(args);
+    private String cheminFichierSource;
+    private String cheminFichierDestination;
 
-                if (ApplicationLigneCommande.demanderOuiOuNon("Voulez-vous sélectionner ce fichier pour la décompression ? (oui/non)")) {
-                    traiterFichierADecompresser(cheminFichierADecompresser);
-                }
-                continuer = ApplicationLigneCommande.demanderOuiOuNon("Voulez-vous recommencer le processus de décompression ? (oui/non)");
-                ApplicationLigneCommande.afficherSeparateur();
-            } catch (IOException e) {
-                out.println("Erreur: " + e.getMessage());
-                continuer = ApplicationLigneCommande.demanderOuiOuNon("Une erreur est survenue. Voulez-vous recommencer ? (oui/non)");
+    public DecompressionHuffman(String cheminFichierSource, String cheminFichierDestination) {
+        this.cheminFichierSource = cheminFichierSource;
+        this.cheminFichierDestination = cheminFichierDestination;
+    }
+
+    public void decompresserFichier() throws IOException {
+
+        String code = GestionFichier.readBinaryFileToString(cheminFichierSource);
+
+        int dernierSeparateur = cheminFichierSource.lastIndexOf("\\");
+        String cheminArbre  = cheminFichierSource.substring(0, dernierSeparateur + 1);
+        cheminArbre = cheminArbre + "arbreHuffman.txt";
+
+        File fichierArbreHuffman = new File(cheminArbre);
+        if (!fichierArbreHuffman.exists()) {
+            throw  new IOException("Erreur: fichier de l'arbre d'Huffman introuvable. " +
+                                   "Veuillez le placer dans le même répertoire que le " +
+                                   "fichier à décompresser avec le nom \"arbreHuffman.txt\"");
+        }
+
+        String[] arbreHuffman = GestionFichier.readAllFile(cheminArbre);
+
+        Map<Byte, String> codageHuffman = genererTableDeCode(arbreHuffman);
+        Noeud root = construireArbreHuffmanDepuisMap(codageHuffman);
+
+        byte[] bytes = transformerChaineEnBytes(code, root);
+        GestionFichier.ecritureFichierDestination(bytes, cheminFichierDestination);
+    }
+
+    private Map<Byte, String> genererTableDeCode(String[] arbre) {
+        Map<Byte, String> tableCode = new HashMap<Byte, String>();
+        for(String line : arbre) {
+            out.println(line);
+            if(!line.isBlank()) {
+                String[] lineSplit = line.split(";");
+                tableCode.put(Byte.valueOf(lineSplit[1].split("=")[1].trim()), lineSplit[0].split("=")[1].trim());
             }
         }
+        return tableCode;
     }
 
-    private static String promptCheminFichierADecompresser(String[] args) throws IOException {
-        ApplicationLigneCommande.afficherSeparateur();
-        out.print("""
-            Entrez le chemin du fichier à décompresser :
-            Exemple de chemin valide : "dossier1\\dossier2\\monFichier.bin"
-                                        dossier1/dossier2/monFichier.bin
-            ==>\s""");
-        String cheminFichierSource = OutilsGestionChemin.getCheminFichierSource(args);
-        ApplicationLigneCommande.afficherSeparateur();
-        out.println("Chemin du fichier spécifié : " + cheminFichierSource);
-        ApplicationLigneCommande.afficherSeparateur();
+    private static Noeud construireArbreHuffmanDepuisMap(Map<Byte, String> codeMap) {
+        Noeud racine = new Noeud();
 
-        OutilsGestionChemin.verifierCheminFichierSourceValide(cheminFichierSource, "bin");
-        return cheminFichierSource;
-    }
+        for (Map.Entry<Byte, String> entry : codeMap.entrySet()) {
+            byte caractere = entry.getKey();
+            String chemin = entry.getValue();
 
-    /**
-     * Traite le fichier à décompresser en demandant l'emplacement de destination et en générant le fichier décompressé.
-     *
-     * @param cheminFichierADecompresser le chemin du fichier à décompresser
-     * @throws IOException si une erreur survient lors de la manipulation des fichiers
-     */
-    private static void traiterFichierADecompresser(String cheminFichierADecompresser) throws IOException {
-        Scanner scanner = new Scanner(System.in);
-        ApplicationLigneCommande.afficherSeparateur();
+            Noeud courant = racine;
+            for (int i = 0; i < chemin.length(); i++) {
+                char direction = chemin.charAt(i);
 
-        String cheminFichierDestination = obtenirCheminDestination();
-        if (cheminFichierDestination == null) {
-            return;
-        }
-
-        String nomFichierDecompresse = obtenirNomFichierDestination(scanner, cheminFichierDestination);
-        if (nomFichierDecompresse == null) {
-            return;
-        }
-
-        ApplicationLigneCommande.afficherSeparateur();
-        String cheminCompletFichierDecompresse = cheminFichierDestination + "\\" + nomFichierDecompresse + ".txt";
-        OutilsGestionFichier.creerFichierDecompresse(cheminCompletFichierDecompresse, cheminFichierADecompresser);
-
-        ApplicationLigneCommande.afficherSeparateur();
-        long tempsDebut = System.currentTimeMillis();
-        StatistiquesCompilateur.resumeDecompression(cheminCompletFichierDecompresse, cheminFichierADecompresser, tempsDebut);
-        ApplicationLigneCommande.afficherSeparateur();
-
-    }
-
-    private static String obtenirCheminDestination() {
-        Scanner scanner = new Scanner(System.in);
-        String cheminDestination;
-        boolean continuer = true;
-
-        while (continuer) {
-            try {
-                out.println("Où voulez-vous enregistrer le fichier une fois décompilé ? (Entrez le chemin complet du répertoire)");
-                cheminDestination = OutilsGestionChemin.getCheminDestination(scanner);
-                return OutilsGestionChemin.enleverGuillemet(cheminDestination);
-            } catch (RuntimeException e) {
-                out.println("Erreur : " + e.getMessage());
-                if (!ApplicationLigneCommande.demanderOuiOuNon("Voulez-vous continuer ? (oui/non)")) {
-                    continuer = false;
+                if (direction == '0') {
+                    if (courant.getGauche() == null) {
+                        courant.setGauche(new Noeud());
+                    }
+                    courant = courant.getGauche();
+                } else if (direction == '1') {
+                    if (courant.getDroite() == null) {
+                        courant.setDroite(new Noeud());
+                    }
+                    courant = courant.getDroite();
                 }
             }
+
+            courant.setCaractere(caractere);
         }
-        return null;
+        return racine;
     }
 
-    private static String obtenirNomFichierDestination(Scanner scanner, String cheminFichierDestination) {
-        String nomFichier = null;
-        boolean continuer = true;
+    private static byte[] transformerChaineEnBytes(String bits, Noeud racine) {
+        List<Byte> byteList = new ArrayList<>();
+        Noeud courant = racine;
+        for (int i = 0; i < bits.length(); i++) {
+            char bit = bits.charAt(i);
+            if (bit == '0') {
+                courant = courant.getGauche();
+            } else if (bit == '1') {
+                courant = courant.getDroite();
+            }
 
-        while (continuer) {
-            try {
-                out.println("Quel nom voulez-vous donner à votre fichier une fois décompilé ?");
-                nomFichier = OutilsGestionChemin.getNomFichierDestinationUnique(scanner, cheminFichierDestination);
-                continuer = false;
-            } catch (RuntimeException e) {
-                out.println("Erreur : " + e.getMessage() + " Veuillez essayer un autre nom.");
-                if (!ApplicationLigneCommande.demanderOuiOuNon("Voulez-vous proposer un nouveau nom ? (oui/non)")) {
-                    out.println("Annulation de la décompression.");
-                    ApplicationLigneCommande.afficherSeparateur();
-                }
+            if (courant.isFeuille()) {
+                byteList.add(courant.getCharacter());
+                courant = racine;
             }
         }
-        return nomFichier;
+
+        byte[] result = new byte[byteList.size()];
+        for (int i = 0; i < byteList.size(); i++) {
+            result[i] = byteList.get(i);
+        }
+
+        return result;
     }
 }

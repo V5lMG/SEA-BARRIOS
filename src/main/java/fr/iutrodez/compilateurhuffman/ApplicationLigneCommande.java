@@ -4,11 +4,12 @@
  */
 package fr.iutrodez.compilateurhuffman;
 
-import fr.iutrodez.compilateurhuffman.huffman.CreerArbreHuffman;
 import fr.iutrodez.compilateurhuffman.huffman.CompressionHuffman;
 import fr.iutrodez.compilateurhuffman.huffman.DecompressionHuffman;
+import fr.iutrodez.compilateurhuffman.outils.GestionPrompt;
+import fr.iutrodez.compilateurhuffman.outils.StatistiquesCompilateur;
 
-import java.util.Scanner;
+import java.io.IOException;
 
 import static java.lang.System.out;
 
@@ -17,7 +18,6 @@ import static java.lang.System.out;
  * TODO : revoir l'orienté objet
  * TODO : JavaDoc et explication code / revoir variable
  *
- * TODO : Empêcher les caractères non UTF8
  * TODO : test UNITAIRE
  */
 
@@ -31,55 +31,111 @@ import static java.lang.System.out;
  * @version 1.0
  */
 public class ApplicationLigneCommande {
-    /**
-     * Point d'entrée principal de l'application en ligne de commande.
-     * Affiche un menu d'options à l'utilisateur et gère les choix de l'utilisateur.
-     *
-     * @param args les arguments de la ligne de commande (optionnels)
-     */
+
+    public static GestionPrompt gestionnaireFichier = new GestionPrompt();
+
     public static void main(String[] args) {
-        afficherSeparateur();
-        out.println("L'application est lancée.");
-
-        if (args.length > 0) {
-            ArgumentLigneCommande.gererArgumentsEnLigneCommande(args);
-        } else {
-            boolean continuer = true;
-            while (continuer) {
-                afficherMenu();
-                int choix = demanderChoixUtilisateur();
-
-                switch (choix) {
-                    case 1:
-                        CompressionHuffman.demanderFichierACompresser(args);
-                        break;
-                    case 2:
-                        DecompressionHuffman.demanderFichierADecompresser(args);
-                        break;
-                    case 3:
-                        CreerArbreHuffman.creerSeulementArbre(args);
-                        break;
-                    case 4:
-                        continuer = false;
-                        break;
-                    default:
-                        out.println("Choix invalide. Veuillez saisir un numéro valide.");
-                        break;
-                }
+        try {
+            if (args.length > 0) {
+                ArgumentLigneCommande.gererArgumentsEnLigneCommande(args);
+            } else {
+                menu();
             }
-            afficherSeparateur();
-            out.println("Fin de l'application.");
-            afficherSeparateur();
+        } catch (Exception e) {
+            out.println("Erreur durant l'exécution de l'application: " + e.getMessage());
         }
     }
 
+    /**
+     * Point d'entrée principal de l'application en ligne de commande.
+     * Affiche un menu d'options à l'utilisateur et gère les choix de l'utilisateur.
+     */
+    public static void menu() {
+        afficherSeparateur();
+        out.println("L'application est lancée.");
+
+        boolean continuer = true;
+        while (continuer) {
+            afficherMenu();
+            int choix = demanderChoixUtilisateur();
+
+            switch (choix) {
+                case 1:
+                    lancerCompression();
+                    break;
+                case 2:
+                    lancerDecompression();
+                    break;
+                case 3:
+                    continuer = false;
+                    break;
+                default:
+                    out.println("Choix invalide. Veuillez saisir un numéro valide.");
+                    break;
+            }
+        }
+        afficherSeparateur();
+        out.println("Fin de l'application.");
+        afficherSeparateur();
+    }
+
+    /**
+     * TODO
+     */
+    private static void lancerCompression() {
+        String source = gestionnaireFichier.getFichierSource("txt");
+        if (source != null) {
+            String destination = gestionnaireFichier.getFichierDestination("bin");
+            if (destination != null) {
+                CompressionHuffman compresser = new CompressionHuffman(source, destination);
+                try {
+                    compresser.compresserFichier();
+
+                    afficherSeparateur();
+                    StatistiquesCompilateur.resumeCompression(source, destination);
+                    afficherSeparateur();
+                    out.println();
+                } catch (IOException erreur) {
+                    out.println("Erreur lors de la compression du fichier : " + erreur.getMessage());
+                }
+            }
+        }
+    }
+
+    /**
+     * TODO
+     */
+    private static void lancerDecompression() {
+        String source = gestionnaireFichier.getFichierSource("bin");
+        if (source != null) {
+            String destination = gestionnaireFichier.getFichierDestination("txt");
+            if (destination != null) {
+                DecompressionHuffman decompresser = new DecompressionHuffman(source, destination);
+                try {
+                    long tempsDecompression = System.currentTimeMillis();
+                    decompresser.decompresserFichier();
+
+                    afficherSeparateur();
+                    StatistiquesCompilateur.resumeDecompression(source, destination, tempsDecompression);
+                    afficherSeparateur();
+                    out.println();
+                } catch (IOException erreur) {
+                    out.println("Erreur lors de la décompression du fichier : " + erreur.getMessage());
+                }
+            }
+        }
+    }
+
+
+    /**
+     * TODO
+     */
     private static void afficherMenu() {
         afficherSeparateur();
         out.println("Choisissez une action :");
         out.println("1. Compression de fichier");
         out.println("2. Décompression de fichier");
-        out.println("3. Créer un arbre d'Huffman");
-        out.println("4. Quitter l'application");
+        out.println("3. Quitter l'application");
         afficherSeparateur();
     }
 
@@ -109,20 +165,6 @@ public class ApplicationLigneCommande {
             out.println("Veuillez saisir un numéro valide.");
             return demanderChoixUtilisateur();
         }
-    }
-
-    public static boolean demanderOuiOuNon(String message) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println(message);
-
-        String reponse = scanner.nextLine().trim().toLowerCase();
-        while (!reponse.equals("oui") && !reponse.equals("non")) {
-            System.out.println("Veuillez saisir une option valide (oui/non).");
-            System.out.println(message);
-            reponse = scanner.nextLine().trim().toLowerCase();
-        }
-
-        return reponse.equals("oui");
     }
 
     /**
