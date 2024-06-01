@@ -1,5 +1,6 @@
-/**
- * 
+/*
+ * Pas de copyright, ni de droit d'auteur.
+ * GestionFichier.java                       27/05/2024
  */
 package fr.iutrodez.compilateurhuffman.outils;
 
@@ -13,97 +14,209 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import static java.lang.System.err;
 
 /**
- * 
+ * Classe de gestion des fichiers pour les opérations de lecture et écriture
+ * nécessaires à la compression et décompression de Huffman.
  */
 public class GestionFichier {
 
-	public static String[] readAllFile(String filepath) {
-		
-		String[] lines = new String[0];
-		
-		try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-            	lines = Arrays.copyOf(lines, lines.length + 1);
-                lines[lines.length-1] = line;
+    /**
+     * Lit tout le contenu d'un fichier texte et le renvoie sous forme
+     * de tableau de chaînes de caractères.
+     *
+     * @param cheminFichier Le chemin du fichier à lire.
+     * @return Un tableau de chaînes contenant toutes les lignes du fichier.
+     */
+    public static String[] lireToutLeFichier(String cheminFichier) {
+        /* ArrayList décrite dans la classe CompressionHuffman*/
+        List<String> lignes = new ArrayList<>();
+
+        try (BufferedReader lecteur = new BufferedReader(
+                new FileReader(cheminFichier))) {
+            String ligne;
+            while ((ligne = lecteur.readLine()) != null) {
+                lignes.add(ligne);
             }
         } catch (IOException e) {
-            err.println("Une erreur est survenue lors de la lecture du fichier : " + e.getMessage());
+            err.println("Erreur lors de la lecture du fichier : "
+                        + e.getMessage());
         }
-		return lines;
-	}
-	
-	public static void ecrireArbreHuffman(String filePath, String[] arbreHuffman) {
-		
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            for (String line : arbreHuffman) {
-                writer.write(line);
+
+        return lignes.toArray(new String[0]);
+    }
+
+    /**
+     * Écrit les lignes d'un arbre de Huffman dans un fichier texte.
+     *
+     * @param cheminFichier Le chemin du fichier à écrire.
+     * @param arbreHuffman  Un tableau de chaînes représentant les lignes
+     *                      de l'arbre de Huffman.
+     */
+    public static void ecrireArbreHuffman(String cheminFichier,
+                                          String[] arbreHuffman) {
+
+        try (BufferedWriter writer = new BufferedWriter(
+                                           new FileWriter(cheminFichier))) {
+
+            for (String ligne : arbreHuffman) {
+                writer.write(ligne);
                 writer.newLine();
             }
         } catch (IOException e) {
-            err.println("Une erreur est survenue lors de l'écriture dans le fichier : " + e.getMessage());
-        }
-	}
-	
-	public static void ecrireChaineBinaireDansFichier(String binaryString, String filePath) throws IOException {
-        try (FileOutputStream fos = new FileOutputStream(filePath);
-             DataOutputStream dos = new DataOutputStream(fos)) {
-            dos.writeInt(binaryString.length());
-            int byteLength = (binaryString.length() + 7) / 8;
-            byte[] byteArray = new byte[byteLength];
-
-            for (int i = 0; i < binaryString.length(); i++) {
-                if (binaryString.charAt(i) == '1') {
-                    byteArray[i / 8] |= (byte) (128 >> (i % 8));
-                }
-            }
-
-            dos.write(byteArray);
+            err.println("Erreur lors de l'écriture dans le fichier : "
+                        + e.getMessage());
         }
     }
-	
-	public static String lireFichierBinaireEnChaine(String filePath) throws IOException {
-        StringBuilder binaryString = new StringBuilder();
 
-        try (FileInputStream fis = new FileInputStream(filePath);
-             DataInputStream dis = new DataInputStream(fis)) {
-            int bitLength = dis.readInt();
-            int byteLength = (bitLength + 7) / 8;
-            byte[] byteArray = new byte[byteLength];
-            dis.readFully(byteArray);
+    /**
+     * Écrit une chaîne binaire dans un fichier binaire.
+     *
+     * @param chaineBinaire La chaîne binaire à écrire.
+     * @param cheminFichier Le chemin du fichier de destination.
+     * @throws IOException Si une erreur d'entrée/sortie se produit.
+     */
+    public static void ecrireChaineBinaireDansFichier(String chaineBinaire,
+                                                      String cheminFichier)
+            throws IOException {
 
-            for (int i = 0; i < bitLength; i++) {
-                int byteIndex = i / 8;
-                int bitIndex = i % 8;
-                if ((byteArray[byteIndex] & (128 >> bitIndex)) != 0) {
-                    binaryString.append('1');
+        /*
+         * Utilisation de streams pour écrire les données dans un fichier :
+         * - FileOutputStream : un flux d'octets utilisé pour écrire des données
+         *                      dans un fichier.
+         * - DataOutputStream : un flux de données utilisé pour écrire des
+         *                      données primitives de manière portable.
+         *                      Il permet d'écrire des types de données tels
+         *                      que des int et des bytes dans le flux de sortie.
+         */
+        try (FileOutputStream streamDeSortie = new FileOutputStream(
+                                                            cheminFichier);
+             DataOutputStream streamDeDonnees = new DataOutputStream(
+                                                             streamDeSortie
+                                                                    )) {
+
+            streamDeDonnees.writeInt(chaineBinaire.length());
+
+            int longueurOctet = (chaineBinaire.length() + 7) / 8;
+            byte[] tableauOctets = new byte[longueurOctet];
+            for (int i = 0; i < chaineBinaire.length(); i++) {
+                if (chaineBinaire.charAt(i) == '1') {
+                    /*
+                     * Cette ligne convertit un bit de la chaîne binaire en
+                     * son équivalent dans un tableau d'octets.
+                     *
+                     * - `i / 8` : Calcule l'index de l'octet où placer le bit.
+                     *   Chaque octet contient 8 bits, donc diviser l'index du
+                     *   bit par 8 donne l'index de l'octet.
+                     *
+                     * - `1 << (7 - (i % 8))` : Utilise le décalage à gauche
+                     *   pour positionner un bit 1 à la position correcte dans
+                     *   l'octet. `(i % 8)` donne la position du bit dans
+                     *   l'octet (0 à 7), et `7 - (i % 8)` calcule la position
+                     *   de gauche à droite.
+                     *
+                     * - `|= (byte)` : Effectue un OR bit à bit entre l'octet
+                     *   actuel et le résultat du décalage pour positionner
+                     *   le bit sans altérer les autres bits.
+                     */
+                    tableauOctets[i / 8] |= (byte) (1 << (7 - (i % 8)));
+                }
+            }
+            streamDeDonnees.write(tableauOctets);
+        }
+    }
+
+    /**
+     * Lit le contenu d'un fichier binaire et le renvoie sous forme de chaîne.
+     *
+     * @param cheminFichier Le chemin du fichier à lire.
+     * @return Une chaîne représentant le contenu binaire du fichier.
+     * @throws IOException Si une erreur d'entrée/sortie se produit.
+     */
+    public static String lireFichierBinaireEnChaine(String cheminFichier)
+            throws IOException {
+        /*
+         * Utilisation de streams pour lire les données depuis un fichier.
+         */
+        StringBuilder chaineBinaire = new StringBuilder();
+
+        try (FileInputStream streamDeFichier = new FileInputStream(
+                cheminFichier
+        );
+             DataInputStream streamDeDonnees = new DataInputStream(
+                     streamDeFichier
+             )) {
+
+            int longueurBits = streamDeDonnees.readInt();
+            int longueurOctets = (longueurBits + 7) / 8;
+            byte[] tableauOctets = new byte[longueurOctets];
+            streamDeDonnees.readFully(tableauOctets);
+
+            for (int i = 0; i < longueurBits; i++) {
+                int indexOctet = i / 8;
+                int indexBit = i % 8;
+
+                /*
+                 * Cette condition vérifie si le bit à la position
+                 * (indexOctet * 8 + indexBit) est 1 ou 0.
+                 *
+                 * - `(128 >> indexBit)` : Déplace le bit 1 vers la droite.
+                 *   Par exemple, si indexBit est 0, cela donne 128
+                 *   (10000000 en binaire).
+                 *   Si indexBit est 1, cela donne 64 (01000000 en binaire).
+                 *
+                 * - `tableauOctets[indexOctet] & (128 >> indexBit)` :
+                 *   Effectue un AND bit à bit entre l'octet et le masque.
+                 *   Si le résultat est différent de 0, cela signifie que le
+                 *   bit à cette position est 1.
+                 *
+                 * - `chaineBinaire.append('1')` ou `chaineBinaire.append('0')`:
+                 *   Ajoute '1' ou '0' à la chaîne binaire en fonction du
+                 *   résultat du test précédent.
+                 */
+                if ((tableauOctets[indexOctet] & (128 >> indexBit)) != 0) {
+                    chaineBinaire.append('1');
                 } else {
-                    binaryString.append('0');
+                    chaineBinaire.append('0');
                 }
             }
         }
+        return chaineBinaire.toString();
+    }
 
-        return binaryString.toString();
-    }
-	
-	public static byte[] readFileToBytes(String filePath) throws IOException {
-        FileInputStream fis = new FileInputStream(filePath);
-        byte[] bytes = fis.readAllBytes();
-        fis.close();
-        return bytes;
-    }
-	
-	public static void ecritureFichierDestination(byte[] data, String filePath) {
-        try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath))) {
-            bos.write(data);
-        } catch (IOException erreur) {
-            erreur.printStackTrace();
+    /**
+     * Lit le contenu d'un fichier et le renvoie sous forme de tableau de bytes.
+     *
+     * @param cheminFichier Le chemin du fichier à lire.
+     * @return Un tableau de bytes contenant le contenu du fichier.
+     * @throws IOException Si une erreur d'entrée/sortie se produit.
+     */
+    public static byte[] lireFichierEnBytes(String cheminFichier)
+            throws IOException {
+        try (FileInputStream streamEntreeFichier =
+                                          new FileInputStream(cheminFichier)) {
+            return streamEntreeFichier.readAllBytes();
         }
     }
-	
+
+    /**
+     * Écrit un tableau de bytes dans un fichier.
+     *
+     * @param donnees       Le tableau de bytes à écrire.
+     * @param cheminFichier Le chemin du fichier de destination.
+     */
+    public static void ecrireFichierDestination(byte[] donnees,
+                                                String cheminFichier) {
+        try (BufferedOutputStream streamDeSortie = new BufferedOutputStream(
+                new FileOutputStream(cheminFichier))) {
+            streamDeSortie.write(donnees);
+        } catch (IOException e) {
+            err.println("Erreur lors de l'écriture dans le fichier : "
+                        + e.getMessage());
+        }
+    }
 }

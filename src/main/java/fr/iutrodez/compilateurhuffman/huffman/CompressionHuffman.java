@@ -77,7 +77,7 @@ public class CompressionHuffman {
      *                     ou des données des codes Huffman.
      */
     public void compresserFichier() throws IOException {
-        byte[] chaine = GestionFichier.readFileToBytes(cheminFichierSource);
+        byte[] chaine = GestionFichier.lireFichierEnBytes(cheminFichierSource);
         Map<Byte, Integer> occurencesDesCaracteres =
                                                getFrequenceDesBytes(chaine);
 

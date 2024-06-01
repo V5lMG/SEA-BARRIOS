@@ -129,7 +129,6 @@ public class ApplicationLigneCommande {
             compresser.compresserFichier();
             afficherSeparateur();
             StatistiquesCompilateur.resumeCompression(source, destination);
-            afficherSeparateur();
         } catch (IOException erreur) {
             out.println("Erreur lors de la compression du fichier : "
                         + erreur.getMessage());

@@ -14,8 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.lang.System.out;
-
 /**
  * Classe permettant la décompression de fichiers
  * utilisant l'algorithme de Huffman.
@@ -95,13 +93,13 @@ public class DecompressionHuffman {
                                    + "\"arbreHuffman.txt\"");
         }
 
-        String[] arbreHuffman = GestionFichier.readAllFile(cheminArbre);
+        String[] arbreHuffman = GestionFichier.lireToutLeFichier(cheminArbre);
         Map<Byte, String> codageHuffman = genererTableDeCode(arbreHuffman);
         Noeud racine = construireArbreHuffmanDepuisMap(codageHuffman);
 
         byte[] bytes = transformerChaineEnBytes(code, racine);
-        GestionFichier.ecritureFichierDestination(bytes,
-                                                  cheminFichierDestination);
+        GestionFichier.ecrireFichierDestination(bytes,
+                                                cheminFichierDestination);
     }
 
     /**
