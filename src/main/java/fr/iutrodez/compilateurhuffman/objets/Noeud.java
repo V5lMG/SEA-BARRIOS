@@ -41,11 +41,11 @@ public class Noeud {
     /**
      * Construit un nœud avec un caractère et une fréquence spécifiés.
      *
-     * @param key Le caractère représenté par ce nœud.
+     * @param cle Le caractère représenté par ce nœud.
      * @param frequence La fréquence d'apparition de ce caractère.
      */
-    public Noeud(byte key, int frequence) {
-        this.caractere = key;
+    public Noeud(byte cle, int frequence) {
+        this.caractere = cle;
         this.frequence = frequence;
     }
 
@@ -192,44 +192,4 @@ public class Noeud {
         generationRecursiveCodeHuffman(this, "", codes);
         return codes;
     }
-
-    /* Méthode pour afficher un arbre de Huffman en ligne de commande
-
-    public void afficherArbre() {
-        afficherArbreRecursive(this, "");
-    }
-
-
-    /**
-     * Affiche récursivement l'arbre de Huffman en partant du noeud donné.
-     * Chaque niveau de l'arbre est indenté pour refléter
-     * la profondeur des noeuds.
-     *
-     * @param noeud Le nœud courant à afficher.
-     * @param indent La chaîne d'indentation pour refléter la profondeur du
-                     nœud actuel.
-     *\
-    private void afficherArbreRecursive(Noeud noeud, String indent) {
-        if (noeud == null) {
-            return;
-        }
-
-        if (noeud.hasEnfant()) {
-            out.println(indent + "Feuille (caractere : "
-                                           + (char) noeud.getCharacter()
-                               + ", frequence : "
-                                           + noeud.getValue() + ")");
-        } else {
-            out.println(indent + "Noeud (frequence: " + noeud.getValue() + ")");
-            if (noeud.getGauche() != null) {
-                out.println(indent + "  Gauche : ");
-                afficherArbreRecursive(noeud.getGauche(), indent + "  ");
-            }
-            if (noeud.getDroite() != null) {
-                out.println(indent + "  Droite : ");
-                afficherArbreRecursive(noeud.getDroite(), indent + "  ");
-            }
-        }
-    }
-    */
 }
