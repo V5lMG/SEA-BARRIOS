@@ -79,43 +79,12 @@ public class CompressionHuffman {
     public void compresserFichier() throws IOException {
         byte[] chaine = GestionFichier.lireFichierEnBytes(cheminFichierSource);
         Map<Byte, Integer> occurencesDesCaracteres =
-                                               getFrequenceDesBytes(chaine);
+                                                  getFrequenceDesBytes(chaine);
 
-        /* Calcul du nombre total d'occurrences de tous les caractères
-         * dans le fichier source.
-         * Cette opération est réalisée en plusieurs étapes
-         * utilisant les flux (streams) Java :
-         */
-        int totalOccurrences =
-                /* Créer un flux (stream) à partir des valeurs de la map.
-                 * Chaque valeur dans cette map représente la fréquence
-                 * d'occurrence d'un byte spécifique dans le fichier source.
-                 */
-                occurencesDesCaracteres.values().stream()
-                /* Convertir le Stream<Integer> en un IntStream,
-                 * permettant des opérations sur des entiers.
-                 * La méthode `intValue()` est une méthode référence
-                 * qui est utilisée pour convertir un Integer en int.
-                 */
-                .mapToInt(Integer::intValue)
-                /* Additionner tous les entiers dans le IntStream
-                 * pour obtenir le total des occurrences.
-                 * La méthode `sum()` est une opération de réduction
-                 * qui combine tous les éléments du flux pour produire
-                 * une seule valeur.
-                 */
-                .sum();
-
-        for (Entry<Byte, Integer> entry : occurencesDesCaracteres.entrySet()) {
-            byte cle = entry.getKey();
-            int occurrences = entry.getValue();
-            double frequence = 100 * ((double) occurrences / totalOccurrences);
-            char symbole = (char) cle;
-            out.printf(    "Caractère : %c ; "
-                       + "Occurrences : %d ; "
-                       +  " Fréquence : %.2f%%\n",
-                       symbole, occurrences, frequence);
-        }
+        Map<Byte, Integer> occurencesTriees = trierOccurences(
+                                                        occurencesDesCaracteres
+                                                             );
+        afficherOccurencesTriees(occurencesTriees);
 
         Noeud[] tableau = new Noeud[occurencesDesCaracteres.size()];
         int entree = 0;
@@ -128,16 +97,6 @@ public class CompressionHuffman {
         Noeud racine = construireArbre(tableau);
         Map<Byte, String> codageHuffman = racine.genererTableDeCodesHuffman();
 
-        String[] tableHuffman = new String[codageHuffman.size()];
-        int occ = 0;
-        for(Entry<Byte, String> code : codageHuffman.entrySet()) {
-            byte key = code.getKey();
-            String value = code.getValue();
-            tableHuffman[occ++] =   "codeHuffman = " + value + " ; "
-                                  + "encode = "      + key + " ; "
-                                  + "symbole = "     + (char) key;
-        }
-
         String codage = encoder(chaine, codageHuffman);
         GestionFichier.ecrireChaineBinaireDansFichier(codage,
                                                       cheminFichierDestination);
@@ -147,8 +106,54 @@ public class CompressionHuffman {
                                           .substring(0, dernierSeparateur + 1);
         cheminFichierDestination = cheminDossier  + "arbreHuffman.txt";
 
-        GestionFichier.ecrireArbreHuffman(cheminFichierDestination,
-                                          tableHuffman);
+        ecrireArbreHuffmanTrie(cheminFichierDestination, codageHuffman);
+    }
+
+    /**
+     * Affiche les occurrences des caractères triées
+     * par ordre décroissant de fréquence.
+     *
+     * @param occurencesTriees La map des occurrences triée.
+     */
+    private void afficherOccurencesTriees(Map<Byte, Integer> occurencesTriees) {
+        out.println("Occurrences des caractères :");
+
+        int totalOccurrences = occurencesTriees.values()
+                                               .stream()
+                                               .mapToInt(Integer::intValue)
+                                               .sum();
+
+        for (Entry<Byte, Integer> entry : occurencesTriees.entrySet()) {
+            byte cle = entry.getKey();
+            int occurrences = entry.getValue();
+            double frequence = (double) occurrences / totalOccurrences;
+            char symbole = (char) cle;
+            out.printf("Caractère : %c ; "
+                       + "Occurrences : %d ; "
+                       + "Fréquence : %.4f\n",
+                       symbole, occurrences, frequence);
+        }
+    }
+
+    /**
+     * Trie les occurrences des caractères par ordre décroissant de fréquence.
+     *
+     * @param occurencesDesCaracteres La map des occurrences à trier.
+     * @return Une LinkedHashMap triée par ordre décroissant de fréquence.
+     */
+    private Map<Byte, Integer> trierOccurences(
+                                      Map<Byte, Integer> occurencesDesCaracteres
+                                               ) {
+
+        List<Entry<Byte, Integer>> list =
+                new ArrayList<>(occurencesDesCaracteres.entrySet());
+        list.sort(Entry.<Byte, Integer>comparingByValue().reversed());
+
+        Map<Byte, Integer> sortedMap = new LinkedHashMap<>();
+        for (Entry<Byte, Integer> entry : list) {
+            sortedMap.put(entry.getKey(), entry.getValue());
+        }
+        return sortedMap;
     }
 
     /**
@@ -230,6 +235,61 @@ public class CompressionHuffman {
             noeuds.add(parent);
         }
         return noeuds.get(0);
+    }
+
+    /**
+     * Écrit l'arbre de Huffman trié dans un fichier texte.
+     *
+     * @param cheminFichierDestination Le chemin du fichier où écrire l'arbre.
+     * @param codageHuffman            La map des codes Huffman à écrire.
+     */
+    private void ecrireArbreHuffmanTrie(String cheminFichierDestination,
+                                        Map<Byte, String> codageHuffman) {
+
+        List<Entry<Byte, String>> arbreTrie = trierArbreHuffman(codageHuffman);
+        String[] tableHuffmanTrie = new String[arbreTrie.size()];
+        int occ = 0;
+        for (Entry<Byte, String> code : arbreTrie) {
+            byte key = code.getKey();
+            String value = code.getValue();
+            tableHuffmanTrie[occ++] = "codeHuffman = " + value + " ;"
+                                      + " encode = " + key + " ;"
+                                      + " symbole = " + (char) key;
+        }
+        GestionFichier.ecrireArbreHuffman(cheminFichierDestination,
+                                          tableHuffmanTrie);
+    }
+
+    /**
+     * Trie les entrées de la table de codes Huffman par longueur de code.
+     *
+     * @param codageHuffman La map des codes Huffman à trier.
+     * @return Une liste d'entrées triées par longueur de code.
+     */
+    private List<Entry<Byte, String>> trierArbreHuffman(Map<Byte,
+                                                        String> codageHuffman) {
+        List<Entry<Byte, String>> list =
+                new ArrayList<>(codageHuffman.entrySet());
+
+        /*
+         * Trie la liste d'entrées de la map en fonction de la valeur (String),
+         * d'abord par la longueur de la chaîne (ordre croissant),
+         * puis par ordre lexicographique (ordre alphabétique) en cas d'égalité.
+         *
+         * - `Entry.comparingByValue(...)` : Crée un comparateur qui compare
+         *   les entrées de la map en utilisant leurs valeurs.
+         *
+         * - `Comparator.comparingInt(String::length)` : Premier comparateur
+         *   qui compare les chaînes en fonction de leur longueur.
+         *
+         * - `thenComparing(String::compareTo)` : Second comparateur qui compare
+         *   les chaînes de manière lexicographique (alphabétique) si elles
+         *   ont la même longueur.
+         */
+        list.sort(Entry.comparingByValue(
+                Comparator.comparingInt(String::length)
+                        .thenComparing(String::compareTo)));
+        return list;
     }
 
     /**

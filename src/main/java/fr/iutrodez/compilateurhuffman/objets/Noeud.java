@@ -13,6 +13,9 @@ import java.util.Map;
  * un enfant gauche et un enfant droit.
  * Cette classe inclut des méthodes pour générer des codes de Huffman
  * pour les feuilles de l'arbre.
+ *
+ * @author ValMG, R. Xaviertaborda, J. Seychelles, B. Thenieres
+ * @version 1.0
  */
 public class Noeud {
     /**

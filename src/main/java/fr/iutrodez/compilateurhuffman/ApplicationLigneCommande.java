@@ -13,10 +13,6 @@ import java.io.IOException;
 
 import static java.lang.System.out;
 
-/*
- * TODO Trier les occurences et le fichier huffman
- */
-
 /**
  * Classe principale permettant de gérer l'application de compression et de
  * décompression de fichiers en ligne de commande.

@@ -22,6 +22,9 @@ import static java.lang.System.err;
 /**
  * Classe de gestion des fichiers pour les opérations de lecture et écriture
  * nécessaires à la compression et décompression de Huffman.
+ *
+ * @author ValMG, R. Xaviertaborda, J. Seychelles, B. Thenieres
+ * @version 1.0
  */
 public class GestionFichier {
 

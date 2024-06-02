@@ -17,6 +17,9 @@ import static java.lang.System.out;
 /**
  * Classe de gestion des invites utilisateur pour les opérations
  * de compression et décompression de fichiers.
+ *
+ * @author ValMG, R. Xaviertaborda, J. Seychelles, B. Thenieres
+ * @version 1.0
  */
 public class GestionPrompt {
 
