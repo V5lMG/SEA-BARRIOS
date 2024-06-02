@@ -24,7 +24,7 @@ import static java.lang.System.out;
 public class GestionPrompt {
 
     /** Gestionnaire d'URL pour les fichiers */
-    GestionUrl gestionUrlFichier = new GestionUrl();
+    private GestionUrl gestionUrlFichier = new GestionUrl();
 
     /**
      * Demande le chemin du fichier source à l'utilisateur.

@@ -266,8 +266,9 @@ public class CompressionHuffman {
      * @param codageHuffman La map des codes Huffman à trier.
      * @return Une liste d'entrées triées par longueur de code.
      */
-    private List<Entry<Byte, String>> trierArbreHuffman(Map<Byte,
-                                                        String> codageHuffman) {
+    private List<Entry<Byte, String>> trierArbreHuffman(
+                                                 Map<Byte,String> codageHuffman
+                                                       ) {
         List<Entry<Byte, String>> list =
                 new ArrayList<>(codageHuffman.entrySet());
 

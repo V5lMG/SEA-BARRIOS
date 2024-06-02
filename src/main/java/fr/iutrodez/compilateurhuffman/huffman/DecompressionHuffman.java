@@ -144,8 +144,9 @@ public class DecompressionHuffman {
      *                le chemin dans l'arbre de Huffman.
      * @return La racine de l'arbre de Huffman reconstruit.
      */
-    private static Noeud construireArbreHuffmanDepuisMap(Map<Byte,
-                                                         String> codeMap) {
+    private static Noeud construireArbreHuffmanDepuisMap(
+                                                      Map<Byte,String> codeMap
+                                                        ) {
         Noeud racine = new Noeud();
 
         /*
@@ -218,7 +219,7 @@ public class DecompressionHuffman {
                                         : noeudCourant.getDroite();
 
             if (noeudCourant.isFeuille()) {
-                byteList.add(noeudCourant.getCharacter());
+                byteList.add(noeudCourant.getCaractere());
                 noeudCourant = racine;
             }
         }

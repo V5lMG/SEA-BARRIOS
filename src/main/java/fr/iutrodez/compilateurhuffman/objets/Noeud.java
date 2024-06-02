@@ -81,7 +81,7 @@ public class Noeud {
      *
      * @return Le caractère représenté par ce nœud.
      */
-    public byte getCharacter() {
+    public byte getCaractere() {
         return caractere;
     }
 
@@ -165,7 +165,7 @@ public class Noeud {
         }
 
         if (!noeud.hasEnfant()) {
-            codes.put(noeud.getCharacter(), chemin);
+            codes.put(noeud.getCaractere(), chemin);
             return;
         }
 

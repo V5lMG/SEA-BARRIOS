@@ -67,7 +67,7 @@ public class ApplicationLigneCommande {
      * Des validations et des messages d'erreur sont présentés
      * si un choix invalide est effectué.
      */
-    public static void menu() {
+    private static void menu() {
         afficherSeparateur();
         out.println("L'application est lancée.");
 
