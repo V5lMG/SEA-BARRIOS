@@ -38,7 +38,6 @@ public class CompressionHuffman {
      */
     private String cheminFichierDestination;
 
-
     /**
      * Constructeur qui initialise les chemins du fichier source
      * et du fichier destination.
@@ -55,58 +54,53 @@ public class CompressionHuffman {
         this.cheminFichierDestination = cheminFichierDestination;
     }
 
-
-    /**
-     * Compresse le fichier spécifié en utilisant l'algorithme de Huffman.
-     * Cette méthode lit le fichier source,
-     * calcule la fréquence de chaque byte, construit l'arbre de Huffman,
-     * génère les codes de Huffman,
-     * et écrit le fichier compressé ainsi qu'un fichier de référence des codes.
-     * </br>
-     * Le processus comprend plusieurs étapes :
-     * 1. Lecture du fichier et calcul des fréquences des caractères.
-     * 2. Construction de l'arbre de Huffman à partir des fréquences.
-     * 3. Génération de la table des codes de Huffman.
-     * 4. Encodage du contenu du fichier source avec les codes d'Huffman.
-     * 5. Écriture du fichier compressé et des codes de Huffman
-     *    dans un fichier texte séparé.
-     *
-     * @throws IOException Si une erreur d'entrée/sortie se produit lors
-     *                     de la lecture du fichier source,
-     *                     de l'écriture du fichier compressé
-     *                     ou des données des codes Huffman.
-     */
     public void compresserFichier() throws IOException {
-        byte[] chaine = GestionFichier.lireFichierEnBytes(cheminFichierSource);
-        Map<Byte, Integer> occurencesDesCaracteres =
-                                                  getFrequenceDesBytes(chaine);
+        byte[] chaine = GestionFichier.recupererOctets(cheminFichierSource);
+        Map<Byte, Integer> occurencesDesCaracteres = preparerDonnees(chaine);
+        Map<Byte, String> codageHuffman =
+                                     compresserDonnees(occurencesDesCaracteres);
+        String codage = convertirOctetsEnCodeHuffman(chaine, codageHuffman);
+        ecrireResultats(codage, cheminFichierDestination, codageHuffman);
+    }
 
-        Map<Byte, Integer> occurencesTriees = trierOccurences(
-                                                        occurencesDesCaracteres
-                                                             );
+    private Map<Byte, Integer> preparerDonnees(byte[] chaine) {
+        Map<Byte, Integer> occurencesDesCaracteres =
+                                                  getFrequenceDesOctets(chaine);
+        Map<Byte, Integer> occurencesTriees =
+                                       trierOccurences(occurencesDesCaracteres);
         afficherOccurencesTriees(occurencesTriees);
+        return occurencesDesCaracteres;
+    }
+
+    private Map<Byte, String> compresserDonnees(
+                                      Map<Byte, Integer> occurencesDesCaracteres
+                                               ) {
 
         Noeud[] tableau = new Noeud[occurencesDesCaracteres.size()];
         int entree = 0;
         for(Entry<Byte, Integer> encode : occurencesDesCaracteres.entrySet()) {
-            byte key = encode.getKey();
-            int value = encode.getValue();
-            tableau[entree++] = new Noeud(key, value);
+            tableau[entree++] = new Noeud(encode.getKey(), encode.getValue());
         }
 
         Noeud racine = construireArbre(tableau);
-        Map<Byte, String> codageHuffman = racine.genererTableDeCodesHuffman();
+        return racine.genererTableDeCodesHuffman();
+    }
 
-        String codage = encoder(chaine, codageHuffman);
+    private void ecrireResultats(String codage,
+                                 String cheminFichierDestination,
+                                 Map<Byte, String> codageHuffman)
+            throws IOException {
+
         GestionFichier.ecrireChaineBinaireDansFichier(codage,
                                                       cheminFichierDestination);
 
         int dernierSeparateur = cheminFichierDestination.lastIndexOf("\\");
-        String cheminDossier  = cheminFichierDestination
-                                          .substring(0, dernierSeparateur + 1);
-        cheminFichierDestination = cheminDossier  + "arbreHuffman.txt";
+        String cheminDossier = cheminFichierDestination
+                                            .substring(0,dernierSeparateur + 1);
 
-        ecrireArbreHuffmanTrie(cheminFichierDestination, codageHuffman);
+        String cheminArbreHuffman = cheminDossier + "arbreHuffman.txt";
+
+        ecrireArbreHuffmanTrie(cheminArbreHuffman, codageHuffman);
     }
 
     /**
@@ -157,7 +151,7 @@ public class CompressionHuffman {
     }
 
     /**
-     * Encode une chaîne de bytes en utilisant
+     * Encode une chaîne de octets en utilisant
      * un mappage spécifié de codes Huffman.
      * La méthode parcourt chaque byte du tableau
      * et utilise le mappage de Huffman pour convertir chaque byte
@@ -165,20 +159,20 @@ public class CompressionHuffman {
      * Ces chaînes de bits sont ensuite concaténées pour former
      * une seule chaîne binaire.
      *
-     * @param chaineBinaire Le tableau de bytes à encoder.
+     * @param chaine Le tableau de octets à encoder.
      * @param codageHuffman Le mappage de chaque byte à sa chaîne
      *                      de code Huffman correspondante.
      * @return La chaîne binaire complète résultante de l'encodage de tous
-     *         les bytes de la chaîne initiale.
+     *         les octets de la chaîne initiale.
      */
-    private String encoder(byte[] chaineBinaire,
-                           Map<Byte, String> codageHuffman) {
+    private String convertirOctetsEnCodeHuffman(byte[] chaine,
+                                               Map<Byte, String> codageHuffman){
 
-        StringBuilder chaineBinaireEncodee = new StringBuilder();
-        for (byte b : chaineBinaire) {
-            chaineBinaireEncodee.append(codageHuffman.get(b));
+        StringBuilder codage = new StringBuilder();
+        for (byte octet : chaine) {
+            codage.append(codageHuffman.get(octet));
         }
-        return chaineBinaireEncodee.toString();
+        return codage.toString();
     }
 
     /**
@@ -294,42 +288,42 @@ public class CompressionHuffman {
     }
 
     /**
-     * Calcule et renvoie la fréquence de chaque byte dans un tableau de bytes.
+     * Calcule et renvoie la fréquence de chaque byte dans un tableau de octets.
      * Cette méthode utilise une HashMap pour stocker
      * et compter la fréquence de chaque byte rencontré.
      *
-     * @param bytes Le tableau de bytes dont les fréquences
+     * @param octets Le tableau de octets dont les fréquences
      *              doivent être calculées.
      * @return Une HashMap où chaque clé est un byte et chaque valeur
      *         est la fréquence de ce byte dans le tableau.
      */
-    private HashMap<Byte, Integer> getFrequenceDesBytes(byte[] bytes) {
+    private HashMap<Byte, Integer> getFrequenceDesOctets(byte[] octets) {
         /*
          * HashMap est une structure de données qui stocke les éléments
          * sous forme de paires clé-valeur.
          * Elle permet des insertions, des suppressions
          * et des accès en temps constant en moyenne.
          */
-        HashMap<Byte, Integer> bytesFrequence = new HashMap<>();
-        for (byte b : bytes) {
-            bytesFrequence.put(b,
+        HashMap<Byte, Integer> frequenceDesOctets = new HashMap<>();
+        for (byte octet : octets) {
+            frequenceDesOctets.put(octet,
                                /*
                                 * La méthode `getOrDefault` est utilisée pour
                                 * obtenir la fréquence actuelle d'un byte
-                                * (représenté par la variable 'b') dans
-                                * la HashMap `bytesFrequence`.
-                                * Si 'b' est déjà une clé dans la map,
+                                * (représenté par la variable 'octet') dans
+                                * la HashMap `frequenceDesOctets`.
+                                * Si 'octet' est déjà une clé dans la map,
                                 * cette méthode retournera sa valeur associée.
-                                * Si 'b' n'est pas encore une clé dans la map,
-                                * `getOrDefault` retournera la valeur
+                                * Si 'octet' n'est pas encore une clé dans la 
+                                * map, `getOrDefault` retournera la valeur
                                 * par défaut spécifiée, ici `0`.
                                 * Ensuite, on ajoute 1 à cette valeur
                                 * pour comptabiliser une nouvelle
-                                * occurrence de 'b'.
+                                * occurrence de 'octet'.
                                 */
-                               bytesFrequence.getOrDefault(b, 0)
-                               + 1);
+                                frequenceDesOctets.getOrDefault(octet, 0)
+                                + 1);
         }
-        return bytesFrequence;
+        return frequenceDesOctets;
     }
 }

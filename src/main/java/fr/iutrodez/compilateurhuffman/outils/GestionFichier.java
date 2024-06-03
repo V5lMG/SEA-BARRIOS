@@ -94,7 +94,7 @@ public class GestionFichier {
          * - DataOutputStream : un flux de données utilisé pour écrire des
          *                      données primitives de manière portable.
          *                      Il permet d'écrire des types de données tels
-         *                      que des int et des bytes dans le flux de sortie.
+         *                      que des int et des octets dans le flux de sortie.
          */
         try (FileOutputStream streamDeSortie = new FileOutputStream(
                                                             cheminFichier);
@@ -192,13 +192,13 @@ public class GestionFichier {
     }
 
     /**
-     * Lit le contenu d'un fichier et le renvoie sous forme de tableau de bytes.
+     * Lit le contenu d'un fichier et le renvoie sous forme de tableau de octets.
      *
      * @param cheminFichier Le chemin du fichier à lire.
-     * @return Un tableau de bytes contenant le contenu du fichier.
+     * @return Un tableau de octets contenant le contenu du fichier.
      * @throws IOException Si une erreur d'entrée/sortie se produit.
      */
-    public static byte[] lireFichierEnBytes(String cheminFichier)
+    public static byte[] recupererOctets(String cheminFichier)
             throws IOException {
         try (FileInputStream streamEntreeFichier =
                                           new FileInputStream(cheminFichier)) {
@@ -207,9 +207,9 @@ public class GestionFichier {
     }
 
     /**
-     * Écrit un tableau de bytes dans un fichier.
+     * Écrit un tableau de octets dans un fichier.
      *
-     * @param donnees       Le tableau de bytes à écrire.
+     * @param donnees       Le tableau de octets à écrire.
      * @param cheminFichier Le chemin du fichier de destination.
      */
     public static void ecrireFichierDestination(byte[] donnees,
