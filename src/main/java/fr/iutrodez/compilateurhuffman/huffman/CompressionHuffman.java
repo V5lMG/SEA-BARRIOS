@@ -342,4 +342,27 @@ public class CompressionHuffman {
         }
         return frequenceDesOctets;
     }
+
+    /**
+     * Méthode pour générer et enregistrer l'arbre de Huffman en utilisant les
+     * données du fichier source et en écrivant l'arbre dans le fichier destination.
+     *
+     * @throws IOException Si une erreur d'entrée/sortie se produit.
+     */
+    public void genererEtEnregistrerArbreHuffman() throws IOException {
+        byte[] chaine = GestionFichier.recupererOctets(cheminFichierSource);
+        Map<Byte, Integer> occurencesDesCaracteres = getFrequenceDesOctets(chaine);
+
+        Noeud[] tableau = new Noeud[occurencesDesCaracteres.size()];
+        int index = 0;
+        for (Map.Entry<Byte, Integer> entry : occurencesDesCaracteres.entrySet()) {
+            tableau[index++] = new Noeud(entry.getKey(), entry.getValue());
+        }
+
+        Noeud racine = construireArbre(tableau);
+        Map<Byte, String> codageHuffman = new HashMap<>();
+        generationCodeHuffman(racine, "", codageHuffman);
+
+        ecrireArbreHuffmanTrie(cheminFichierDestination, codageHuffman);
+    }
 }

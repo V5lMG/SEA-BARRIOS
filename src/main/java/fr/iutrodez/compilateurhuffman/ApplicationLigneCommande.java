@@ -100,9 +100,7 @@ public class ApplicationLigneCommande {
         afficherSeparateur();
     }
 
-    private static void lancerCreationArbre() {
-        out.println("coucou");
-    }
+
 
     /**
      * Lance le processus de compression d'un fichier texte en utilisant
@@ -170,10 +168,32 @@ public class ApplicationLigneCommande {
             StatistiquesCompilateur.resumeDecompression(source,
                                                         destination,
                                                         tempsDecompression);
-            afficherSeparateur();
         } catch (IOException erreur) {
             out.println("Erreur lors de la décompression du fichier : "
                         + erreur.getMessage());
+        }
+    }
+
+    private static void lancerCreationArbre() {
+        String source = gestionnaireFichier.getFichierSource("txt");
+        if (source == null) {
+            return;
+        }
+
+        String destination = gestionnaireFichier.getFichierDestination("txt");
+        if (destination == null) {
+            return;
+        }
+
+        CompressionHuffman creerArbre =
+                new CompressionHuffman(source, destination);
+
+        try {
+            creerArbre.genererEtEnregistrerArbreHuffman();
+            afficherSeparateur();
+        } catch (IOException erreur) {
+            out.println("Erreur lors de la compression du fichier : "
+                    + erreur.getMessage());
         }
     }
 
