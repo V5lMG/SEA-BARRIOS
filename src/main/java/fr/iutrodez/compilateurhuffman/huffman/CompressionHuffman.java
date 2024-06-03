@@ -72,19 +72,35 @@ public class CompressionHuffman {
         return occurencesDesCaracteres;
     }
 
-    private Map<Byte, String> compresserDonnees(
-                                      Map<Byte, Integer> occurencesDesCaracteres
-                                               ) {
-
+    private Map<Byte, String> compresserDonnees(Map<Byte, Integer> occurencesDesCaracteres) {
         Noeud[] tableau = new Noeud[occurencesDesCaracteres.size()];
         int entree = 0;
-        for(Entry<Byte, Integer> encode : occurencesDesCaracteres.entrySet()) {
+        for (Map.Entry<Byte, Integer> encode : occurencesDesCaracteres.entrySet()) {
             tableau[entree++] = new Noeud(encode.getKey(), encode.getValue());
         }
 
         Noeud racine = construireArbre(tableau);
-        return racine.genererTableDeCodesHuffman();
+        Map<Byte, String> codes = new HashMap<>();
+        generationCodeHuffman(racine, "", codes);
+        return codes;
     }
+
+    private void generationCodeHuffman(Noeud noeud, String chemin, Map<Byte, String> codes) {
+        if (noeud == null) {
+            return;
+        }
+        if (noeud.isFeuille()) {
+            codes.put(noeud.getCaractere(), chemin);
+        } else {
+            if (noeud.getGauche() != null) {
+                generationCodeHuffman(noeud.getGauche(), chemin + "0", codes);
+            }
+            if (noeud.getDroite() != null) {
+                generationCodeHuffman(noeud.getDroite(), chemin + "1", codes);
+            }
+        }
+    }
+
 
     private void ecrireResultats(String codage,
                                  String cheminFichierDestination,
@@ -208,8 +224,8 @@ public class CompressionHuffman {
             /* Trie la liste `noeuds` en utilisant un comparateur.
              * Le comparateur est défini par Comparator.comparingInt,
              * qui crée un comparateur qui compare les entiers retournés
-             * par la méthode `getValue` de chaque objet `Noeud`.
-             * Noeud::getValue est une référence de méthode qui renvoie
+             * par la méthode `getFrequence` de chaque objet `Noeud`.
+             * Noeud::getFrequence est une référence de méthode qui renvoie
              * la valeur de fréquence du nœud.
              * Cette opération de tri place les noeuds avec
              * les plus petites valeurs (fréquences) en premier,

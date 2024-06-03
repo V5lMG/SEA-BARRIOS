@@ -4,9 +4,6 @@
  */
 package fr.iutrodez.compilateurhuffman.objets;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Représente un nœud dans l'arbre de Huffman.
  * Chaque nœud peut avoir un caractère, une fréquence,
@@ -131,65 +128,11 @@ public class Noeud {
     }
 
     /**
-     * Vérifie si le nœud a des enfants.
-     *
-     * @return true si le nœud a au moins un enfant (gauche ou droite),
-     *         false sinon.
-     */
-    public boolean hasEnfant() {
-        return gauche != null || droite != null;
-    }
-
-    /**
      * Vérifie si ce nœud est une feuille (n'a pas d'enfants).
      *
      * @return true si ce nœud est une feuille, sinon false.
      */
     public boolean isFeuille() {
-        return !hasEnfant();
-    }
-
-    /**
-     * Génère récursivement les codes de Huffman pour chaque caractère
-     * dans l'arbre de Huffman.
-     *
-     * @param noeud Le nœud courant dans la récursion.
-     * @param chemin Le chemin binaire actuel.
-     * @param codes La map de codes de Huffman à remplir.
-     */
-    private void generationCodeHuffman(Noeud noeud,
-                                                String chemin,
-                                                Map<Byte, String> codes) {
-        if (noeud == null) {
-            return;
-        }
-
-        if (!noeud.hasEnfant()) {
-            codes.put(noeud.getCaractere(), chemin);
-            return;
-        }
-
-        if (noeud.getGauche() != null) {
-            generationCodeHuffman(noeud.getGauche(),
-                                           chemin + "0",
-                                           codes);
-        }
-        if (noeud.getDroite() != null) {
-            generationCodeHuffman(noeud.getDroite(),
-                                           chemin + "1",
-                                           codes);
-        }
-    }
-
-    /**
-     * Génère une table de codes de Huffman pour les caractères dans cet arbre.
-     *
-     * @return Une map où chaque clé est un byte (caractère) et chaque valeur
-     *         est la chaîne binaire représentant le code de Huffman.
-     */
-    public Map<Byte, String> genererTableDeCodesHuffman() {
-        Map<Byte, String> codes = new HashMap<>();
-        generationCodeHuffman(this, "", codes);
-        return codes;
+        return gauche == null && droite == null;
     }
 }

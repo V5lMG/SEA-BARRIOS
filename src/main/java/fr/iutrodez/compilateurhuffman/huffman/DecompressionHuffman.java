@@ -7,6 +7,7 @@ package fr.iutrodez.compilateurhuffman.huffman;
 import fr.iutrodez.compilateurhuffman.outils.GestionFichier;
 import fr.iutrodez.compilateurhuffman.objets.Noeud;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -57,47 +58,49 @@ public class DecompressionHuffman {
     }
 
     /**
-     * Décompresse le fichier spécifié à l'aide de l'arbre de Huffman.
-     * Le fichier d'arbre Huffman doit être présent dans le même répertoire
-     * que le fichier compressé et nommé "arbreHuffman.txt".
-     * Lance une IOException si le fichier de l'arbre n'est pas trouvé ou
-     * si une erreur de lecture/écriture survient.
+     * Lance le processus de décompression du fichier spécifié.
      *
-     * @throws IOException Si une erreur se produit pendant la lecture
-     *                     du fichier ou lors de la reconstruction de l'arbre.
+     * @throws IOException Si une erreur se produit pendant la décompression.
      */
     public void decompresserFichier() throws IOException {
+        String cheminArbre = trouverCheminArbre();
+        Noeud racine = preparerArbreHuffman(cheminArbre);
+        decompresser(racine);
+    }
 
-        String code = GestionFichier
-                               .lireFichierBinaireEnChaine(cheminFichierSource);
-
-        /*
-         * Trouve la position du dernier séparateur de dossier
-         * dans le chemin du fichier source.
-         * Utilise la position du dernier séparateur pour obtenir le chemin
-         * du dossier contenant le fichier source.
-         * Ensuite, construit le chemin complet vers le fichier de l'arbre
-         * de Huffman en ajoutant "arbreHuffman.txt" au chemin du dossier.
-         */
+    /**
+     * Détermine le chemin vers le fichier de l'arbre Huffman basé
+     * sur le chemin du fichier source.
+     *
+     * @return Le chemin du fichier de l'arbre Huffman.
+     * @throws IOException Si le fichier de l'arbre n'est pas trouvé.
+     */
+    private String trouverCheminArbre() throws IOException {
         int dernierSeparateur = cheminFichierSource.lastIndexOf("\\");
-        String cheminArbre = cheminFichierSource
-                                            .substring(0, dernierSeparateur + 1)
-                             + "arbreHuffman.txt";
+        String cheminArbre =
+                cheminFichierSource.substring(0,dernierSeparateur + 1)
+                        + "arbreHuffman.txt";
 
-        File fichierArbreHuffman = new File(cheminArbre);
-        if (!fichierArbreHuffman.exists()) {
-            throw  new IOException("Erreur: fichier de l'arbre d'Huffman "
-                                   + "introuvable. Veuillez le placer dans "
-                                   + "le même répertoire que le fichier à "
-                                   + "décompresser avec le nom "
-                                   + "\"arbreHuffman.txt\"");
+        if (!new File(cheminArbre).exists()) {
+            throw new IOException("Erreur: fichier de l'arbre d'Huffman "
+                    + "introuvable. Veuillez le placer dans le même "
+                    + "répertoire que le fichier à décompresser avec le nom "
+                    + "\"arbreHuffman.txt\"");
         }
+        return cheminArbre;
+    }
 
+    private Noeud preparerArbreHuffman(String cheminArbre) {
         String[] arbreHuffman = GestionFichier.lireToutLeFichier(cheminArbre);
         Map<Byte, String> codageHuffman = genererTableDeCode(arbreHuffman);
-        Noeud racine = construireArbreHuffmanDepuisMap(codageHuffman);
+        return construireArbreHuffmanDepuisMap(codageHuffman);
+    }
 
-        byte[] bytes = transformerChaineEnBytes(code, racine);
+    private void decompresser(Noeud racine) throws IOException {
+        String code =
+                GestionFichier.lireFichierBinaireEnChaine(cheminFichierSource);
+        byte[] bytes =
+                decoderChaineBinaireEnBytes(code, racine);
         GestionFichier.ecrireFichierDestination(bytes,
                                                 cheminFichierDestination);
     }
@@ -188,48 +191,31 @@ public class DecompressionHuffman {
     }
 
     /**
-     * Transforme une chaîne binaire en un tableau de bytes en utilisant
+     * Décode une chaîne binaire en un tableau de bytes en utilisant
      * l'arbre de Huffman fourni.
      * Chaque chemin binaire dans la chaîne représente un caractère dans
      * l'arbre de Huffman.
      *
-     * @param bits La chaîne binaire à transformer en bytes.
+     * @param bits La chaîne binaire à décoder.
      * @param racine La racine de l'arbre de Huffman utilisé pour
-     *               la transformation.
+     *               le décodage.
      * @return Un tableau de bytes représentant les caractères décodés.
      */
-    private static byte[] transformerChaineEnBytes(String bits, Noeud racine) {
-
-        // Fonctionnement d'ArrayList décrite dans la classe CompressionHuffman
-        List<Byte> byteList = new ArrayList<>();
+    private static byte[] decoderChaineBinaireEnBytes(String bits,
+                                                      Noeud racine) {
+        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         Noeud noeudCourant = racine;
 
         for (char bit : bits.toCharArray()) {
-            /*
-             * Opérateur ternaire est utilisé pour décider si le `noeudCourant`
-             * doit se déplacer vers son enfant gauche ou droit.
-             * La condition est basée sur la valeur du bit actuel.
-             *
-             * Si le bit actuel est '0', alors `noeudCourant` est mis à jour
-             * pour être son enfant gauche (`noeudCourant.getGauche()`).
-             * Sinon, si le bit actuel est '1', alors `noeudCourant` est
-             * mis à jour pour être son enfant droit.
-             */
             noeudCourant = (bit == '0') ? noeudCourant.getGauche()
                                         : noeudCourant.getDroite();
 
             if (noeudCourant.isFeuille()) {
-                byteList.add(noeudCourant.getCaractere());
+                byteStream.write(noeudCourant.getCaractere());
                 noeudCourant = racine;
             }
         }
 
-        /* Conversion de la liste de bytes en tableau de bytes */
-        byte[] result = new byte[byteList.size()];
-        for (int i = 0; i < byteList.size(); i++) {
-            result[i] = byteList.get(i);
-        }
-
-        return result;
+        return byteStream.toByteArray();
     }
 }

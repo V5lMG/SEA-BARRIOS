@@ -84,6 +84,9 @@ public class ApplicationLigneCommande {
                     lancerDecompression();
                     break;
                 case 3:
+                    lancerCreationArbre();
+                    break;
+                case 4:
                     continuer = false;
                     break;
                 default:
@@ -95,6 +98,10 @@ public class ApplicationLigneCommande {
         afficherSeparateur();
         out.println("Fin de l'application.");
         afficherSeparateur();
+    }
+
+    private static void lancerCreationArbre() {
+        out.println("coucou");
     }
 
     /**
@@ -130,7 +137,6 @@ public class ApplicationLigneCommande {
                         + erreur.getMessage());
         }
     }
-
 
     /**
      * Lance le processus de décompression d'un fichier binaire
@@ -182,7 +188,8 @@ public class ApplicationLigneCommande {
         out.println("Choisissez une action :");
         out.println("1. Compression de fichier");
         out.println("2. Décompression de fichier");
-        out.println("3. Quitter l'application");
+        out.println("3. Créer un arbre de Huffman");
+        out.println("4. Quitter l'application");
         afficherSeparateur();
     }
 
