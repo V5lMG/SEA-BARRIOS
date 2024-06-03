@@ -29,23 +29,23 @@ public class Noeud {
     private int frequence;
 
     /**
-     * L'enfant droit de ce nœud.
-     */
-    private Noeud droite;
-
-    /**
      * L'enfant gauche de ce nœud.
      */
     private Noeud gauche;
 
     /**
+     * L'enfant droit de ce nœud.
+     */
+    private Noeud droite;
+
+    /**
      * Construit un nœud avec un caractère et une fréquence spécifiés.
      *
-     * @param cle Le caractère représenté par ce nœud.
+     * @param indice Le caractère représenté par ce nœud.
      * @param frequence La fréquence d'apparition de ce caractère.
      */
-    public Noeud(byte cle, int frequence) {
-        this.caractere = cle;
+    public Noeud(byte indice, int frequence) {
+        this.caractere = indice;
         this.frequence = frequence;
     }
 
@@ -68,15 +68,6 @@ public class Noeud {
     }
 
     /**
-     * Retourne la fréquence d'apparition du caractère représenté par ce nœud.
-     *
-     * @return La fréquence d'apparition du caractère.
-     */
-    public int getValue() {
-        return frequence;
-    }
-
-    /**
      * Retourne le caractère représenté par ce nœud.
      *
      * @return Le caractère représenté par ce nœud.
@@ -86,30 +77,21 @@ public class Noeud {
     }
 
     /**
+     * Retourne la fréquence d'apparition du caractère représenté par ce nœud.
+     *
+     * @return La fréquence d'apparition du caractère.
+     */
+    public int getFrequence() {
+        return frequence;
+    }
+
+    /**
      * Définit le caractère représenté par ce nœud.
      *
      * @param caractere Le caractère à définir.
      */
     public void setCaractere(byte caractere) {
         this.caractere = caractere;
-    }
-
-    /**
-     * Retourne l'enfant droit de ce nœud.
-     *
-     * @return L'enfant droit de ce nœud.
-     */
-    public Noeud getDroite() {
-        return droite;
-    }
-
-    /**
-     * Définit l'enfant droit de ce nœud.
-     *
-     * @param droite L'enfant droit à définir.
-     */
-    public void setDroite(Noeud droite) {
-        this.droite = droite;
     }
 
     /**
@@ -128,6 +110,24 @@ public class Noeud {
      */
     public void setGauche(Noeud gauche) {
         this.gauche = gauche;
+    }
+
+    /**
+     * Retourne l'enfant droit de ce nœud.
+     *
+     * @return L'enfant droit de ce nœud.
+     */
+    public Noeud getDroite() {
+        return droite;
+    }
+
+    /**
+     * Définit l'enfant droit de ce nœud.
+     *
+     * @param droite L'enfant droit à définir.
+     */
+    public void setDroite(Noeud droite) {
+        this.droite = droite;
     }
 
     /**
@@ -157,7 +157,7 @@ public class Noeud {
      * @param chemin Le chemin binaire actuel.
      * @param codes La map de codes de Huffman à remplir.
      */
-    private void generationRecursiveCodeHuffman(Noeud noeud,
+    private void generationCodeHuffman(Noeud noeud,
                                                 String chemin,
                                                 Map<Byte, String> codes) {
         if (noeud == null) {
@@ -170,12 +170,12 @@ public class Noeud {
         }
 
         if (noeud.getGauche() != null) {
-            generationRecursiveCodeHuffman(noeud.getGauche(),
+            generationCodeHuffman(noeud.getGauche(),
                                            chemin + "0",
                                            codes);
         }
         if (noeud.getDroite() != null) {
-            generationRecursiveCodeHuffman(noeud.getDroite(),
+            generationCodeHuffman(noeud.getDroite(),
                                            chemin + "1",
                                            codes);
         }
@@ -189,7 +189,7 @@ public class Noeud {
      */
     public Map<Byte, String> genererTableDeCodesHuffman() {
         Map<Byte, String> codes = new HashMap<>();
-        generationRecursiveCodeHuffman(this, "", codes);
+        generationCodeHuffman(this, "", codes);
         return codes;
     }
 }
