@@ -61,6 +61,7 @@ public class ApplicationLigneCommande {
      * entre différentes options de traitement :
      * Compression de fichiers,
      * décompression de fichiers,
+     * création d'arbre de Huffman
      * ou fermeture l'application.
      * Chaque choix est traité par appel de
      * la méthode correspondante (compression ou décompression).
@@ -127,9 +128,12 @@ public class ApplicationLigneCommande {
                 new CompressionHuffman(source, destination);
 
         try {
+            long tempsCompression = System.currentTimeMillis();
             compresser.compresserFichier();
             afficherSeparateur();
-            StatistiquesCompilateur.resumeCompression(source, destination);
+            StatistiquesCompilateur.resumeCompression(source,
+                                                      destination,
+                                                      tempsCompression);
         } catch (IOException erreur) {
             out.println("Erreur lors de la compression du fichier : "
                         + erreur.getMessage());
@@ -174,6 +178,16 @@ public class ApplicationLigneCommande {
         }
     }
 
+    /**
+     * Initie le processus de création et d'enregistrement
+     * d'un arbre de Huffman.
+     * Obtient les chemins de fichier source et destination via
+     * un gestionnaire de fichiers, puis utilise la classe
+     * {@link CompressionHuffman} pour construire l'arbre de Huffman et
+     * l'enregistrer dans le fichier de destination. Affiche un séparateur
+     * en cas de succès et gère les exceptions d'entrée/sortie,
+     * en affichant des messages d'erreur appropriés.
+     */
     private static void lancerCreationArbre() {
         String source = gestionnaireFichier.getFichierSource("txt");
         if (source == null) {
@@ -250,7 +264,6 @@ public class ApplicationLigneCommande {
     /**
      * Affiche un séparateur horizontal pour
      * structurer visuellement l'interface en console.
-     * Utilisé pour séparer des sections de texte dans les affichages console.
      */
     public static void afficherSeparateur() {
         out.println("--------------------------------------------------------");

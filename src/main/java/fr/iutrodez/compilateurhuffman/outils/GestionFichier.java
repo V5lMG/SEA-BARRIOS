@@ -5,15 +5,22 @@
 package fr.iutrodez.compilateurhuffman.outils;
 
 import java.io.BufferedOutputStream;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+
 import java.io.FileReader;
 import java.io.FileWriter;
+
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,21 +43,36 @@ public class GestionFichier {
      * @return Un tableau de chaînes contenant toutes les lignes du fichier.
      */
     public static String[] lireToutLeFichier(String cheminFichier) {
-        /* ArrayList décrite dans la classe CompressionHuffman*/
-        List<String> lignes = new ArrayList<>();
+        // Calculer le nombre de lignes pour dimensionner le tableau
+        int nombreDeLignes = 0;
+        try (BufferedReader compteurLignes =
+                     new BufferedReader(new FileReader(cheminFichier))) {
 
-        try (BufferedReader lecteur = new BufferedReader(
-                new FileReader(cheminFichier))) {
-            String ligne;
-            while ((ligne = lecteur.readLine()) != null) {
-                lignes.add(ligne);
+            while (compteurLignes.readLine() != null) {
+                nombreDeLignes++;
             }
         } catch (IOException e) {
-            err.println("Erreur lors de la lecture du fichier : "
-                        + e.getMessage());
+            System.err.println("Erreur lors de la comptabilisation des lignes "
+                               + "du fichier : " + e.getMessage());
+            return new String[0];
         }
 
-        return lignes.toArray(new String[0]);
+        String[] lignes = new String[nombreDeLignes];
+
+        try (BufferedReader lecteur =
+                     new BufferedReader(new FileReader(cheminFichier))) {
+
+            String ligne;
+            int index = 0;
+            while ((ligne = lecteur.readLine()) != null) {
+                lignes[index++] = ligne;
+            }
+        } catch (IOException e) {
+            System.err.println("Erreur lors de la lecture du fichier : "
+                               + e.getMessage());
+            return new String[0];
+        }
+        return lignes;
     }
 
     /**
@@ -81,7 +103,6 @@ public class GestionFichier {
      *
      * @param chaineBinaire La chaîne binaire à écrire.
      * @param cheminFichier Le chemin du fichier de destination.
-     * @throws IOException Si une erreur d'entrée/sortie se produit.
      */
     public static void ecrireChaineBinaireDansFichier(String chaineBinaire,
                                                       String cheminFichier)
@@ -97,10 +118,10 @@ public class GestionFichier {
          *                      que des int et des octets dans le flux de sortie.
          */
         try (FileOutputStream streamDeSortie = new FileOutputStream(
-                                                            cheminFichier);
+                cheminFichier);
              DataOutputStream streamDeDonnees = new DataOutputStream(
-                                                             streamDeSortie
-                                                                    )) {
+                     streamDeSortie
+             )) {
 
             streamDeDonnees.writeInt(chaineBinaire.length());
 
@@ -140,7 +161,7 @@ public class GestionFichier {
      * @return Une chaîne représentant le contenu binaire du fichier.
      * @throws IOException Si une erreur d'entrée/sortie se produit.
      */
-    public static String lireFichierBinaireEnChaine(String cheminFichier)
+    public static String lireFichierBinaire(String cheminFichier)
             throws IOException {
         /*
          * Utilisation de streams pour lire les données depuis un fichier.

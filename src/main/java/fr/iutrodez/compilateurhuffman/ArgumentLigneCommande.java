@@ -56,13 +56,23 @@ public class ArgumentLigneCommande {
                 }
                 break;
 
+            case "construire":
+                if (args.length < 4) {
+                    out.println("Arguments manquants. Utilisation : "
+                            + "construire <chemin_fichier_a_decompresser>"
+                            + " <nom_dossier_destination> <nom_fichier>");
+                } else {
+                    genererArbreHuffman(args[1], args[2], args[3]);
+                }
+                break;
+
             case "help":
                 afficherAide();
                 break;
 
             default:
-                out.println("Commande invalide. Utilisez 'help' pour obtenir "
-                            + "des informations sur l'utilisation.");
+                out.println("\n\nCommande invalide. Utilisez 'help' pour obtenir "
+                            + "des informations sur l'utilisation.\n\n");
                 break;
         }
         ApplicationLigneCommande.afficherSeparateur();
@@ -105,11 +115,13 @@ public class ArgumentLigneCommande {
                 new CompressionHuffman(cheminFichierSource,
                                        cheminDossierDestination);
         try {
+            long tempsCompression = System.currentTimeMillis();
             compresser.compresserFichier();
 
             ApplicationLigneCommande.afficherSeparateur();
             StatistiquesCompilateur.resumeCompression(cheminFichierSource,
-                                                      cheminDossierDestination);
+                                                      cheminDossierDestination,
+                                                      tempsCompression);
             ApplicationLigneCommande.afficherSeparateur();
             out.println();
         } catch (IOException erreur) {
@@ -162,6 +174,49 @@ public class ArgumentLigneCommande {
     }
 
     /**
+     * Construit et enregistre un arbre de Huffman à partir
+     * d'un fichier texte source.
+     * Cette méthode prépare le chemin complet de la destination,
+     * crée le dossier nécessaire, et utilise {@link CompressionHuffman}
+     * pour générer et sauvegarder l'arbre dans un fichier texte.
+     * Affiche des messages pour le suivi et gère les erreurs d'entrée/sortie.
+     *
+     * @param cheminFichierSource Chemin du fichier source.
+     * @param cheminDossierDestination Dossier de destination pour
+     *                                 le fichier compressé.
+     * @param nomFichierCompresse Nom du fichier compressé (sans extension).
+     */
+    private static void genererArbreHuffman(String cheminFichierSource,
+                                          String cheminDossierDestination,
+                                          String nomFichierCompresse) {
+
+        out.println("Création de l'arbre de Huffman à l'aide du fichier : "
+                    + cheminFichierSource);
+        cheminDossierDestination = cheminDossierDestination + "\\"
+                                   + nomFichierCompresse;
+
+        try {
+            GestionPrompt.creerDossierPourCompilation(cheminDossierDestination);
+        } catch (IOException erreur) {
+            throw new RuntimeException("Erreur lors de la création du dossier"
+                    + " : " + erreur.getMessage());
+        }
+        cheminDossierDestination = cheminDossierDestination + "\\"
+                + nomFichierCompresse + ".txt";
+
+        CompressionHuffman creerArbre =
+                new CompressionHuffman(cheminFichierSource,
+                        cheminDossierDestination);
+        try {
+            creerArbre.genererEtEnregistrerArbreHuffman();
+            out.println();
+        } catch (IOException erreur) {
+            out.println("Erreur lors de la compression du fichier : "
+                    + erreur.getMessage());
+        }
+    }
+
+    /**
      * Affiche les instructions pour l'utilisation
      * des commandes de l'application.
      */
@@ -178,6 +233,10 @@ public class ArgumentLigneCommande {
         out.println("     Décompresse le fichier spécifié et enregistre "
                     + "le résultat dans le dossier de destination sous le "
                     + "nouveau nom de fichier.");
+        out.println("----  construire <chemin_fichier_a_decompresser> "
+                    + "<nom_dossier_destination> <nom_fichier>   ----");
+        out.println("     Créer un arbre de Huffman à l'aide d'un "
+                    + "fichier source fournit.");
         out.println("--------  help   --------");
         out.println("     Affiche ce message d'aide, expliquant comment "
                     + "utiliser toutes les commandes disponibles.");

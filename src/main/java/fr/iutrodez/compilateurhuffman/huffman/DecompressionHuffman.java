@@ -98,7 +98,7 @@ public class DecompressionHuffman {
 
     private void decompresser(Noeud racine) throws IOException {
         String code =
-                GestionFichier.lireFichierBinaireEnChaine(cheminFichierSource);
+                GestionFichier.lireFichierBinaire(cheminFichierSource);
         byte[] bytes =
                 decoderChaineBinaireEnBytes(code, racine);
         GestionFichier.ecrireFichierDestination(bytes,

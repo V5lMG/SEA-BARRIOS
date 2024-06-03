@@ -27,7 +27,8 @@ public class StatistiquesCompilateur {
      * @param cheminFichierDestination Le chemin du fichier original.
      */
     public static void resumeCompression(String cheminFichierSource,
-                                         String cheminFichierDestination) {
+                                         String cheminFichierDestination,
+                                         long tempsCompression) {
         File fichierOriginal = new File(cheminFichierSource);
         File fichierCompile = new File(cheminFichierDestination);
         long tailleFichierOriginal = fichierOriginal.length();
@@ -43,6 +44,11 @@ public class StatistiquesCompilateur {
         double tauxCompression =
                 (double) tailleFichierCompile / tailleFichierOriginal * 100;
         out.printf("Taux de compression : %.2f %%\n", tauxCompression);
+
+        long tempsDeCompression = System.currentTimeMillis()
+                                  - tempsCompression;
+        out.println("Temps de décompression : " + tempsDeCompression
+                    + " millisecondes");
     }
 
     /**
@@ -78,8 +84,7 @@ public class StatistiquesCompilateur {
 
         long tempsDeDecompression = System.currentTimeMillis()
                                     - tempsDecompression;
-        out.println("Temps de décompression : "
-                    + tempsDeDecompression
+        out.println("Temps de décompression : " + tempsDeDecompression
                     + " millisecondes");
     }
 }
