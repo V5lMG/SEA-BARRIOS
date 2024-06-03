@@ -215,13 +215,13 @@ public class CompressionHuffman {
              * les plus petites valeurs (fréquences) en premier,
              * ce qui est nécessaire pour la construction de l'arbre de Huffman.
              */
-            noeuds.sort(Comparator.comparingInt(Noeud::getValue));
+            noeuds.sort(Comparator.comparingInt(Noeud::getFrequence));
 
             Noeud premierNoeud = noeuds.remove(0);
             Noeud deuxiemeNoeud = noeuds.remove(0);
 
-            Noeud parent = new Noeud(premierNoeud.getValue()
-                                     + deuxiemeNoeud.getValue());
+            Noeud parent = new Noeud(premierNoeud.getFrequence()
+                                     + deuxiemeNoeud.getFrequence());
 
             parent.setGauche(premierNoeud);
             parent.setDroite(deuxiemeNoeud);
