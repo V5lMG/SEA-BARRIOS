@@ -18,11 +18,18 @@ class TestGestionPrompt {
     @TempDir
     Path tempDir;
 
+    /**
+     * Initialise l'instance de GestionPrompt avant chaque test.
+     */
     @BeforeEach
     void setUp() {
         gestionPrompt = new GestionPrompt();
     }
 
+    /**
+     * Teste la méthode getFichierSource de la classe GestionPrompt.
+     * Vérifie que le chemin du fichier source est correctement récupéré à partir de l'entrée utilisateur.
+     */
     @Test
     void testGetFichierSource() {
         String input = "dossier1\\dossier2\\monFichier.txt\noui\n";
@@ -35,6 +42,12 @@ class TestGestionPrompt {
         assertEquals(cheminFichier, resultat);
     }
 
+    /**
+     * Teste la méthode getContenuFichier de la classe GestionPrompt.
+     * Vérifie que le contenu du fichier est correctement lu.
+     *
+     * @throws IOException si une erreur d'entrée/sortie se produit lors de la lecture du fichier.
+     */
     @Test
     void testGetContenuFichier() throws IOException {
         String contenu = "Ligne 1\nLigne 2\nLigne 3";
@@ -45,6 +58,10 @@ class TestGestionPrompt {
         assertEquals(contenu + "\n", contenuLu);
     }
 
+    /**
+     * Teste la méthode getFichierDestination de la classe GestionPrompt.
+     * Vérifie que le chemin du fichier destination est correctement récupéré à partir de l'entrée utilisateur.
+     */
     @Test
     void testGetFichierDestination() {
         String input = tempDir.toString() + "\nmonFichierDestination\n";
@@ -55,6 +72,11 @@ class TestGestionPrompt {
         assertEquals(cheminAttendu, resultat);
     }
 
+
+    /**
+     * Teste la méthode creerDossierPourCompilation de la classe GestionPrompt.
+     * Vérifie que le dossier pour la compilation est créé avec succès.
+     */
     @Test
     void testCreerDossierPourCompilation() {
         String cheminDossier = tempDir.resolve("nouveauDossier").toString();
@@ -62,6 +84,10 @@ class TestGestionPrompt {
         assertTrue(Files.exists(Path.of(cheminDossier)));
     }
 
+    /**
+     * Teste la méthode demanderOuiOuNon de la classe GestionPrompt.
+     * Vérifie que la réponse de l'utilisateur est correctement traitée.
+     */
     @Test
     void testDemanderOuiOuNon() {
         String input = "oui\n";

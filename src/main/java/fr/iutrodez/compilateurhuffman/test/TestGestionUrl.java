@@ -14,11 +14,18 @@ class TestGestionUrl {
 
     private GestionUrl gestionUrl;
 
+    /**
+     * Initialise un nouvel objet GestionUrl avant chaque test.
+     */
     @BeforeEach
     void setUp() {
         gestionUrl = new GestionUrl();
     }
 
+    /**
+     * Teste la méthode enleverGuillemet de la classe GestionUrl.
+     * Vérifie que les guillemets sont correctement enlevés du chemin spécifié.
+     */
     @Test
     void testEnleverGuillemet() {
         String chemin = "\"chemin/vers/le/fichier.txt\"";
@@ -26,6 +33,10 @@ class TestGestionUrl {
         assertEquals("chemin/vers/le/fichier.txt", resultat);
     }
 
+    /**
+     * Teste la méthode getNomFichierDestinationUnique de la classe GestionUrl.
+     * Vérifie que le nom de fichier unique est correctement récupéré.
+     */
     @Test
     void testGetNomFichierDestinationUnique() {
         String input = "nouveauFichier\n";
@@ -38,6 +49,10 @@ class TestGestionUrl {
         assertEquals("nouveauFichier", nomFichier);
     }
 
+    /**
+     * Teste la méthode getNomFichierDestinationUnique de la classe GestionUrl pour un fichier existant.
+     * Vérifie qu'une exception est levée lorsque le nom de fichier existe déjà.
+     */
     @Test
     void testGetNomFichierDestinationUnique_FichierExistant() {
         assertThrows(RuntimeException.class, () -> {
@@ -51,6 +66,10 @@ class TestGestionUrl {
         });
     }
 
+    /**
+     * Teste la méthode getCheminDestination de la classe GestionUrl.
+     * Vérifie que le chemin de destination est correctement récupéré.
+     */
     @Test
     void testGetCheminDestination() {
         String input = "/chemin/vers/le/repertoire\n";
@@ -60,6 +79,10 @@ class TestGestionUrl {
         assertEquals("/chemin/vers/le/repertoire", chemin);
     }
 
+    /**
+     * Teste la méthode getCheminDestination de la classe GestionUrl pour un répertoire invalide.
+     * Vérifie qu'une exception est levée lorsque le répertoire de destination est invalide.
+     */
     @Test
     void testGetCheminDestination_RepertoireInvalide() {
         assertThrows(RuntimeException.class, () -> {
@@ -70,6 +93,10 @@ class TestGestionUrl {
         });
     }
 
+    /**
+     * Teste la méthode verifierCheminFichierSourceValide de la classe GestionUrl.
+     * Vérifie qu'une exception est levée lorsque le chemin du fichier source n'est pas valide pour le type spécifié.
+     */
     @Test
     void testVerifieCheminFichierSourceValide() {
         assertThrows(IOException.class, () -> {

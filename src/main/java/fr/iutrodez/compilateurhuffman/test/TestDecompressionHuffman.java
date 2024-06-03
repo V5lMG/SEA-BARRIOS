@@ -25,6 +25,12 @@ class TestDecompressionHuffman {
     private Path fichierDestination;
     private Path fichierArbre;
 
+    /**
+     * Configure l'environnement de test avant chaque test.
+     * Crée des fichiers temporaires pour le fichier source compressé, le fichier de destination et le fichier de l'arbre Huffman.
+     *
+     * @throws IOException si une erreur d'entrée/sortie se produit
+     */
     @BeforeEach
     void setUp() throws IOException {
         fichierSource = tempDir.resolve("fichierSource.huff");
@@ -40,6 +46,12 @@ class TestDecompressionHuffman {
         Files.write(fichierArbre, contenuArbre.getBytes());
     }
 
+    /**
+     * Teste la méthode decompresserFichier de la classe DecompressionHuffman.
+     * Vérifie que le fichier source compressé est correctement décompressé en un fichier de destination.
+     *
+     * @throws IOException si une erreur d'entrée/sortie se produit
+     */
     @Test
     void testDecompresserFichier() throws IOException {
         DecompressionHuffman decompressionHuffman = new DecompressionHuffman(
@@ -55,7 +67,14 @@ class TestDecompressionHuffman {
         assertTrue(Files.size(fichierSource) > 0);
     }
 
-
+    /**
+     * Teste la méthode genererTableDeCode de la classe DecompressionHuffman.
+     * Vérifie que la table de code est correctement générée à partir de l'arbre de Huffman.
+     *
+     * @throws NoSuchMethodException si la méthode n'est pas trouvée
+     * @throws InvocationTargetException si une exception est levée lors de l'invocation de la méthode
+     * @throws IllegalAccessException si l'accès à la méthode est illégal
+     */
     @Test
     void testGenererTableDeCode() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         DecompressionHuffman decompressionHuffman = new DecompressionHuffman(
@@ -77,6 +96,14 @@ class TestDecompressionHuffman {
         assertEquals("11", tableDeCode.get((byte) 99));
     }
 
+    /**
+     * Teste la méthode decoderChaineBinaireEnBytes de la classe DecompressionHuffman.
+     * Vérifie que la chaîne binaire est correctement décodée en bytes en utilisant l'arbre de Huffman.
+     *
+     * @throws NoSuchMethodException si la méthode n'est pas trouvée
+     * @throws InvocationTargetException si une exception est levée lors de l'invocation de la méthode
+     * @throws IllegalAccessException si l'accès à la méthode est illégal
+     */
     @Test
     void testDecoderChaineBinaireEnBytes() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Noeud racine = new Noeud();

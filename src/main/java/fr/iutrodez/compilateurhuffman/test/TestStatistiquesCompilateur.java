@@ -10,6 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TestStatistiquesCompilateur {
 
+    /**
+     * Teste la méthode resumeCompression de la classe StatistiquesCompilateur.
+     * Vérifie que les statistiques de compression sont correctement affichées.
+     */
     @Test
     void testResumeCompression() {
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
@@ -26,6 +30,10 @@ class TestStatistiquesCompilateur {
         assertEquals(expectedOutput, outContent.toString());
     }
 
+    /**
+     * Teste la méthode resumeDecompression de la classe StatistiquesCompilateur.
+     * Vérifie que les statistiques de décompression sont correctement affichées.
+     */
     @Test
     void testResumeDecompression() {
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
