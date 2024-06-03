@@ -68,7 +68,7 @@ public class GestionUrl {
      * @return Un nom de fichier valide.
      * @throws RuntimeException Si le nom de fichier est invalide.
      */
-    private String getNomFichierDestination(Scanner scanner) {
+    public String getNomFichierDestination(Scanner scanner) {
         String nomFichier = scanner.nextLine();
         if (!nomFichier.matches("[a-zA-Z0-9._-]+")) {
             throw new RuntimeException("Nom de fichier invalide. Uniquement "
