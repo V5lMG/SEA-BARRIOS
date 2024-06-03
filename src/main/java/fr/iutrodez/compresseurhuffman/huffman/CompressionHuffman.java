@@ -21,7 +21,8 @@ import static java.lang.System.out;
  * Classe de compression de fichiers utilisant l'algorithme de Huffman.
  * Cette classe permet de lire un fichier source,
  * de compter la fréquence des caractères, de construire l'arbre de Huffman,
- * et de compresser le fichier en une chaîne de bits selon le codage de Huffman.
+ * et de compresser le fichier en une chaîne de bits
+ * selon le codage de Huffman.
  * Le résultat est écrit dans un fichier de destination
  * avec les codes Huffman utilisés.
  * Un résumé des fréquences de caractère et

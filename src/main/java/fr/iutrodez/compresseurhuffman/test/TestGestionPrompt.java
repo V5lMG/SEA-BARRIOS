@@ -1,4 +1,4 @@
-package fr.iutrodez.compilateurhuffman.test;
+package fr.iutrodez.compresseurhuffman.test;
 
 import fr.iutrodez.compilateurhuffman.outils.GestionPrompt;
 import org.junit.jupiter.api.BeforeEach;
