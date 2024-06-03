@@ -99,7 +99,7 @@ public class DecompressionHuffman {
         String[] arbreHuffman =
                 GestionFichier.lireFichierArbreHuffman(cheminArbre);
 
-        Map<Byte, String> codageHuffman =
+        Map<String, String> codageHuffman =
                 genererTableDeCodeHuffman(arbreHuffman);
         return construireArbreHuffmanDepuisMap(codageHuffman);
     }
@@ -134,19 +134,17 @@ public class DecompressionHuffman {
      * @return Une map où chaque clé est un byte et chaque valeur
      *         est le code Huffman correspondant.
      */
-    private Map<Byte, String> genererTableDeCodeHuffman(String[] arbre) {
+    private Map<String, String> genererTableDeCodeHuffman(String[] arbre) {
         /*
          * Utilisation d'une HashMap, la description de HashMap
-         * a été faites dans CompressionHuffman.java
+         * a été faite dans CompressionHuffman.java
          */
-        Map<Byte, String> tableDeCodeHuffman = new HashMap<>();
+        Map<String, String> tableDeCodeHuffman = new HashMap<>();
         for (String line : arbre) {
             if (!line.isBlank()) {
                 String[] separateur = line.split(";");
 
-                Byte cle = Byte.valueOf(separateur[1]
-                                             .split("=")[1]
-                                             .trim());
+                String cle = separateur[1].split("=")[1].trim();
 
                 String valeur = separateur[0].split("=")[1].trim();
                 tableDeCodeHuffman.put(cle, valeur);
@@ -166,7 +164,7 @@ public class DecompressionHuffman {
      * @return La racine de l'arbre de Huffman reconstruit.
      */
     private static Noeud construireArbreHuffmanDepuisMap(
-                                               Map<Byte, String> codeHuffmanMap
+                                             Map<String, String> codeHuffmanMap
                                                         ) {
 
         Noeud racine = new Noeud();
@@ -175,8 +173,8 @@ public class DecompressionHuffman {
          * Parcours de chaque clé de la map.
          * keySet() : Renvoie un ensemble des clés contenues dans la map.
          */
-        for (Byte caractere : codeHuffmanMap.keySet()) {
-            String chemin = codeHuffmanMap.get(caractere);
+        for (String caractereBinaire : codeHuffmanMap.keySet()) {
+            String chemin = codeHuffmanMap.get(caractereBinaire);
 
             Noeud noeudCourant = racine;
 
@@ -194,7 +192,9 @@ public class DecompressionHuffman {
                     noeudCourant = noeudCourant.getDroite();
                 }
             }
-            noeudCourant.setCaractere(caractere);
+            noeudCourant.setCaractere(
+                    (byte) Integer.parseInt(caractereBinaire, 2)
+            );
         }
         return racine;
     }

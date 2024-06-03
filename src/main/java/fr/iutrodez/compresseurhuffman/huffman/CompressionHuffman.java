@@ -7,7 +7,6 @@ package fr.iutrodez.compresseurhuffman.huffman;
 import fr.iutrodez.compresseurhuffman.outils.GestionFichier;
 import fr.iutrodez.compresseurhuffman.objets.Noeud;
 
-import java.nio.charset.StandardCharsets;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -117,7 +116,7 @@ public class CompressionHuffman {
 
         Noeud racine = construireEtGenererArbre(occurencesDesCaracteres);
         Map<Byte, String> codes = new HashMap<>();
-        recurciveCodeHuffman(racine, "", codes);
+        recursiveCodeHuffman(racine, "", codes);
         return codes;
     }
 
@@ -150,7 +149,7 @@ public class CompressionHuffman {
      * @param codes  La map qui stocke les caractères et leurs codes
      *               de Huffman correspondants.
      */
-    private void recurciveCodeHuffman(Noeud noeud, String chemin,
+    private void recursiveCodeHuffman(Noeud noeud, String chemin,
                                       Map<Byte, String> codes) {
 
         if (noeud == null) {
@@ -160,11 +159,11 @@ public class CompressionHuffman {
             codes.put(noeud.getCaractere(), chemin);
         } else {
             if (noeud.getGauche() != null) {
-                recurciveCodeHuffman(noeud.getGauche(),
+                recursiveCodeHuffman(noeud.getGauche(),
                                      chemin + "0", codes);
             }
             if (noeud.getDroite() != null) {
-                recurciveCodeHuffman(noeud.getDroite(),
+                recursiveCodeHuffman(noeud.getDroite(),
                                      chemin + "1", codes);
             }
         }
@@ -335,15 +334,9 @@ public class CompressionHuffman {
          * Crée une liste des clés (bytes) à partir
          * des clés de la map des codes Huffman.
          */
-        List<Byte> clesTriees = new ArrayList<>(codageHuffman.keySet());
+        List<Byte> clesTriees = new ArrayList<>(codageHuffman.keySet()); // TODO refaire
 
-        /*
-         * Trie la liste des clés en ordre naturel
-         * (ordre décroissant des valeurs byte).
-         * Comparator.reverseOrder() est utilisé pour assurer
-         * le tri dans l'ordre décroissant.
-         */
-        clesTriees.sort(Comparator.reverseOrder());
+        // TODO trier arbre
 
         String[] tableHuffmanTrie = new String[clesTriees.size()];
 
