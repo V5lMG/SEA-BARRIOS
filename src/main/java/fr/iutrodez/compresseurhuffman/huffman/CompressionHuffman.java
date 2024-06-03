@@ -8,12 +8,12 @@ import fr.iutrodez.compresseurhuffman.outils.GestionFichier;
 import fr.iutrodez.compresseurhuffman.objets.Noeud;
 
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
+import java.util.Comparator;
 
 import static java.lang.System.out;
 
@@ -77,12 +77,12 @@ public class CompressionHuffman {
      *                     pendant les opérations de lecture ou d'écriture.
      */
     public void compresserFichier() throws IOException {
-        byte[] chaine = GestionFichier.recupererOctets(cheminFichierSource);
-        Map<Byte, Integer> occurencesDesCaracteres = preparerDonnees(chaine);
+        byte[] octets = GestionFichier.recupererOctets(cheminFichierSource);
+        Map<Byte, Integer> occurencesDesCaracteres = preparerDonnees(octets);
         Map<Byte, String> codageHuffman =
                 genererCodesHuffman(occurencesDesCaracteres);
 
-        String codage = convertirOctetsEnCodeHuffman(chaine, codageHuffman);
+        String codage = convertirOctetsEnCodeHuffman(octets, codageHuffman);
         ecrireResultats(codage, cheminFichierDestination, codageHuffman);
     }
 
@@ -90,18 +90,55 @@ public class CompressionHuffman {
      * Prépare les données en calculant et triant les occurrences
      * des octets dans la chaîne.
      *
-     * @param chaine Un tableau d'octets représentant les données à analyser.
+     * @param octets Un tableau d'octets représentant les données à analyser.
      * @return Une map contenant les occurrences des octets.
      */
-    private Map<Byte, Integer> preparerDonnees(byte[] chaine) {
+    private Map<Byte, Integer> preparerDonnees(byte[] octets) {
         Map<Byte, Integer> occurencesDesCaracteres =
-                getFrequenceDesOctets(chaine);
+                getFrequenceDesOctets(octets);
 
-        Map<Byte, Integer> occurencesTriees =
-                trierOccurences(occurencesDesCaracteres);
-
-        afficherOccurencesTriees(occurencesTriees);
+        afficherOccurencesTriees(occurencesDesCaracteres);
         return occurencesDesCaracteres;
+    }
+
+    /**
+     * Calcule et renvoie la fréquence de chaque byte dans un tableau d'octets.
+     * Cette méthode utilise une HashMap pour stocker
+     * et compter la fréquence de chaque byte rencontré.
+     *
+     * @param octets Le tableau d'octets dont les fréquences
+     *              doivent être calculées.
+     * @return Une HashMap où chaque clé est un byte et chaque valeur
+     *         est la fréquence de ce byte dans le tableau.
+     */
+    private HashMap<Byte, Integer> getFrequenceDesOctets(byte[] octets) {
+        /*
+         * HashMap est une structure de données qui stocke les éléments
+         * sous forme de paires clé-valeur.
+         * Elle permet des insertions, des suppressions
+         * et des accès en temps constant en moyenne.
+         */
+        HashMap<Byte, Integer> frequenceDesOctets = new HashMap<>();
+        for (byte octet : octets) {
+            frequenceDesOctets.put(octet,
+                    /*
+                     * La méthode `getOrDefault` est utilisée pour
+                     * obtenir la fréquence actuelle d'un byte
+                     * (représenté par la variable 'octet') dans
+                     * la HashMap `frequenceDesOctets`.
+                     * Si 'octet' est déjà une clé dans la map,
+                     * cette méthode retournera sa valeur associée.
+                     * Si 'octet' n'est pas encore une clé dans la
+                     * map, `getOrDefault` retournera la valeur
+                     * par défaut spécifiée, ici `0`.
+                     * Ensuite, on ajoute 1 à cette valeur
+                     * pour comptabiliser une nouvelle
+                     * occurrence de 'octet'.
+                     */
+                    frequenceDesOctets.getOrDefault(octet, 0)
+                            + 1);
+        }
+        return frequenceDesOctets;
     }
 
     /**
@@ -118,7 +155,7 @@ public class CompressionHuffman {
                                      Map<Byte, Integer> occurencesDesCaracteres
                                                  ) {
 
-        Noeud racine = construireEtGenererArbre(occurencesDesCaracteres);
+        Noeud racine = construireArbreAvecOccurences(occurencesDesCaracteres);
         Map<Byte, String> codes = new HashMap<>();
         recursiveCodeHuffman(racine, "", codes);
         return codes;
@@ -132,14 +169,15 @@ public class CompressionHuffman {
      *                                des octets.
      * @return La racine de l'arbre de Huffman.
      */
-    private Noeud construireEtGenererArbre(
+    private Noeud construireArbreAvecOccurences (
                                      Map<Byte, Integer> occurencesDesCaracteres
                                           ) {
 
         Noeud[] tableau = new Noeud[occurencesDesCaracteres.size()];
         int index = 0;
-        for (Map.Entry<Byte, Integer> entry : occurencesDesCaracteres.entrySet()) {
-            tableau[index++] = new Noeud(entry.getKey(), entry.getValue());
+        for (Byte key : occurencesDesCaracteres.keySet()) {
+            Integer value = occurencesDesCaracteres.get(key);
+            tableau[index++] = new Noeud(key, value);
         }
         return construireArbre(tableau);
     }
@@ -208,41 +246,39 @@ public class CompressionHuffman {
      * Affiche les occurrences des caractères triées
      * par ordre décroissant de fréquence.
      *
-     * @param occurencesTriees La map des occurrences triée.
+     * @param occurences La map des occurrences à trier.
      */
-    private void afficherOccurencesTriees(Map<Byte, Integer> occurencesTriees) {
+    private void afficherOccurencesTriees(Map<Byte, Integer> occurences) {
         out.println("Occurrences des caractères :");
 
-        int totalOccurrences = occurencesTriees.values()
-                                               .stream()
-                                               .mapToInt(Integer::intValue)
-                                               .sum();
+        int totalOccurrences = 0;
+        for (int occurence : occurences.values()) {
+            totalOccurrences += occurence;
+        }
 
-        for (Byte indice : occurencesTriees.keySet()) {
-            int occurrences = occurencesTriees.get(indice);
+        String[][] tableauOccurences = new String[occurences.size()][3];
+
+        int i = 0;
+        for (Byte indice : occurences.keySet()) {
+            int occurrences = occurences.get(indice);
             double frequence = (double) occurrences / totalOccurrences;
             char symbole = (char) indice.byteValue();
-            out.printf(  "Caractère : %c ; "
-                       + "Occurrences : %d ; "
-                       + "Fréquence : %.4f\n",
-                       symbole, occurrences, frequence);
+            tableauOccurences[i][0] = String.valueOf(symbole);
+            tableauOccurences[i][1] = String.valueOf(occurrences);
+            tableauOccurences[i][2] = String.format("%.6f", frequence);
+            i++;
         }
-    }
 
-    /**
-     * Trie les occurrences des caractères
-     * par ordre décroissant de fréquence.
-     *
-     * @param occurencesDesCaracteres La map des occurrences à trier.
-     * @return Une HashMap avec les clés triées
-     *         par ordre décroissant de fréquence.
-     */
-    private Map<Byte, Integer> trierOccurences(
-                                   Map<Byte, Integer> occurencesDesCaracteres
-                                              ) {
+        Arrays.sort(tableauOccurences,
+                (a, b) -> Double.compare(
+                        Double.parseDouble(b[2].replace(',', '.')),
+                        Double.parseDouble(a[2].replace(',', '.'))
+                ));
 
-        // TODO trier les occurences
-        return occurencesDesCaracteres;
+        for (String[] donneeAAfficher : tableauOccurences) {
+            out.printf("Caractère : %s ; Occurrences : %s ; Fréquence : %s\n",
+                    donneeAAfficher[0], donneeAAfficher[1], donneeAAfficher[2]);
+        }
     }
 
     /**
@@ -338,9 +374,11 @@ public class CompressionHuffman {
          * Crée une liste des clés (bytes) à partir
          * des clés de la map des codes Huffman.
          */
-        List<Byte> clesTriees = new ArrayList<>(codageHuffman.keySet()); // TODO refaire
+        List<Byte> clesTriees = new ArrayList<>(codageHuffman.keySet());
 
-        // TODO trier arbre
+        clesTriees.sort((bits1, bits2) -> comparerCodesHuffman(codageHuffman,
+                                                               bits1,
+                                                               bits2));
 
         String[] tableHuffmanTrie = new String[clesTriees.size()];
 
@@ -358,6 +396,27 @@ public class CompressionHuffman {
     }
 
     /**
+     * Compare deux bytes en fonction de leurs codes Huffman.
+     *
+     * @param bits1 Le premier byte à comparer.
+     * @param bits2 Le deuxième byte à comparer.
+     * @return Un entier négatif, zéro ou un entier positif
+     *         si le premier argument est inférieur,
+     *         égal ou supérieur au deuxième.
+     */
+    private int comparerCodesHuffman(Map<Byte, String> codageHuffman,
+                                     Byte bits1, Byte bits2) {
+        String code1 = codageHuffman.get(bits1);
+        String code2 = codageHuffman.get(bits2);
+        int compareLength = Integer.compare(code1.length(), code2.length());
+        if (compareLength == 0) {
+            return code1.compareTo(code2);
+        } else {
+            return compareLength;
+        }
+    }
+
+    /**
      * Récupère la représentation UTF-8 en chaîne de caractères d'un byte.
      *
      * @param value Le byte à convertir.
@@ -369,46 +428,6 @@ public class CompressionHuffman {
     }
 
     /**
-     * Calcule et renvoie la fréquence de chaque byte dans un tableau d'octets.
-     * Cette méthode utilise une HashMap pour stocker
-     * et compter la fréquence de chaque byte rencontré.
-     *
-     * @param octets Le tableau d'octets dont les fréquences
-     *              doivent être calculées.
-     * @return Une HashMap où chaque clé est un byte et chaque valeur
-     *         est la fréquence de ce byte dans le tableau.
-     */
-    private HashMap<Byte, Integer> getFrequenceDesOctets(byte[] octets) {
-        /*
-         * HashMap est une structure de données qui stocke les éléments
-         * sous forme de paires clé-valeur.
-         * Elle permet des insertions, des suppressions
-         * et des accès en temps constant en moyenne.
-         */
-        HashMap<Byte, Integer> frequenceDesOctets = new HashMap<>();
-        for (byte octet : octets) {
-            frequenceDesOctets.put(octet,
-                               /*
-                                * La méthode `getOrDefault` est utilisée pour
-                                * obtenir la fréquence actuelle d'un byte
-                                * (représenté par la variable 'octet') dans
-                                * la HashMap `frequenceDesOctets`.
-                                * Si 'octet' est déjà une clé dans la map,
-                                * cette méthode retournera sa valeur associée.
-                                * Si 'octet' n'est pas encore une clé dans la 
-                                * map, `getOrDefault` retournera la valeur
-                                * par défaut spécifiée, ici `0`.
-                                * Ensuite, on ajoute 1 à cette valeur
-                                * pour comptabiliser une nouvelle
-                                * occurrence de 'octet'.
-                                */
-                                frequenceDesOctets.getOrDefault(octet, 0)
-                                + 1);
-        }
-        return frequenceDesOctets;
-    }
-
-    /**
      * Méthode pour générer et enregistrer l'arbre de Huffman en
      * utilisant les données du fichier source et en écrivant
      * l'arbre dans le fichier destination.
@@ -416,9 +435,9 @@ public class CompressionHuffman {
      * @throws IOException Si une erreur d'entrée/sortie se produit.
      */
     public void genererEtEnregistrerArbreHuffman() throws IOException {
-        byte[] chaine = GestionFichier.recupererOctets(cheminFichierSource);
+        byte[] octets = GestionFichier.recupererOctets(cheminFichierSource);
         Map<Byte, Integer> occurencesDesCaracteres =
-                getFrequenceDesOctets(chaine);
+                getFrequenceDesOctets(octets);
 
         Map<Byte, String> codageHuffman =
                 genererCodesHuffman(occurencesDesCaracteres);
