@@ -1,7 +1,3 @@
-/*
- * Pas de copyright, ni de droit d'auteur.
- * DecompressionHuffman.java                 27/05/2024
- */
 package fr.iutrodez.compresseurhuffman.huffman;
 
 import fr.iutrodez.compresseurhuffman.outils.GestionFichier;
@@ -25,7 +21,10 @@ import java.util.Map;
  * et la transformation des données binaires compressées
  * en leur format d'origine.
  *
- * @author ValMG, R. Xaviertaborda, J. Seychelles, B. Thenieres
+ * @author V. Munier--Genie
+ * @author R. Xaviertaborda
+ * @author J. Seychelles
+ * @author B. Thenieres
  * @version 1.0
  */
 public class DecompressionHuffman {
@@ -99,7 +98,7 @@ public class DecompressionHuffman {
         String[] arbreHuffman =
                 GestionFichier.lireFichierArbreHuffman(cheminArbre);
 
-        Map<String, String> codageHuffman =
+        Map<Byte, String> codageHuffman =
                 genererTableDeCodeHuffman(arbreHuffman);
         return construireArbreHuffmanDepuisMap(codageHuffman);
     }
@@ -120,7 +119,7 @@ public class DecompressionHuffman {
                 decoderChaineBinaireEnBytes(code, racine);
 
         GestionFichier.ecrireFichierDestination(bytes,
-                                                cheminFichierDestination);
+                cheminFichierDestination);
     }
 
     /**
@@ -134,17 +133,19 @@ public class DecompressionHuffman {
      * @return Une map où chaque clé est un byte et chaque valeur
      *         est le code Huffman correspondant.
      */
-    private Map<String, String> genererTableDeCodeHuffman(String[] arbre) {
+    private Map<Byte, String> genererTableDeCodeHuffman(String[] arbre) {
         /*
          * Utilisation d'une HashMap, la description de HashMap
          * a été faite dans CompressionHuffman.java
          */
-        Map<String, String> tableDeCodeHuffman = new HashMap<>();
+        Map<Byte, String> tableDeCodeHuffman = new HashMap<>();
         for (String line : arbre) {
             if (!line.isBlank()) {
                 String[] separateur = line.split(";");
 
-                String cle = separateur[1].split("=")[1].trim();
+                byte cle = (byte) Integer.parseInt(separateur[1]
+                                                   .split("=")[1]
+                                                   .trim(), 2);
 
                 String valeur = separateur[0].split("=")[1].trim();
                 tableDeCodeHuffman.put(cle, valeur);
@@ -164,8 +165,8 @@ public class DecompressionHuffman {
      * @return La racine de l'arbre de Huffman reconstruit.
      */
     private static Noeud construireArbreHuffmanDepuisMap(
-                                             Map<String, String> codeHuffmanMap
-                                                        ) {
+            Map<Byte, String> codeHuffmanMap
+    ) {
 
         Noeud racine = new Noeud();
 
@@ -173,8 +174,8 @@ public class DecompressionHuffman {
          * Parcours de chaque clé de la map.
          * keySet() : Renvoie un ensemble des clés contenues dans la map.
          */
-        for (String caractereBinaire : codeHuffmanMap.keySet()) {
-            String chemin = codeHuffmanMap.get(caractereBinaire);
+        for (Byte caractere : codeHuffmanMap.keySet()) {
+            String chemin = codeHuffmanMap.get(caractere);
 
             Noeud noeudCourant = racine;
 
@@ -192,9 +193,7 @@ public class DecompressionHuffman {
                     noeudCourant = noeudCourant.getDroite();
                 }
             }
-            noeudCourant.setCaractere(
-                    (byte) Integer.parseInt(caractereBinaire, 2)
-            );
+            noeudCourant.setCaractere(caractere);
         }
         return racine;
     }
@@ -224,7 +223,7 @@ public class DecompressionHuffman {
 
         for (char bit : bits.toCharArray()) {
             noeudCourant = (bit == '0') ? noeudCourant.getGauche()
-                                        : noeudCourant.getDroite();
+                    : noeudCourant.getDroite();
 
             if (noeudCourant.isFeuille()) {
                 byteStream.write(noeudCourant.getCaractere());

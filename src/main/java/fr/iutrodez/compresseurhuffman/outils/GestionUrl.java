@@ -12,7 +12,10 @@ import java.util.Scanner;
  * Classe de gestion des chemins et des noms de fichiers pour
  * les opérations de compression et de décompression.
  *
- * @author ValMG, R. Xaviertaborda, J. Seychelles, B. Thenieres
+ * @author V. Munier--Genie
+ * @author R. Xaviertaborda
+ * @author J. Seychelles
+ * @author B. Thenieres
  * @version 1.0
  */
 public class GestionUrl {

@@ -21,7 +21,10 @@ import static java.lang.System.out;
  * et la décompression de fichiers texte.
  * L'application s'exécute jusqu'à ce que l'utilisateur choisisse de quitter.
  *
- * @author ValMG, R. Xaviertaborda, J. Seychelles, B. Thenieres
+ * @author V. Munier--Genie
+ * @author R. Xaviertaborda
+ * @author J. Seychelles
+ * @author B. Thenieres
  * @version 1.0
  */
 public class ApplicationLigneCommande {

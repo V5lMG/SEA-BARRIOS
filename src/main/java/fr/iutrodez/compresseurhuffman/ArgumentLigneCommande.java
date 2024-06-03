@@ -17,7 +17,10 @@ import static java.lang.System.out;
  * Classe destinée à gérer et interpréter les arguments de ligne de commande
  * pour l'application de compression Huffman.
  *
- * @author ValMG, R. Xaviertaborda, J. Seychelles, B. Thenieres
+ * @author V. Munier--Genie
+ * @author R. Xaviertaborda
+ * @author J. Seychelles
+ * @author B. Thenieres
  * @version 1.0
  */
 public class ArgumentLigneCommande {

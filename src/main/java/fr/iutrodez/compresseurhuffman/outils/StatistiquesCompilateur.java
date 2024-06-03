@@ -15,7 +15,10 @@ import static java.lang.System.out;
  * Cette classe fournit des méthodes pour afficher les tailles de fichiers
  * et les taux de compression et de décompression.
  *
- * @author ValMG, R. Xaviertaborda, J. Seychelles, B. Thenieres
+ * @author V. Munier--Genie
+ * @author R. Xaviertaborda
+ * @author J. Seychelles
+ * @author B. Thenieres
  * @version 1.0
  */
 public class StatistiquesCompilateur {

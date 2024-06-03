@@ -11,7 +11,10 @@ package fr.iutrodez.compresseurhuffman.objets;
  * Cette classe inclut des méthodes pour générer des codes de Huffman
  * pour les feuilles de l'arbre.
  *
- * @author ValMG, R. Xaviertaborda, J. Seychelles, B. Thenieres TODO aligner les noms
+ * @author V. Munier--Genie
+ * @author R. Xaviertaborda
+ * @author J. Seychelles
+ * @author B. Thenieres
  * @version 1.0
  */
 public class Noeud {

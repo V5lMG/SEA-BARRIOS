@@ -27,7 +27,10 @@ import static java.lang.System.out;
  * Un résumé des fréquences de caractère et
  * des codes de Huffman est également produit.
  *
- * @author ValMG, R. Xaviertaborda, J. Seychelles, B. Thenieres
+ * @author V. Munier--Genie
+ * @author R. Xaviertaborda
+ * @author J. Seychelles
+ * @author B. Thenieres
  * @version 1.0
  */
 public class CompressionHuffman {
