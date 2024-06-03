@@ -65,7 +65,7 @@ class TestGestionFichier {
         String chaineBinaire = "01101101";
         GestionFichier.ecrireChaineBinaireDansFichier(chaineBinaire, fichierBinaire.toString());
 
-        String contenuLu = GestionFichier.lireFichierBinaireEnChaine(fichierBinaire.toString());
+        String contenuLu = GestionFichier.lireFichierBinaire(fichierBinaire.toString());
         assertEquals(chaineBinaire, contenuLu);
     }
 

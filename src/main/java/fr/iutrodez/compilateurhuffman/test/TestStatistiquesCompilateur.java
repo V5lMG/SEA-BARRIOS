@@ -15,12 +15,14 @@ class TestStatistiquesCompilateur {
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
 
-        StatistiquesCompilateur.resumeCompression("/chemin/vers/fichierSource.txt",
-                "/chemin/vers/fichierDestination.bin");
+        long tempsCompression = System.currentTimeMillis();
+        StatistiquesCompilateur.resumeCompression("fichier_source.txt", "fichier_compressé.bin", tempsCompression);
 
-        String expectedOutput = "Taille du fichier original : 1234 octets\n" +
-                "Taille du fichier compressé : 567 octets\n" +
-                "Taux de compression : 45.99 %\n";
+        String expectedOutput = "Taille du fichier original : 100 octets\n" +
+                "Taille du fichier compressé : 50 octets\n" +
+                "Taux de compression : 50.00 %\n" +
+                "Temps de décompression : 0 millisecondes\n";
+
         assertEquals(expectedOutput, outContent.toString());
     }
 
@@ -30,14 +32,13 @@ class TestStatistiquesCompilateur {
         System.setOut(new PrintStream(outContent));
 
         long tempsDecompression = System.currentTimeMillis();
-        StatistiquesCompilateur.resumeDecompression("/chemin/vers/fichierCompresse.bin",
-                "/chemin/vers/fichierDestination.txt",
-                tempsDecompression);
+        StatistiquesCompilateur.resumeDecompression("fichier_compressé.bin", "fichier_décompressé.txt", tempsDecompression);
 
-        String expectedOutput = "Taille du fichier compressé : 567 octets\n" +
-                "Taille du fichier décompressé : 1234 octets\n" +
-                "Taux de décompression : 45.99 %\n" +
-                "Temps de décompression : 1000 millisecondes\n";
+        String expectedOutput = "Taille du fichier compressé : 50 octets\n" +
+                "Taille du fichier décompressé : 100 octets\n" +
+                "Taux de décompression : 200.00 %\n" +
+                "Temps de décompression : 0 millisecondes\n";
+
         assertEquals(expectedOutput, outContent.toString());
     }
 }
