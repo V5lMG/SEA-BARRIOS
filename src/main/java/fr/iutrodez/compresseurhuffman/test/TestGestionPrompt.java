@@ -1,6 +1,6 @@
 package fr.iutrodez.compresseurhuffman.test;
 
-import fr.iutrodez.compilateurhuffman.outils.GestionPrompt;
+import fr.iutrodez.compresseurhuffman.outils.GestionPrompt;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;

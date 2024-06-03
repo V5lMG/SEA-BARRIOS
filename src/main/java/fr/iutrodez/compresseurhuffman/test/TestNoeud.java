@@ -1,6 +1,6 @@
 package fr.iutrodez.compresseurhuffman.test;
 
-import fr.iutrodez.compilateurhuffman.objets.Noeud;
+import fr.iutrodez.compresseurhuffman.objets.Noeud;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

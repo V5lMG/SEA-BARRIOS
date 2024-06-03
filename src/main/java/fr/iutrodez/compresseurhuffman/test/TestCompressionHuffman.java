@@ -1,6 +1,6 @@
 package fr.iutrodez.compresseurhuffman.test;
 
-import fr.iutrodez.compilateurhuffman.huffman.CompressionHuffman;
+import fr.iutrodez.compresseurhuffman.huffman.CompressionHuffman;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

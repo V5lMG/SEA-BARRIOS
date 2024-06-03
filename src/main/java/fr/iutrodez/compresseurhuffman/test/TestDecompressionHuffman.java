@@ -1,8 +1,7 @@
 package fr.iutrodez.compresseurhuffman.test;
 
-import fr.iutrodez.compilateurhuffman.huffman.DecompressionHuffman;
-import fr.iutrodez.compilateurhuffman.objets.Noeud;
-import fr.iutrodez.compilateurhuffman.outils.GestionFichier;
+import fr.iutrodez.compresseurhuffman.huffman.DecompressionHuffman;
+import fr.iutrodez.compresseurhuffman.objets.Noeud;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;

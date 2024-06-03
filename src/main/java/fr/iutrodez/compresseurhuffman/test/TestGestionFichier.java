@@ -1,6 +1,6 @@
 package fr.iutrodez.compresseurhuffman.test;
 
-import fr.iutrodez.compilateurhuffman.outils.GestionFichier;
+import fr.iutrodez.compresseurhuffman.outils.GestionFichier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static fr.iutrodez.compilateurhuffman.outils.GestionFichier.*;
+import static fr.iutrodez.compresseurhuffman.outils.GestionFichier.*;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -49,7 +49,7 @@ class TestGestionFichier {
      */
     @Test
     void testLireToutLeFichier() {
-        String[] lignes = lireToutLeFichier(fichierTexte.toString());
+        String[] lignes = lireFichierArbreHuffman(fichierTexte.toString());
         assertArrayEquals(new String[]{"Ligne 1", "Ligne 2", "Ligne 3"}, lignes);
     }
 

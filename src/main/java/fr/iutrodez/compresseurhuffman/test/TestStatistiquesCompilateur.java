@@ -1,6 +1,6 @@
 package fr.iutrodez.compresseurhuffman.test;
 
-import fr.iutrodez.compilateurhuffman.outils.StatistiquesCompilateur;
+import fr.iutrodez.compresseurhuffman.outils.StatistiquesCompilateur;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
