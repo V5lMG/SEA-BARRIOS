@@ -1,3 +1,2 @@
 Manifest-Version: 1.0
-Main-Class: fr.iutrodez.compilateurhuffman.ApplicationLigneCommande
-
+Main-Class: fr.iutrodez.compresseurhuffman.ApplicationLigneCommande

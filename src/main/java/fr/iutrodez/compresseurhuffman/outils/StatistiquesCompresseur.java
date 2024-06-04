@@ -1,6 +1,6 @@
 /*
  * Pas de copyright, ni de droit d'auteur.
- * StatistiquesCompilateur.java               27/05/2024
+ * StatistiquesCompresseur.java               27/05/2024
  */
 package fr.iutrodez.compresseurhuffman.outils;
 
@@ -21,7 +21,7 @@ import static java.lang.System.out;
  * @author B. Thenieres
  * @version 1.0
  */
-public class StatistiquesCompilateur {
+public class StatistiquesCompresseur {
     /**
      * Affiche un résumé de la compression, incluant les tailles du fichier
      * original et compressé, ainsi que le taux de compression.

@@ -7,7 +7,7 @@ package fr.iutrodez.compresseurhuffman;
 import fr.iutrodez.compresseurhuffman.huffman.CompressionHuffman;
 import fr.iutrodez.compresseurhuffman.huffman.DecompressionHuffman;
 import fr.iutrodez.compresseurhuffman.outils.GestionPrompt;
-import fr.iutrodez.compresseurhuffman.outils.StatistiquesCompilateur;
+import fr.iutrodez.compresseurhuffman.outils.StatistiquesCompresseur;
 
 import java.io.IOException;
 
@@ -122,7 +122,7 @@ public class ArgumentLigneCommande {
             compresser.compresserFichier();
 
             ApplicationLigneCommande.afficherSeparateur();
-            StatistiquesCompilateur.resumeCompression(cheminFichierSource,
+            StatistiquesCompresseur.resumeCompression(cheminFichierSource,
                                                       cheminDossierDestination,
                                                       tempsCompression);
             ApplicationLigneCommande.afficherSeparateur();
@@ -163,7 +163,7 @@ public class ArgumentLigneCommande {
             decompresser.decompresserFichier();
 
             ApplicationLigneCommande.afficherSeparateur();
-            StatistiquesCompilateur.resumeDecompression(
+            StatistiquesCompresseur.resumeDecompression(
                                                       cheminFichierSource,
                                                       cheminDossierDestination,
                                                       tempsDecompression
