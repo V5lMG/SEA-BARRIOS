@@ -50,7 +50,7 @@ public class StatistiquesCompresseur {
 
         long tempsDeCompression = System.currentTimeMillis()
                                   - tempsCompression;
-        out.println("Temps de décompression : " + tempsDeCompression
+        out.println("Temps de compression : " + tempsDeCompression
                     + " millisecondes");
     }
 
