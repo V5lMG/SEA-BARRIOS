@@ -1,6 +1,6 @@
 @echo off
 :: Mettre en place le JAVA_HOME le mettre à jour le PATH
-set JAVA_HOME=jdk\openjdk-22.0.1
+set JAVA_HOME=jdk\jdk22
 set PATH=%JAVA_HOME%\bin;%PATH%
 
 :: Liste des arguments
