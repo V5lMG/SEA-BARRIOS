@@ -62,8 +62,8 @@ public class ArgumentLigneCommande {
             case "construire":
                 if (args.length < 4) {
                     out.println("Arguments manquants. Utilisation : "
-                            + "construire <chemin_fichier_a_decompresser>"
-                            + " <nom_dossier_destination> <nom_fichier>");
+                                + "construire <chemin_fichier_a_decompresser>"
+                                + " <nom_dossier_destination> <nom_fichier>");
                 } else {
                     genererArbreHuffman(args[1], args[2], args[3]);
                 }
