@@ -67,6 +67,7 @@ public class Noeud {
 
     }
 
+    /* ********** GETTERS ********** */
     /**
      * Retourne le caractère représenté par ce nœud.
      *
@@ -86,15 +87,6 @@ public class Noeud {
     }
 
     /**
-     * Définit le caractère représenté par ce nœud.
-     *
-     * @param caractere Le caractère à définir.
-     */
-    public void setCaractere(byte caractere) {
-        this.caractere = caractere;
-    }
-
-    /**
      * Retourne l'enfant gauche de ce nœud.
      *
      * @return L'enfant gauche de ce nœud.
@@ -104,21 +96,32 @@ public class Noeud {
     }
 
     /**
-     * Définit l'enfant gauche de ce nœud.
-     *
-     * @param gauche L'enfant gauche à définir.
-     */
-    public void setGauche(Noeud gauche) {
-        this.gauche = gauche;
-    }
-
-    /**
      * Retourne l'enfant droit de ce nœud.
      *
      * @return L'enfant droit de ce nœud.
      */
     public Noeud getDroite() {
         return droite;
+    }
+
+
+    /* ********** SETTERS ********** */
+    /**
+     * Définit le caractère représenté par ce nœud.
+     *
+     * @param caractere Le caractère à définir.
+     */
+    public void setCaractere(byte caractere) {
+        this.caractere = caractere;
+    }
+
+    /**
+     * Définit l'enfant gauche de ce nœud.
+     *
+     * @param gauche L'enfant gauche à définir.
+     */
+    public void setGauche(Noeud gauche) {
+        this.gauche = gauche;
     }
 
     /**

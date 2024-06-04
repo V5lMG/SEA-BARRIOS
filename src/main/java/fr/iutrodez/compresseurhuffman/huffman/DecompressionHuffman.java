@@ -116,7 +116,7 @@ public class DecompressionHuffman {
                 GestionFichier.lireFichierBinaire(cheminFichierSource);
 
         byte[] bytes =
-                decoderChaineBinaireEnBytes(code, racine);
+                transformerChaineEnBytes(code, racine);
 
         GestionFichier.ecrireFichierDestination(bytes,
                 cheminFichierDestination);
@@ -209,7 +209,7 @@ public class DecompressionHuffman {
      *               le décodage.
      * @return Un tableau de bytes représentant les caractères décodés.
      */
-    private static byte[] decoderChaineBinaireEnBytes(String bits,
+    private static byte[] transformerChaineEnBytes(String bits,
                                                       Noeud racine) {
         /*
          * Crée un ByteArrayOutputStream pour écrire des données

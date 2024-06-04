@@ -204,7 +204,8 @@ public class GestionPrompt {
      * @throws IOException Si une erreur d'entrée/sortie se produit.
      */
     public static void creerDossierPourCompilation(
-                                               String cheminDossierDestination)
+                                                 String cheminDossierDestination
+                                                   )
             throws IOException {
 
         File dossier = new File(cheminDossierDestination);
