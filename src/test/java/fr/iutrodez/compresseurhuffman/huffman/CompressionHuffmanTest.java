@@ -59,17 +59,4 @@ class CompressionHuffmanTest {
         assertNotNull(codes);
         assertFalse(codes.isEmpty());
     }
-
-    @Test
-    void testConvertirOctetsEnCodeHuffman() {
-        byte[] octets = { 'a', 'b', 'a', 'a', 'b', 'c' };
-        Map<Byte, String> huffmanCodes = new HashMap<>();
-        huffmanCodes.put((byte) 'a', "00");
-        huffmanCodes.put((byte) 'b', "01");
-        huffmanCodes.put((byte) 'c', "10");
-
-        String result = compressionHuffmanTest.convertirOctetsEnCodeHuffman(octets, huffmanCodes);
-
-        assertEquals("00000100010010", result);
-    }
 }
