@@ -111,7 +111,7 @@ public class CompressionHuffman {
      * @return Une HashMap où chaque clé est un byte et chaque valeur
      *         est la fréquence de ce byte dans le tableau.
      */
-    private HashMap<Byte, Integer> getFrequenceDesOctets(byte[] octets) {
+    public HashMap<Byte, Integer> getFrequenceDesOctets(byte[] octets) {
         /*
          * HashMap est une structure de données qui stocke les éléments
          * sous forme de paires clé-valeur.
@@ -151,9 +151,9 @@ public class CompressionHuffman {
      * @return Une map contenant les octets et
      *         leurs codes de Huffman correspondants.
      */
-    private Map<Byte, String> genererCodesHuffman(
-                                     Map<Byte, Integer> occurencesDesCaracteres
-                                                 ) {
+    public Map<Byte, String> genererCodesHuffman(
+            Map<Byte, Integer> occurencesDesCaracteres
+    ) {
 
         Noeud racine = construireArbreAvecOccurences(occurencesDesCaracteres);
         Map<Byte, String> codes = new HashMap<>();
@@ -169,9 +169,9 @@ public class CompressionHuffman {
      *                                des octets.
      * @return La racine de l'arbre de Huffman.
      */
-    private Noeud construireArbreAvecOccurences (
-                                     Map<Byte, Integer> occurencesDesCaracteres
-                                          ) {
+    public Noeud construireArbreAvecOccurences(
+            Map<Byte, Integer> occurencesDesCaracteres
+    ) {
 
         Noeud[] tableau = new Noeud[occurencesDesCaracteres.size()];
         int index = 0;
@@ -296,8 +296,8 @@ public class CompressionHuffman {
      * @return La chaîne binaire complète résultante de l'encodage de tous
      *         les octets de la chaîne initiale.
      */
-    private String convertirOctetsEnCodeHuffman(byte[] chaineOctets,
-                                             Map<Byte, String> mappageHuffman) {
+    public String convertirOctetsEnCodeHuffman(byte[] chaineOctets,
+                                               Map<Byte, String> mappageHuffman) {
 
         StringBuilder codeHuffman = new StringBuilder();
         for (byte octet : chaineOctets) {
